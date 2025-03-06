@@ -1,0 +1,70 @@
+#pragma kernel CSMain
+
+struct BezierSegment
+{
+    float2 p0, p1, p2; //
+};
+
+StructuredBuffer<BezierSegment> bezierSegments;
+StructuredBuffer<float2> points;
+RWStructuredBuffer<int> results; 
+float2 scale; 
+
+
+float2 BezierPoint(float2 p0, float2 p1, float2 p2, float2 p3, float t)
+{
+    float u = 1.0 - t;
+    return u * u * u * p0 +
+           3.0 * u * u * t * p1 +
+           3.0 * u * t * t * p2 +
+           t * t * t * p3;
+}
+
+
+bool EdgeIntersectsRay(float2 a, float2 b, float2 testPoint)
+{
+    if ((a.y > testPoint.y) == (b.y > testPoint.y)) return false; 
+    float xIntersection = a.x + (b.x - a.x) * (testPoint.y - a.y) / (b.y - a.y);
+    return xIntersection > testPoint.x; 
+}
+
+[numthreads(256, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= points.Length) return; 
+
+    float2 testPoint = points[id.x]; 
+    int crossings = 0;
+
+    
+    for (int i = 0; i < bezierSegments.Length - 1; i++) 
+    {
+        BezierSegment seg = bezierSegments[i];
+        float2 next_p0 = bezierSegments[i + 1].p0; 
+
+        
+        float2 p0 = seg.p0 * scale;
+        float2 p1 = seg.p1 * scale;
+        float2 p2 = seg.p2 * scale;
+        float2 p3 = next_p0 * scale;
+
+        float2 prev = p0;
+        const int resolution = 10; 
+
+        for (int j = 1; j <= resolution; j++)
+        {
+            float t = j / (float)resolution;
+            float2 curr = BezierPoint(p0, p1, p2, p3, t);
+
+            if (EdgeIntersectsRay(prev, curr, testPoint))
+            {
+                crossings++;
+            }
+
+            prev = curr;
+        }
+    }
+
+    
+    results[id.x] = (crossings % 2 == 1) ? 1 : 0;
+}
