@@ -164,11 +164,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   svgFilePath: Assets/Bus.svg
-  Outline: 1
-  pointSpacing: 0.6
   Scale: 2.48
   pointRadius: 0.25
   dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
+  Outline: 1
+  OutlineSpacing: 0.5
   Fill: 1
   fillSpacing: 0.94
   gridOffset: {x: 18.25, y: -3.59}
@@ -204,15 +204,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   svgFilePath: Assets/alien.svg
-  Outline: 1
-  pointSpacing: 0.39
   Scale: 2
   pointRadius: 0.25
   dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
+  Outline: 1
+  OutlineSpacing: 0.5
   Fill: 0
-  fillSpacing: 0.85
-  gridOffset: {x: -3.67, y: 13.45}
-  gridRotation: -43
+  fillSpacing: 3.5
+  gridOffset: {x: -2.44, y: 10.7}
+  gridRotation: -45
   bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
 --- !u!4 &336120190
 Transform:
@@ -400,15 +400,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   svgFilePath: Assets/Ferry.svg
-  Outline: 1
-  pointSpacing: 0.38
   Scale: 2
   pointRadius: 0.25
   dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
+  Outline: 1
+  OutlineSpacing: 0.5
   Fill: 1
-  fillSpacing: 0.5
-  gridOffset: {x: 0.7, y: 22.1}
-  gridRotation: -0.55
+  fillSpacing: 0.83
+  gridOffset: {x: 0, y: 22.6}
+  gridRotation: 0
   bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
 --- !u!4 &1160562967
 Transform:
@@ -607,8 +607,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1160562967}
-  - {fileID: 336120190}
   - {fileID: 313107194}
+  - {fileID: 336120190}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 135, z: 0}
 --- !u!1660057539 &9223372036854775807

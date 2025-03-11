@@ -2,7 +2,7 @@
 
 struct BezierSegment
 {
-    float2 p0, p1, p2; //
+    float2 p0, p1, p2; 
 };
 
 StructuredBuffer<BezierSegment> bezierSegments;

@@ -9,16 +9,16 @@ public class SVGLoader : MonoBehaviour
 {
     public string svgFilePath;
 
-    public bool Outline = true;
-    [Min(0f)]
-    public float pointSpacing = 0.5f; 
-
     [Min(0.01f)]
     public float Scale = 1f;
-
     [Min(0.01f)]
     public float pointRadius = 0.25f;
     public GameObject dronePrefab; 
+
+    public bool Outline = true;
+    [Min(0f)]
+    public float OutlineSpacing = 0.5f; 
+
 
     public bool Fill = false;
 
@@ -64,7 +64,7 @@ public class SVGLoader : MonoBehaviour
         List<VirtualDrone> possibleDrones = new();
 
         if(Outline) {
-            possibleDrones.AddRange(GetEvenlySpacedPointsFromPath(contours, pointSpacing, Scale, pointRadius));
+            possibleDrones.AddRange(GetEvenlySpacedPointsFromPath(contours, OutlineSpacing, Scale, pointRadius));
         }
         
         if(Fill) {
