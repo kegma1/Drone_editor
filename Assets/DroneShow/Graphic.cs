@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 [ExecuteInEditMode]
-public class SVGLoader : MonoBehaviour
+public class Grpahic : MonoBehaviour
 {
     public string svgFilePath;
 
@@ -24,8 +24,8 @@ public class SVGLoader : MonoBehaviour
 
     [Min(0f)]
     public float fillSpacing = 0.5f; 
-    public Vector2 gridOffset;
-    public float gridRotation;
+    public Vector2 fillOffset;
+    public float fillRotation;
 
     private List<VirtualDrone> edgePoints = new List<VirtualDrone>();
     private Rect sceneViewport;
@@ -185,8 +185,8 @@ public class SVGLoader : MonoBehaviour
         for (float x = viewPort.xMin; x <= viewPort.xMax *scale; x += adjustedSpacing)
         {
             for (float y = viewPort.yMin; y <= viewPort.yMax *scale; y += adjustedSpacing) {
-                Vector2 rotatedPoint = Quaternion.AngleAxis(gridRotation, Vector3.forward) * new Vector2(x, y);
-                points.Add(rotatedPoint + gridOffset);
+                Vector2 rotatedPoint = Quaternion.AngleAxis(fillRotation, Vector3.forward) * new Vector2(x, y);
+                points.Add(rotatedPoint + fillOffset);
             }
         }
 

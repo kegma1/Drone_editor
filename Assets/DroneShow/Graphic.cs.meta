@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 113a158a43746644f91fe4b2c8e1be43
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
+  - bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

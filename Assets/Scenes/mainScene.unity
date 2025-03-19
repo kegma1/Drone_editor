@@ -144,12 +144,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 313107193}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.37055743, y: 0, z: 0, w: 0.92880964}
-  m_LocalPosition: {x: -4.5, y: 23.1, z: 18.7}
+  m_LocalRotation: {x: -0.14180619, y: 0.8581082, z: 0.34235042, w: 0.35544005}
+  m_LocalPosition: {x: 41.404877, y: 39.50673, z: -35.04092}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1381458368}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -43.5, y: 0, z: 0}
 --- !u!114 &313107195
 MonoBehaviour:
@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 113a158a43746644f91fe4b2c8e1be43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  svgFilePath: Assets/Bus.svg
+  svgFilePath: Assets/SVG/Bus.svg
   Scale: 2.48
   pointRadius: 0.25
   dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
@@ -171,64 +171,9 @@ MonoBehaviour:
   OutlineSpacing: 0.5
   Fill: 1
   fillSpacing: 0.94
-  gridOffset: {x: 18.25, y: -3.59}
-  gridRotation: 45
+  fillOffset: {x: 18, y: -6.38}
+  fillRotation: 45
   bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
---- !u!1 &336120188
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 336120190}
-  - component: {fileID: 336120189}
-  m_Layer: 0
-  m_Name: Alien
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &336120189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 336120188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 113a158a43746644f91fe4b2c8e1be43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  svgFilePath: Assets/alien.svg
-  Scale: 2
-  pointRadius: 0.25
-  dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
-  Outline: 1
-  OutlineSpacing: 0.5
-  Fill: 0
-  fillSpacing: 3.5
-  gridOffset: {x: -2.44, y: 10.7}
-  gridRotation: -45
-  bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
---- !u!4 &336120190
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 336120188}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.13002956, y: 0.08641016, z: 0.011376116, w: 0.9876721}
-  m_LocalPosition: {x: 22.8519, y: 3.5932732, z: 18.850494}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1381458368}
-  m_LocalEulerAnglesHint: {x: -15, y: 10, z: 0}
 --- !u!1 &530237182
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,7 +344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 113a158a43746644f91fe4b2c8e1be43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  svgFilePath: Assets/Ferry.svg
+  svgFilePath: Assets/SVG/Ferry.svg
   Scale: 2
   pointRadius: 0.25
   dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
@@ -407,8 +352,8 @@ MonoBehaviour:
   OutlineSpacing: 0.5
   Fill: 1
   fillSpacing: 0.83
-  gridOffset: {x: 0, y: 22.6}
-  gridRotation: 0
+  fillOffset: {x: 0, y: 22.6}
+  fillRotation: 0
   bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
 --- !u!4 &1160562967
 Transform:
@@ -418,12 +363,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1160562965}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.13002956, y: -0.08641016, z: -0.011376116, w: 0.9876721}
-  m_LocalPosition: {x: -37.1481, y: 3.5932732, z: 18.850494}
+  m_LocalRotation: {x: -0.060270317, y: 0.8794223, z: 0.1157782, w: 0.45779833}
+  m_LocalPosition: {x: 64.59699, y: 20, z: -12.061642}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1381458368}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -15, y: -10, z: 0}
 --- !u!1 &1163740297
 GameObject:
@@ -577,44 +522,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 1000
   playerBody: {fileID: 1020111165}
---- !u!1 &1381458367
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1381458368}
-  m_Layer: 0
-  m_Name: drones
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1381458368
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1381458367}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.92387956, z: 0, w: 0.38268343}
-  m_LocalPosition: {x: 25, y: 16.406727, z: -25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1160562967}
-  - {fileID: 313107194}
-  - {fileID: 336120190}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 135, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 530237186}
   - {fileID: 1020111165}
-  - {fileID: 1381458368}
+  - {fileID: 1160562967}
+  - {fileID: 313107194}
