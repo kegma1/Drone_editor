@@ -4,7 +4,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Graphic
+[ExecuteInEditMode]
+public class EditorGraphic : MonoBehaviour
 {
     public string svgFilePath;
 
@@ -22,9 +23,9 @@ public class Graphic
     public bool Fill = false;
 
     [Min(0f)]
-    public float FillSpacing = 0.5f; 
-    public Vector2 FillOffset;
-    public float FillRotation;
+    public float fillSpacing = 0.5f; 
+    public Vector2 fillOffset;
+    public float fillRotation;
 
     private List<VirtualDrone> edgePoints = new List<VirtualDrone>();
     private Rect sceneViewport;
@@ -36,6 +37,17 @@ public class Graphic
     private ComputeBuffer pointBuffer;
     private ComputeBuffer resultBuffer;
 
+    private void OnValidate() {
+        if (svgFilePath != null) {
+            GeneratePointsFromPath();
+        }
+    }
+
+    private void Start() {
+        if (svgFilePath != null) {
+            GeneratePointsFromPath();
+        }
+    }
 
     public void GeneratePointsFromPath() {
         edgePoints.Clear();
@@ -56,12 +68,26 @@ public class Graphic
         }
         
         if(Fill) {
-            possibleDrones.AddRange(GetEvenlySpacedPointsFromShape(contours, FillSpacing, Scale, pointRadius));
+            possibleDrones.AddRange(GetEvenlySpacedPointsFromShape(contours, fillSpacing, Scale, pointRadius));
         }
         
         foreach (var drone in possibleDrones) {
             if(!edgePoints.Any(p => Vector2.Distance(p.pos, drone.pos) < pointRadius*2)) {
                 edgePoints.Add(drone);
+            }
+        }
+
+        if (!Application.isPlaying) 
+        {
+            foreach (Transform child in transform)
+                DestroyImmediate(child.gameObject);
+        } else {
+            foreach (var drone in edgePoints) {
+                var newDrone = Instantiate(dronePrefab);
+                newDrone.transform.position = drone.ApplyTransformation(transform, sceneViewport, Scale);
+                var droneComp = newDrone.GetComponent<Drone>();
+                droneComp.color = drone.color;
+                droneComp.radius = pointRadius;
             }
         }
     }
@@ -159,8 +185,8 @@ public class Graphic
         for (float x = viewPort.xMin; x <= viewPort.xMax *scale; x += adjustedSpacing)
         {
             for (float y = viewPort.yMin; y <= viewPort.yMax *scale; y += adjustedSpacing) {
-                Vector2 rotatedPoint = Quaternion.AngleAxis(FillRotation, Vector3.forward) * new Vector2(x, y);
-                points.Add(rotatedPoint + FillOffset);
+                Vector2 rotatedPoint = Quaternion.AngleAxis(fillRotation, Vector3.forward) * new Vector2(x, y);
+                points.Add(rotatedPoint + fillOffset);
             }
         }
 
@@ -236,5 +262,13 @@ public class Graphic
         return Vector2.Lerp(p0, p1, t);
     }
 
- 
+    private void OnDrawGizmos()
+    {
+        foreach (var drone in edgePoints)
+        {
+            Gizmos.color = drone.color;
+
+            Gizmos.DrawSphere(drone.ApplyTransformation(transform, sceneViewport, Scale), pointRadius);
+        }
+    }
 }

@@ -29,10 +29,7 @@
                 "FillSpacing" : 0.94,
                 "FillOffset" : [18, -6.38],
                 "FillRotation" : 45
-            },
-            "Type" : "NoneAnimation",
-            "Duration" : 0,
-            "NextAnimation" : null
+            }
         }
     }
 }
