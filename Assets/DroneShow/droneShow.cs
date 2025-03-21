@@ -16,6 +16,8 @@ public class droneShow : MonoBehaviour
     private ObjectPool<GameObject> _pool;
 
     public ComputeShader bezierShader;
+
+    private float t = 0f;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,6 +30,11 @@ public class droneShow : MonoBehaviour
             ParseShow();
             Play();
         }
+    }
+
+    void Update()
+    {
+        
     }
 
     private void OnPutBackInPool(GameObject @object)

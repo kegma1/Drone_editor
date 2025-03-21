@@ -35,7 +35,7 @@ public class LerpAnimation : MonoBehaviour, IAnimation
         }
     }
 
-    public void Play()
+    public void Play(float t)
     {
         throw new System.NotImplementedException();
     }

@@ -6,5 +6,5 @@ public interface IAnimation {
     public List<DronePath> Paths { get; set; }
 
     public void GeneratePaths();
-    public void Play();
+    public void Play(float t);
 }
