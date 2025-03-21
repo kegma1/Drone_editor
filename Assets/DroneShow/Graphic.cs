@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Graphic
+public class Graphic : MonoBehaviour
 {
     public string svgFilePath;
 
@@ -12,7 +12,6 @@ public class Graphic
     public float Scale = 1f;
     [Min(0.01f)]
     public float pointRadius = 0.25f;
-    public GameObject dronePrefab; 
 
     public bool Outline = true;
     [Min(0f)]
@@ -26,8 +25,9 @@ public class Graphic
     public Vector2 FillOffset;
     public float FillRotation;
 
-    private List<VirtualDrone> edgePoints = new List<VirtualDrone>();
-    private Rect sceneViewport;
+
+    public List<VirtualDrone> edgePoints = new List<VirtualDrone>();
+    public Rect sceneViewport;
 
 
     public ComputeShader bezierShader;

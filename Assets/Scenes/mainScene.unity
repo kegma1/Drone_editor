@@ -119,61 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &313107193
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 313107194}
-  - component: {fileID: 313107195}
-  m_Layer: 0
-  m_Name: Bus
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &313107194
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313107193}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.14180619, y: 0.8581082, z: 0.34235042, w: 0.35544005}
-  m_LocalPosition: {x: 41.404877, y: 39.50673, z: -35.04092}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -43.5, y: 0, z: 0}
---- !u!114 &313107195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313107193}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 113a158a43746644f91fe4b2c8e1be43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  svgFilePath: Assets/SVG/Bus.svg
-  Scale: 2.48
-  pointRadius: 0.25
-  dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
-  Outline: 1
-  OutlineSpacing: 0.5
-  Fill: 1
-  fillSpacing: 0.94
-  fillOffset: {x: 18, y: -6.38}
-  fillRotation: 45
-  bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
 --- !u!1 &530237182
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,61 +260,6 @@ Transform:
   - {fileID: 1163740301}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1160562965
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1160562967}
-  - component: {fileID: 1160562966}
-  m_Layer: 0
-  m_Name: Ferry
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1160562966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1160562965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 113a158a43746644f91fe4b2c8e1be43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  svgFilePath: Assets/SVG/Ferry.svg
-  Scale: 2
-  pointRadius: 0.25
-  dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
-  Outline: 1
-  OutlineSpacing: 0.5
-  Fill: 1
-  fillSpacing: 0.83
-  fillOffset: {x: 0, y: 22.6}
-  fillRotation: 0
-  bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
---- !u!4 &1160562967
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1160562965}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.060270317, y: 0.8794223, z: 0.1157782, w: 0.45779833}
-  m_LocalPosition: {x: 64.59699, y: 20, z: -12.061642}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -15, y: -10, z: 0}
 --- !u!1 &1163740297
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,6 +442,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SourceFilePath: Assets/test.json
+  dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
+  bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
 --- !u!4 &1659493773
 Transform:
   m_ObjectHideFlags: 0
@@ -573,6 +465,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 530237186}
   - {fileID: 1020111165}
-  - {fileID: 1160562967}
-  - {fileID: 313107194}
   - {fileID: 1659493773}

@@ -13,8 +13,8 @@ public class GlobalData {
 
 [System.Serializable]
 public class AnimationData {
-    public float[] Position;
-    public float[] Rotation;
+    public float?[] Position;
+    public float?[] Rotation;
     public GraphicData Graphic;
     public string Type;
     public float Duration;

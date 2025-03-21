@@ -6,7 +6,7 @@
         "Position" : [64, 20, -12],
         "Rotation" : [-15, 125, 0],
         "Graphic" : {
-            "Source" : "Assets/Ferry.svg",
+            "Source" : "Assets/SVG/Ferry.svg",
             "Scale" : 2,
             "Outline" : true,
             "OutlineSpacing" : 0.5,
@@ -18,10 +18,8 @@
         "Type" : "LerpAnimation",
         "Duration" : 2,
         "NextAnimation" : {
-            "Position" : [41, 39.5, -35],
-            "Rotation" : [-43.5, 135, 0],
             "Graphic" : {
-                "Source" : "Assets/Bus.svg",
+                "Source" : "Assets/SVG/Bus.svg",
                 "Scale" : 2.48,
                 "Outline" : true,
                 "OutlineSpacing" : 0.5,
