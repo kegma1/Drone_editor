@@ -3,38 +3,63 @@ using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Pool;
-using Unity.VisualScripting;
 
 public class droneShow : MonoBehaviour
 {
     public string SourceFilePath;
 
     private float DroneRadius;
-    
+
+    public int MaxDrones = 500;
+
     public GameObject dronePrefab; 
 
     private ObjectPool<GameObject> _pool;
 
     public ComputeShader bezierShader;
 
+
     private float t = 0f;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (dronePrefab != null) {
-            _pool = new ObjectPool<GameObject>(CreateDrone, null, OnPutBackInPool, defaultCapacity: 500);
+            _pool = new ObjectPool<GameObject>(CreateDrone, null, OnPutBackInPool, defaultCapacity: MaxDrones);
+
+            
+            
         }
 
         if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
             ParseShow();
-            Play();
+
+            // IAnimation firstAnimation = GetComponentInChildren<IAnimation>();
+            // if (firstAnimation == null) return;
+
+            // Graphic firstGraphic = GetComponentInChildren<Graphic>();
+            // if (firstGraphic == null) return;
+
+            for (int i = 0; i < MaxDrones; i++)
+            {
+                var drone = _pool.Get();
+                drone.transform.position = Vector3.zero;
+                var droneComp = drone.GetComponent<Drone>();
+                droneComp.color = Color.white;
+                droneComp.radius = DroneRadius;
+
+                // var animComp = drone.GetComponent<AnimationPlayer>();
+                // animComp.Duration = firstAnimation.Duration;
+                // animComp.Path = firstAnimation.Paths[Vdrone];
+
+            }
         }
     }
 
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            Play();
+        }
     }
 
     private void OnPutBackInPool(GameObject @object)
@@ -60,8 +85,14 @@ public class droneShow : MonoBehaviour
             var drone = _pool.Get();
             drone.transform.position = Vdrone.ApplyTransformation(firstGraphic.transform, firstGraphic.sceneViewport, firstGraphic.Scale);
             var droneComp = drone.GetComponent<Drone>();
-            droneComp.color = Vdrone.color;
-            droneComp.radius = DroneRadius;
+            // droneComp.color = Vdrone.color;
+            // droneComp.radius = DroneRadius;
+
+            var animComp = drone.GetComponent<AnimationPlayer>();
+            animComp.Duration = firstAnimation.Duration;
+            animComp.Path = firstAnimation.Paths[Vdrone];
+            animComp.PlayFromStart();
+
         }
 
 

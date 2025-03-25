@@ -5,7 +5,7 @@ public class NoneAnimation : MonoBehaviour, IAnimation
 {
     public float Time { get; set; } = 0;
     public float Duration { get; set; }
-    public List<DronePath> Paths { get; set; }
+    public Dictionary<VirtualDrone, DronePath> Paths { get; set; }
 
     public void GeneratePaths() {}
 

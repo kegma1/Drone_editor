@@ -5,12 +5,23 @@ public class LerpAnimation : MonoBehaviour, IAnimation
 {
     public float Time { get; set; } = 0;
     public float Duration { get; set; }
-    public List<DronePath> Paths { get; set; } = new();
+    public Dictionary<VirtualDrone, DronePath> Paths { get; set; } = new();
 
     public void GeneratePaths()
     {
         Graphic thisGraphic = GetComponent<Graphic>();
-        Graphic nextGraphic = GetComponentInChildren<Graphic>();
+        Graphic nextGraphic = null;
+
+        foreach (Transform child in transform) {
+            nextGraphic = child.GetComponent<Graphic>();
+            if (nextGraphic != null)
+                break;
+        }
+
+        if (nextGraphic == null) {
+            Debug.Log("no NextGraphic found");
+            return;
+        }
 
         if (thisGraphic.edgePoints.Count < 1) thisGraphic.GeneratePointsFromPath();
         if (nextGraphic.edgePoints.Count < 1) nextGraphic.GeneratePointsFromPath();
@@ -20,18 +31,22 @@ public class LerpAnimation : MonoBehaviour, IAnimation
 
         for (int i = 0; i < thisGraphic.edgePoints.Count; i++)
         {
+            var thisPoint = thisGraphic.edgePoints[i].ApplyTransformation(thisGraphic.transform, thisGraphic.sceneViewport, thisGraphic.Scale);
+            // var nextPoint = Vector3.zero;
+            var nextPoint = nextGraphic.edgePoints[i].ApplyTransformation(nextGraphic.transform, nextGraphic.sceneViewport, nextGraphic.Scale);
+     
             var path = new DronePath() {
-                Start = thisGraphic.edgePoints[i].pos,
-                ControllA = thisGraphic.edgePoints[i].pos,
-                ControllB = nextGraphic.edgePoints[i].pos,
+                Start = thisPoint,
+                ControllA = thisPoint,
+                ControllB = nextPoint,
                 NextSegment = new() {
-                    Start = nextGraphic.edgePoints[i].pos,
-                    ControllA = Vector3.zero,
-                    ControllB = Vector3.zero,
+                    Start = nextPoint,
+                    ControllA = null,
+                    ControllB = null,
                     NextSegment = null
                 }
             };
-            Paths.Add(path);
+            Paths[thisGraphic.edgePoints[i]] = path;
         }
     }
 
