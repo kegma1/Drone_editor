@@ -8,8 +8,6 @@ public class AnimationPlayer : MonoBehaviour
     public float Duration = 0f;
     private bool IsPlaying = false;
     private DronePath currentSegment;
-
-    public ObjectPool<GameObject> pool;
     
     void Start()
     {
@@ -24,8 +22,8 @@ public class AnimationPlayer : MonoBehaviour
             if (T > 1f) {
                 T = 0f;
                 currentSegment = currentSegment.NextSegment;
-
-                if (currentSegment.NextSegment == null) {
+                
+                if (currentSegment == null || currentSegment.NextSegment == null) {
                     IsPlaying = false;
                     return;
                 }
@@ -39,6 +37,8 @@ public class AnimationPlayer : MonoBehaviour
         if (Path != null) {
             T = 0f;
             IsPlaying = true;
+            currentSegment = Path;
+            gameObject.SetActive(true);  
         } else {
             Debug.Log("no path was found");
         }

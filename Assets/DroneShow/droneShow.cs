@@ -3,6 +3,7 @@ using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Pool;
+using System.Collections.Generic;
 
 public class droneShow : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class droneShow : MonoBehaviour
 
     private float DroneRadius;
 
-    public int MaxDrones = 500;
+    public int MaxDrones = 800;
 
     public GameObject dronePrefab; 
 
@@ -26,23 +27,11 @@ public class droneShow : MonoBehaviour
     void Start()
     {
         if (dronePrefab != null) {
-            // _pool = new ObjectPool<GameObject>(CreateDrone, null, OnPutBackInPool, defaultCapacity: MaxDrones);
-            _pool = new ObjectPool<GameObject>(CreateDrone, null, null, defaultCapacity: MaxDrones);          
-            
+            _pool = new ObjectPool<GameObject>(CreateDrone, null, null, defaultCapacity: MaxDrones, maxSize: MaxDrones);           
         }
 
         if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
             ParseShow();
-
-            for (int i = 0; i < MaxDrones; i++)
-            {
-                var drone = _pool.Get();
-                drone.transform.position = Vector3.zero;
-                var droneComp = drone.GetComponent<Drone>();
-                droneComp.color = Color.white;
-                droneComp.radius = DroneRadius;
-
-            }
         }
     }
 
@@ -53,14 +42,12 @@ public class droneShow : MonoBehaviour
         }
     }
 
-    private void OnPutBackInPool(GameObject @object)
-    {
-        @object.SetActive(false);
-    }
-
     private GameObject CreateDrone()
     {
         var drone = Instantiate(dronePrefab);
+        var droneComp = drone.GetComponent<Drone>();
+        droneComp.color = Color.white;
+        droneComp.radius = DroneRadius;
         return drone;
     }
 
@@ -86,6 +73,8 @@ public class droneShow : MonoBehaviour
             }
         }
 
+        List<GameObject> activeDrones = new();
+
         foreach (var Vdrone in GraphicComp.edgePoints)
         {
             var drone = _pool.Get();
@@ -94,13 +83,17 @@ public class droneShow : MonoBehaviour
 
             var animComp = drone.GetComponent<AnimationPlayer>();
             animComp.Duration = AnimationComp.Duration;
-            animComp.pool = _pool;
 
             animComp.Path = AnimationComp.GeneratePaths(
                 drone.transform.position, 
                 Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale)
             );
             animComp.PlayFromStart();
+            activeDrones.Add(drone);
+        }
+
+        foreach (var drone in activeDrones) {
+            _pool.Release(drone);
         }
 
         if (currentAnimation == null) {
@@ -108,9 +101,8 @@ public class droneShow : MonoBehaviour
         } else {
             currentAnimation = currentAnimation.transform.GetChild(0).gameObject;
         }
-
-
     }
+
 
     void ParseShow() {
         string JsonContent = File.ReadAllText(SourceFilePath);

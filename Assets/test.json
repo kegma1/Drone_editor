@@ -23,7 +23,7 @@
                 "Scale" : 2.48,
                 "Outline" : true,
                 "OutlineSpacing" : 0.5,
-                "Fill" : true,
+                "Fill" : false,
                 "FillSpacing" : 0.94,
                 "FillOffset" : [18, -6.38],
                 "FillRotation" : 45
