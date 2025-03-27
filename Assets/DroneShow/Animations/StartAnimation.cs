@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LerpAnimation : MonoBehaviour, IAnimation
+public class StartAnimation : IAnimation
 {
     public float Time { get; set; } = 0;
     public float Duration { get; set; }

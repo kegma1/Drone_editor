@@ -18,26 +18,21 @@ public class droneShow : MonoBehaviour
 
     public ComputeShader bezierShader;
 
+    private GameObject currentAnimation = null;
+
 
     private float t = 0f;
     
     void Start()
     {
         if (dronePrefab != null) {
-            _pool = new ObjectPool<GameObject>(CreateDrone, null, OnPutBackInPool, defaultCapacity: MaxDrones);
-
-            
+            // _pool = new ObjectPool<GameObject>(CreateDrone, null, OnPutBackInPool, defaultCapacity: MaxDrones);
+            _pool = new ObjectPool<GameObject>(CreateDrone, null, null, defaultCapacity: MaxDrones);          
             
         }
 
         if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
             ParseShow();
-
-            // IAnimation firstAnimation = GetComponentInChildren<IAnimation>();
-            // if (firstAnimation == null) return;
-
-            // Graphic firstGraphic = GetComponentInChildren<Graphic>();
-            // if (firstGraphic == null) return;
 
             for (int i = 0; i < MaxDrones; i++)
             {
@@ -46,10 +41,6 @@ public class droneShow : MonoBehaviour
                 var droneComp = drone.GetComponent<Drone>();
                 droneComp.color = Color.white;
                 droneComp.radius = DroneRadius;
-
-                // var animComp = drone.GetComponent<AnimationPlayer>();
-                // animComp.Duration = firstAnimation.Duration;
-                // animComp.Path = firstAnimation.Paths[Vdrone];
 
             }
         }
@@ -74,25 +65,48 @@ public class droneShow : MonoBehaviour
     }
 
     void Play() {
-        IAnimation firstAnimation = GetComponentInChildren<IAnimation>();
-        if (firstAnimation == null) return;
+        IAnimation AnimationComp;
 
-        Graphic firstGraphic = GetComponentInChildren<Graphic>();
-        if (firstGraphic == null) return;
+        Graphic GraphicComp = null;
 
-        foreach (var Vdrone in firstGraphic.edgePoints)
+        if (currentAnimation == null) {
+            AnimationComp = new StartAnimation();
+            AnimationComp.Duration = 2;
+
+            GraphicComp = GetComponentInChildren<Graphic>();
+        } else {
+            AnimationComp = currentAnimation.GetComponent<IAnimation>();
+            if (AnimationComp == null) return;
+
+
+            foreach (Transform child in currentAnimation.transform) {
+                GraphicComp = child.GetComponent<Graphic>();
+                if (GraphicComp != null)
+                    break;
+            }
+        }
+
+        foreach (var Vdrone in GraphicComp.edgePoints)
         {
             var drone = _pool.Get();
-            drone.transform.position = Vdrone.ApplyTransformation(firstGraphic.transform, firstGraphic.sceneViewport, firstGraphic.Scale);
             var droneComp = drone.GetComponent<Drone>();
             // droneComp.color = Vdrone.color;
-            // droneComp.radius = DroneRadius;
 
             var animComp = drone.GetComponent<AnimationPlayer>();
-            animComp.Duration = firstAnimation.Duration;
-            animComp.Path = firstAnimation.Paths[Vdrone];
-            animComp.PlayFromStart();
+            animComp.Duration = AnimationComp.Duration;
+            animComp.pool = _pool;
 
+            animComp.Path = AnimationComp.GeneratePaths(
+                drone.transform.position, 
+                Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale)
+            );
+            animComp.PlayFromStart();
+        }
+
+        if (currentAnimation == null) {
+            currentAnimation = transform.GetChild(0).gameObject;
+        } else {
+            currentAnimation = currentAnimation.transform.GetChild(0).gameObject;
         }
 
 
@@ -134,8 +148,6 @@ public class droneShow : MonoBehaviour
         if(data.NextAnimation != null) {
             GetAnimation(data.NextAnimation, animtionObject.transform);
         }
-
-        animation.GeneratePaths();
     }
 
     private Graphic GetGraphic(AnimationData data, GameObject parrent) {
@@ -150,6 +162,8 @@ public class droneShow : MonoBehaviour
         graphic.FillRotation = data.Graphic.FillRotation;
         graphic.pointRadius = DroneRadius;
         graphic.bezierShader = bezierShader;
+
+        graphic.GeneratePointsFromPath();
         return graphic;
     }
 

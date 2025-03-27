@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class AnimationPlayer : MonoBehaviour
     public float Duration = 0f;
     private bool IsPlaying = false;
     private DronePath currentSegment;
+
+    public ObjectPool<GameObject> pool;
     
     void Start()
     {
