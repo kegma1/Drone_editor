@@ -6,31 +6,47 @@
         "Position" : [64, 20, -12],
         "Rotation" : [-15, 125, 0],
         "Graphic" : {
-            "Source" : "Assets/SVG/Ferry.svg",
-            "Scale" : 2,
+            "Source" : "Assets/SVG/Bus.svg",
+            "Scale" : 2.48,
             "Outline" : true,
             "OutlineSpacing" : 0.5,
-            "Fill" : true,
-            "FillSpacing" : 0.82,
-            "FillOffset" : [0.0, 22.6],
-            "FillRotation" : 0
+            "Fill" : false,
+            "FillSpacing" : 0.94,
+            "FillOffset" : [18, -6.38],
+            "FillRotation" : 45
         },
         "Type" : "LerpAnimation",
         "Duration" : 2,
         "NextAnimation" : {
             "Graphic" : {
-                "Source" : "Assets/SVG/Bus.svg",
-                "Scale" : 2.48,
+                "Source" : "Assets/SVG/Ferry.svg",
+                "Scale" : 2,
                 "Outline" : true,
                 "OutlineSpacing" : 0.5,
-                "Fill" : false,
-                "FillSpacing" : 0.94,
-                "FillOffset" : [18, -6.38],
-                "FillRotation" : 45
+                "Fill" : true,
+                "FillSpacing" : 0.82,
+                "FillOffset" : [0.0, 22.6],
+                "FillRotation" : 0
             },
-            "Type" : "NoneAnimation",
-            "Duration" : 0,
-            "NextAnimation" : null
+            "Type" : "LerpAnimation",
+            "Duration" : 3,
+            "NextAnimation" : {
+                "Position" : [64, 40, 0],
+                "Rotation" : [0, 125, 0],
+                "Graphic" : {
+                    "Source" : "Assets/SVG/Bus.svg",
+                    "Scale" : 2.48,
+                    "Outline" : true,
+                    "OutlineSpacing" : 0.5,
+                    "Fill" : false,
+                    "FillSpacing" : 0.94,
+                    "FillOffset" : [18, -6.38],
+                    "FillRotation" : 45
+                },
+                "Type" : "NoneAnimation",
+                "Duration" : 0,
+                "NextAnimation" : null
+            }
         }
     }
 }

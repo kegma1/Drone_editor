@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class LerpAnimation : MonoBehaviour, IAnimation
 {
-    public float Time { get; set; } = 0;
     public float Duration { get; set; }
     public Dictionary<Vector3, DronePath> Paths { get; set; } = new();
 
-    public DronePath GeneratePaths(Vector3 from, Vector3 to)
+    public DronePath GeneratePath(Vector3 from, Vector3 to)
     {
         var path = new DronePath() {
             Start = from,
@@ -24,8 +23,4 @@ public class LerpAnimation : MonoBehaviour, IAnimation
         return path;
     }
 
-    public void Play(float t)
-    {
-        throw new System.NotImplementedException();
-    }
 }

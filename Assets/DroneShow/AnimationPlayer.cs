@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Pool;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -8,13 +7,17 @@ public class AnimationPlayer : MonoBehaviour
     public float Duration = 0f;
     private bool IsPlaying = false;
     private DronePath currentSegment;
-    
+    public Drone Drone;
+    public Color targetColor;
+    private Color startColor;
+    public Vector3 startPosition;
+
     void Start()
     {
+        Drone = GetComponent<Drone>();
         currentSegment = Path;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (IsPlaying && currentSegment != null) {
@@ -29,16 +32,19 @@ public class AnimationPlayer : MonoBehaviour
                 }
             }
 
+            Drone.SetColor(Color.Lerp(startColor, targetColor, T));
             transform.position = EvaluateSegment(currentSegment, T);
         }
     }
 
     public void PlayFromStart() {
+        Drone = GetComponent<Drone>();
         if (Path != null) {
             T = 0f;
-            IsPlaying = true;
             currentSegment = Path;
+            startColor = Drone.color;
             gameObject.SetActive(true);  
+            IsPlaying = true;
         } else {
             Debug.Log("no path was found");
         }

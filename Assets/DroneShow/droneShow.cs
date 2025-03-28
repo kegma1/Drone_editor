@@ -4,6 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Pool;
 using System.Collections.Generic;
+using System.Linq;
 
 public class droneShow : MonoBehaviour
 {
@@ -21,18 +22,27 @@ public class droneShow : MonoBehaviour
 
     private GameObject currentAnimation = null;
 
+    
+    private Queue<GameObject> activeDrones = new();
+
 
     private float t = 0f;
     
     void Start()
     {
         if (dronePrefab != null) {
-            _pool = new ObjectPool<GameObject>(CreateDrone, null, null, defaultCapacity: MaxDrones, maxSize: MaxDrones);           
+            _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones, maxSize: MaxDrones);           
         }
 
         if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
             ParseShow();
         }
+    }
+
+    private void onDroneRelease(GameObject @object)
+    {
+        var animComp = @object.GetComponent<AnimationPlayer>();
+        animComp.PlayFromStart();
     }
 
     void Update()
@@ -46,7 +56,7 @@ public class droneShow : MonoBehaviour
     {
         var drone = Instantiate(dronePrefab);
         var droneComp = drone.GetComponent<Drone>();
-        droneComp.color = Color.white;
+        droneComp.color = Color.black;
         droneComp.radius = DroneRadius;
         return drone;
     }
@@ -73,33 +83,60 @@ public class droneShow : MonoBehaviour
             }
         }
 
-        List<GameObject> activeDrones = new();
+        if (GraphicComp == null) {
+            return;
+        }
+
+        var curretnDrones = new List<GameObject>();
 
         foreach (var Vdrone in GraphicComp.edgePoints)
         {
-            var drone = _pool.Get();
-            var droneComp = drone.GetComponent<Drone>();
-            // droneComp.color = Vdrone.color;
+            GameObject drone;
+
+            if (activeDrones.Count > 0) {
+                drone = activeDrones.Dequeue();
+            } else {
+                drone = _pool.Get();
+            }
 
             var animComp = drone.GetComponent<AnimationPlayer>();
             animComp.Duration = AnimationComp.Duration;
+            animComp.targetColor = Vdrone.color;
+            animComp.startPosition = drone.transform.position;
 
-            animComp.Path = AnimationComp.GeneratePaths(
+            animComp.Path = AnimationComp.GeneratePath(
                 drone.transform.position, 
                 Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale)
             );
             animComp.PlayFromStart();
-            activeDrones.Add(drone);
+            curretnDrones.Add(drone);
         }
 
         foreach (var drone in activeDrones) {
+            var animComp = drone.GetComponent<AnimationPlayer>();
+            animComp.Duration = AnimationComp.Duration;
+            animComp.targetColor = Color.black;
+
+            animComp.Path = AnimationComp.GeneratePath(
+                drone.transform.position, 
+                animComp.startPosition
+            );
             _pool.Release(drone);
         }
+        activeDrones.Clear();
+
+        foreach (var drone in curretnDrones) {
+            activeDrones.Enqueue(drone);
+        }
+        curretnDrones.Clear();
 
         if (currentAnimation == null) {
             currentAnimation = transform.GetChild(0).gameObject;
         } else {
-            currentAnimation = currentAnimation.transform.GetChild(0).gameObject;
+            var nextAnimation = currentAnimation.transform.GetChild(0).gameObject;
+            if(nextAnimation) {
+                currentAnimation = nextAnimation;
+            }
         }
     }
 
