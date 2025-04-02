@@ -5,12 +5,12 @@ public class MainMenuController : MonoBehaviour
 {
     public void NewShow()
     {
-        SceneManager.LoadScene("mainScene");
+        SceneManager.LoadScene("EditDroneShow");
     }
 
     public void LoadShow()
     {
-        Debug.Log("Load Show"); //må implementeres
+        SceneManager.LoadScene("previewDroneShow");
     }
 
     public void ExitGame()
