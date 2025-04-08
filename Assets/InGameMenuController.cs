@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class InGameMenuController : MonoBehaviour
 {
     public GameObject pauseMenuPanel;
+    public GameObject MainUi;
 
     void Update()
     {
@@ -17,6 +18,8 @@ public class InGameMenuController : MonoBehaviour
     {
         bool isActive = pauseMenuPanel.activeSelf;
         pauseMenuPanel.SetActive(!isActive);
+        if (MainUi)
+            MainUi.SetActive(isActive);
     }
 
     public void ReturnToMainMenu()
