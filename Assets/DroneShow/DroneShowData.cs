@@ -11,14 +11,21 @@ public class GlobalData {
 
 [System.Serializable]
 public class AnimationData {
-    public float?[] Position;
-    public float?[] Rotation;
+    public float[] Position ;
+    public float[] Rotation;
     public GraphicData Graphic;
     public string Type;
     public float Duration;
 #nullable enable
     public AnimationData? NextAnimation;
 #nullable disable
+
+
+    public AnimationData() {
+        Position = new float[] { 0f, 0f, 0f };
+        Rotation = new float[] { 0f, 0f, 0f };
+        Graphic = new();
+    }
 }
 
 [System.Serializable]
@@ -31,4 +38,8 @@ public class GraphicData {
     public float FillSpacing;
     public float[] FillOffset;
     public float FillRotation;
+
+    public GraphicData() {
+        FillOffset = new float[] { 0f, 0f };
+    }
 }

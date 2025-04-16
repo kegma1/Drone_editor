@@ -24,9 +24,6 @@ public class droneShow : MonoBehaviour
 
     
     private Queue<GameObject> activeDrones = new();
-
-
-    private float t = 0f;
     
     void Start()
     {
