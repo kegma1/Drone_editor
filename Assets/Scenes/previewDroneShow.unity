@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuPanel: {fileID: 1306891526}
+  MainUi: {fileID: 0}
 --- !u!4 &444463245
 Transform:
   m_ObjectHideFlags: 0
@@ -823,6 +824,7 @@ GameObject:
   - component: {fileID: 1163740299}
   - component: {fileID: 1163740298}
   - component: {fileID: 1163740302}
+  - component: {fileID: 1163740303}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -963,6 +965,21 @@ MonoBehaviour:
   mouseSensitivity: 1000
   playerBody: {fileID: 1020111165}
   pauseMenuPanel: {fileID: 1306891526}
+--- !u!114 &1163740303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163740297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 468fb8a0e5281284ebcdbf5c97a93130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 10
+  boostMultiplier: 3
+  climbSpeed: 5
 --- !u!1 &1306891526
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,6 +24,9 @@ public class droneShow : MonoBehaviour
 
     
     private Queue<GameObject> activeDrones = new();
+
+
+    private float t = 0f;
     
     void Start()
     {
@@ -55,6 +58,25 @@ public class droneShow : MonoBehaviour
         var droneComp = drone.GetComponent<Drone>();
         droneComp.color = Color.black;
         droneComp.radius = DroneRadius;
+
+        
+        var rb = drone.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = drone.AddComponent<Rigidbody>();
+        }
+        rb.useGravity = false;
+        rb.isKinematic = true;
+
+
+        var repulsion = drone.GetComponent<DroneRepulsion>();
+        if (repulsion == null)
+        {
+            repulsion = drone.AddComponent<DroneRepulsion>();
+        }
+        repulsion.repulsionRadius = 2f;
+        repulsion.repulsionStrength = 3f;
+
         return drone;
     }
 
