@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using SimpleFileBrowser;
 using TMPro;
+using System.Collections;
 
 public class InspectorManager : MonoBehaviour
 {
@@ -55,6 +57,29 @@ public class InspectorManager : MonoBehaviour
         FillOffsetY.text = data.Graphic.FillOffset[1].ToString();
         isInCode = false;
     }
+
+    public void OnClickFilePicker() {
+        StartCoroutine(PickFile());
+    }
+
+    public IEnumerator PickFile() {
+        FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".svg"));
+
+		FileBrowser.SetDefaultFilter( ".svg" );
+
+		FileBrowser.AddQuickLink( "Users", "C:\\Users", null );
+
+        yield return FileBrowser.WaitForLoadDialog( FileBrowser.PickMode.Files, true, null, null, "Select Files", "Load" );
+        Debug.Log( FileBrowser.Success );
+
+        if( FileBrowser.Success )
+			OnFilesSelected( FileBrowser.Result ); 
+    }
+
+    private void OnFilesSelected( string[] filePaths ) {
+		for( int i = 0; i < filePaths.Length; i++ )
+			Debug.Log( filePaths[i] );
+	}
 
     public void OnChangePositionX(string newValue) {
         if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
