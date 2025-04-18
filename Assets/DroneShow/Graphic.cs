@@ -10,6 +10,7 @@ public class Graphic : MonoBehaviour
 
     [Min(0.01f)]
     public float Scale = 1f;
+    public float Duration = 1f;
     [Min(0.01f)]
     public float pointRadius = 0.25f;
 

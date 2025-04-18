@@ -202,6 +202,7 @@ public class droneShow : MonoBehaviour
         Graphic graphic = parrent.AddComponent<Graphic>();
         graphic.svgFilePath = data.Graphic.Source;
         graphic.Scale = data.Graphic.Scale;
+        graphic.Duration = data.Graphic.Duration;
         graphic.Outline = data.Graphic.Outline;
         graphic.OutlineSpacing = data.Graphic.OutlineSpacing;
         graphic.Fill = data.Graphic.Fill;
