@@ -12,7 +12,7 @@ public enum PathStyle
 
 public class EvolveAnimation : MonoBehaviour, IAnimation
 {
-    public float Duration { get; set; } = 3f;
+    public float Speed { get; set; } = 3f;
     public Dictionary<Vector3, DronePath> Paths { get; set; } = new();
 
     private int populationSize = 20;

@@ -14,6 +14,8 @@ public class InspectorManager : MonoBehaviour
     public TMP_InputField RotationY;
     public TMP_InputField RotationZ;
 
+    public TMP_InputField Duration;
+    public TMP_InputField Speed;
     public TMP_InputField Scale;
 
     public Toggle OutlineToggle;
@@ -38,6 +40,8 @@ public class InspectorManager : MonoBehaviour
         RotationY.text = data.Rotation[1].ToString();
         RotationZ.text = data.Rotation[2].ToString();
 
+        Duration.text = data.Graphic.Duration.ToString();
+        Speed.text = data.Speed.ToString();
         Scale.text = data.Graphic.Scale.ToString();
 
         OutlineToggle.isOn = data.Graphic.Outline;
@@ -101,6 +105,22 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.Scale = float.Parse(Scale.text);
+        }
+    }
+
+    public void OnChangeDuration(string newValue) {
+        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
+            var data = currentGraphic.animationData;
+            data.Graphic.Duration = float.Parse(Duration.text);
+        }
+    }
+
+    public void OnChangeSpeed(string newValue) {
+        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
+            var data = currentGraphic.animationData;
+            data.Speed = float.Parse(Speed.text);
         }
     }
 

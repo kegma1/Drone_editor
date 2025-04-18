@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LerpAnimation : MonoBehaviour, IAnimation
 {
-    public float Duration { get; set; }
+    public float Speed { get; set; }
     public Dictionary<Vector3, DronePath> Paths { get; set; } = new();
 
     public DronePath GeneratePath(Vector3 from, Vector3 to)

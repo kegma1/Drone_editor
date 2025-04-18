@@ -87,7 +87,7 @@ public class droneShow : MonoBehaviour
 
         if (currentAnimation == null) {
             AnimationComp = new StartAnimation();
-            AnimationComp.Duration = 2;
+            AnimationComp.Speed = 1;
 
             GraphicComp = GetComponentInChildren<Graphic>();
         } else {
@@ -119,7 +119,7 @@ public class droneShow : MonoBehaviour
             }
 
             var animComp = drone.GetComponent<AnimationPlayer>();
-            animComp.Duration = AnimationComp.Duration;
+            animComp.Speed = AnimationComp.Speed;
             animComp.targetColor = Vdrone.color;
             animComp.startPosition = drone.transform.position;
 
@@ -133,7 +133,7 @@ public class droneShow : MonoBehaviour
 
         foreach (var drone in activeDrones) {
             var animComp = drone.GetComponent<AnimationPlayer>();
-            animComp.Duration = AnimationComp.Duration;
+            animComp.Speed = AnimationComp.Speed;
             animComp.targetColor = Color.black;
 
             animComp.Path = AnimationComp.GeneratePath(
@@ -192,7 +192,7 @@ public class droneShow : MonoBehaviour
             animtionObject.transform.eulerAngles = parrent.eulerAngles;
         }
 
-        animation.Duration = data.Duration;
+        animation.Speed = data.Speed;
         if(data.NextAnimation != null) {
             GetAnimation(data.NextAnimation, animtionObject.transform);
         }

@@ -7,6 +7,7 @@
         "Rotation" : [-15, 125, 0],
         "Graphic" : {
             "Source" : "Assets/SVG/Bus.svg",
+            "Duration" : 8,
             "Scale" : 2.48,
             "Outline" : true,
             "OutlineSpacing" : 0.5,
@@ -16,12 +17,13 @@
             "FillRotation" : 45
         },
         "Type" : "LerpAnimation",
-        "Duration" : 8,
+        "Speed" : 8,
         "NextAnimation" : {
             "Position" : [64, 20, -12],
             "Rotation" : [-15, 125, 0],
             "Graphic" : {
                 "Source" : "Assets/SVG/Ferry.svg",
+                "Duration" : 9,
                 "Scale" : 2,
                 "Outline" : true,
                 "OutlineSpacing" : 0.5,
@@ -31,12 +33,13 @@
                 "FillRotation" : 0
             },
             "Type" : "LerpAnimation",
-            "Duration" : 9,
+            "Speed" : 9,
             "NextAnimation" : {
                 "Position" : [64, 40, 0],
                 "Rotation" : [0, 125, 0],
                 "Graphic" : {
                     "Source" : "Assets/SVG/Bus.svg",
+                    "Duration" : 0,
                     "Scale" : 2.48,
                     "Outline" : true,
                     "OutlineSpacing" : 0.5,
@@ -46,7 +49,7 @@
                     "FillRotation" : 45
                 },
                 "Type" : "NoneAnimation",
-                "Duration" : 0,
+                "Speed" : 1,
                 "NextAnimation" : null
             }
         }

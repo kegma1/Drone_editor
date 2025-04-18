@@ -4,7 +4,7 @@ public class AnimationPlayer : MonoBehaviour
 {
     public DronePath Path;
     public float T = 0f;
-    public float Duration = 0f;
+    public float Speed = 0f;
     private bool IsPlaying = false;
     private DronePath currentSegment;
     public Drone Drone;
@@ -24,7 +24,7 @@ public class AnimationPlayer : MonoBehaviour
     void Update()
     {
         if (IsPlaying && currentSegment != null) {
-            T += Time.deltaTime / Duration;
+            T += Time.deltaTime / Speed;
 
             if (T > 1f) {
                 T = 0f;

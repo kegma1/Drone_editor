@@ -15,7 +15,7 @@ public class AnimationData {
     public float[] Rotation;
     public GraphicData Graphic;
     public string Type;
-    public float Duration;
+    public float Speed;
 #nullable enable
     public AnimationData? NextAnimation;
 #nullable disable
@@ -31,6 +31,7 @@ public class AnimationData {
 [System.Serializable]
 public class GraphicData {
     public string Source;
+    public float Duration;
     public float Scale;
     public bool Outline;
     public float OutlineSpacing;
