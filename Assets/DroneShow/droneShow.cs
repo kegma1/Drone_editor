@@ -87,7 +87,7 @@ public class droneShow : MonoBehaviour
 
         if (currentAnimation == null) {
             AnimationComp = new StartAnimation();
-            AnimationComp.Speed = 1;
+            AnimationComp.Speed = 5;
 
             GraphicComp = GetComponentInChildren<Graphic>();
         } else {

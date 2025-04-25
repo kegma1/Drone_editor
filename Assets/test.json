@@ -17,7 +17,7 @@
             "FillRotation" : 45
         },
         "Type" : "LerpAnimation",
-        "Speed" : 1,
+        "Speed" : 5,
         "NextAnimation" : {
             "Position" : [64, 20, -12],
             "Rotation" : [-15, 125, 0],
@@ -33,7 +33,7 @@
                 "FillRotation" : 0
             },
             "Type" : "LerpAnimation",
-            "Speed" : 1,
+            "Speed" : 5,
             "NextAnimation" : {
                 "Position" : [64, 40, 0],
                 "Rotation" : [0, 125, 0],

@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Drone_editor.sln"
+    "dotnet.defaultSolution": "Drone_editor2.sln"
 }
