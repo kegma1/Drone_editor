@@ -6,7 +6,7 @@
         "Position" : [64, 20, -12],
         "Rotation" : [-15, 125, 0],
         "Graphic" : {
-            "Source" : "Assets/SVG/Bus.svg",
+            "Source" : "Assets/SVG/uit.svg",
             "Duration" : 8,
             "Scale" : 2.48,
             "Outline" : true,
