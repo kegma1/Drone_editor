@@ -16,7 +16,7 @@ public class ProjectLoader : MonoBehaviour
         get => _ProjectFilePath;
     }
     private string ProjectFileContent;
-    private DroneShowData ParsedProject;
+    public DroneShowData ParsedProject;
 
     public GameObject TimelineContent;
     public TimelineManager timelineManager;
