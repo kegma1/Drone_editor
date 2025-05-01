@@ -12,6 +12,7 @@ public class ProjectLoader : MonoBehaviour
             ProjectFileContent = File.ReadAllText(_ProjectFilePath);
 
             ParsedProject = JsonConvert.DeserializeObject<DroneShowData>(ProjectFileContent);
+            timelineManager.CurrentfocusedGraphic = null;
         }
         get => _ProjectFilePath;
     }
@@ -23,7 +24,6 @@ public class ProjectLoader : MonoBehaviour
 
     public GameObject AnimationPanelPrefab;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         ProjectFilePath = "Assets/test.json";
@@ -54,9 +54,5 @@ public class ProjectLoader : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }
