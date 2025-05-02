@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "com.coffee.git-dependency-resolver": "https://github.com/mob-sakai/GitDependencyResolverForUnity.git",
+    "com.nebukam.orca": "https://github.com/Nebukam/com.nebukam.orca.git",
+    "com.unity.mathematics": "1.2.6",
     "com.unity.ai.navigation": "2.0.6",
     "com.unity.collab-proxy": "2.7.1",
     "com.unity.ide.rider": "3.0.31",

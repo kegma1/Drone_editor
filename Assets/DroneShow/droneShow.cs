@@ -55,30 +55,36 @@ public class droneShow : MonoBehaviour
     private GameObject CreateDrone()
     {
         var drone = Instantiate(dronePrefab);
+
+
+        float xOffset = 0f;
+        float yOffset = 0f; 
+        float zOffset = 0f;
+
+        drone.transform.position = new Vector3(xOffset, yOffset, zOffset);
+
         var droneComp = drone.GetComponent<Drone>();
-        droneComp.color = Color.black;
-        droneComp.radius = DroneRadius;
-
-        
-        var rb = drone.GetComponent<Rigidbody>();
-        if (rb == null)
+        if (droneComp != null)
         {
-            rb = drone.AddComponent<Rigidbody>();
+            droneComp.color = Color.black;
+            droneComp.radius = DroneRadius;
         }
-        rb.useGravity = false;
-        rb.isKinematic = true;
 
-
-        var repulsion = drone.GetComponent<DroneRepulsion>();
-        if (repulsion == null)
+        var orca = drone.GetComponent<OrcaAgent>();
+        if (orca == null)
         {
-            repulsion = drone.AddComponent<DroneRepulsion>();
+            orca = drone.AddComponent<OrcaAgent>();
         }
-        repulsion.repulsionRadius = 2f;
-        repulsion.repulsionStrength = 3f;
+
+        float r = orca.Radius;
+        orca.maxSpeed = 5f;
+
+        orca.heightTolerance = 1.0f;
 
         return drone;
     }
+
+
 
     void Play() {
         IAnimation AnimationComp;

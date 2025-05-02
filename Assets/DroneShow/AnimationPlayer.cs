@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Mathematics;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -7,57 +8,115 @@ public class AnimationPlayer : MonoBehaviour
     private bool IsPlaying = false;
     private DronePath currentSegment;
     public Drone Drone;
+    public Vector3 startPosition;
     public Color targetColor;
     private Color startColor;
-    public Vector3 startPosition;
-    public float Speed;  
+    public float Speed;
+    private OrcaAgent orca;
 
-    private DroneRepulsion droneRepulsion;
+    public Vector3 previousPosition;
 
     void Start()
     {
         Drone = GetComponent<Drone>();
         currentSegment = Path;
-        droneRepulsion = GetComponent<DroneRepulsion>();
+        orca = GetComponent<OrcaAgent>();
+        previousPosition = transform.position;
     }
 
     void Update()
     {
-        if (IsPlaying && currentSegment != null)
+        if (!IsPlaying || currentSegment == null) return;
+
+        Vector3 targetPosition = EvaluateSegment(currentSegment, T);
+
+        Vector3 tangent = Vector3.zero;
+
+        if (currentSegment.ControllA.HasValue && currentSegment.ControllB.HasValue)
         {
-            float distanceToMove = Speed * Time.deltaTime; 
+            Vector3 p0 = currentSegment.Start;
+            Vector3 p1 = currentSegment.ControllA.Value;
+            Vector3 p2 = currentSegment.ControllB.Value;
+            Vector3 p3 = currentSegment.NextSegment != null
+                ? currentSegment.NextSegment.Start
+                : BezierEvaluate(p0, p1, p2, 1f);
 
-            float segmentLength = GetSegmentLength(currentSegment);
+            tangent = EvaluateCubicTangent(p0, p1, p2, p3, T).normalized;
+        }
 
-            float adjustedSegmentLength = Mathf.Max(segmentLength, 1f); 
+        Vector3 desiredVelocity = tangent * Speed;
 
-            float incrementT = distanceToMove / adjustedSegmentLength;
-            T += incrementT;
-            
-            if (T > 1f)
+        if (orca != null)
+        {
+            orca.SetTargetHeight(targetPosition.y);
+            orca.SetPreferredVelocity(desiredVelocity);
+        }
+
+        Drone.SetColor(Color.Lerp(startColor, targetColor, T));
+    }
+
+    void LateUpdate()
+    {
+        if (!IsPlaying || currentSegment == null) return;
+
+        Vector3 adjustedVelocity = orca != null
+            ? new Vector3(orca.ORCAAgent.velocity.x, 0f, orca.ORCAAgent.velocity.z)
+            : Vector3.zero;
+
+        transform.position += adjustedVelocity * Time.deltaTime;
+
+        //Y-axis smoothing
+        Vector3 newPos = transform.position;
+        if (orca != null && orca.GetTargetHeight(out float targetY))
+        {
+            float currentY = newPos.y;
+            if (Mathf.Abs(currentY - targetY) > 0.1f)
+                newPos.y = Mathf.Lerp(currentY, targetY, Time.deltaTime * 2f);
+            else
+                newPos.y = targetY;
+        }
+        transform.position = newPos;
+
+
+        float actualDistanceMoved = Vector3.Distance(transform.position, previousPosition);
+        float segmentLength = GetSegmentLength(currentSegment); 
+        float adjustedSegmentLength = Mathf.Max(segmentLength, 0.01f);
+        float incrementT = actualDistanceMoved / adjustedSegmentLength;
+
+        if (actualDistanceMoved < 0.01f)
+        {
+            T += Time.deltaTime * 0.05f; 
+        }
+
+        T += incrementT;
+
+        if (T >= 1f || Vector3.Distance(transform.position, EvaluateSegment(currentSegment, 1f)) < 0.2f)
+        {
+            Vector3 targetPos = EvaluateSegment(currentSegment, 1f);
+            float distance = Vector3.Distance(transform.position, targetPos);
+
+            if (distance > 0.1f)
             {
-                T = 0f;
-                currentSegment = currentSegment.NextSegment;
-
-                if (currentSegment == null || currentSegment.NextSegment == null)
-                {
-                    IsPlaying = false;  
-                    return;
-                }
+                //in case orca steered agent off the curve
+                orca.SetPreferredVelocity((targetPos - transform.position).normalized * Speed);
+                return;
             }
 
-            Drone.SetColor(Color.Lerp(startColor, targetColor, T));
+            //transform.position = targetPos;
 
-            Vector3 targetPosition = EvaluateSegment(currentSegment, T);
-
-            Vector3 repulsionOffset = CalculateRepulsion();
-
-            float smoothFactor = 10f;
-            Vector3 newPosition = Vector3.Lerp(transform.position, targetPosition + repulsionOffset, Time.deltaTime * smoothFactor);
-            transform.position = newPosition;
-
-
+            T = 0f;
+            currentSegment = currentSegment.NextSegment;
+            
+            if (currentSegment == null || currentSegment.NextSegment == null)
+            {
+                IsPlaying = false;
+                orca?.SetPreferredVelocity(Vector3.zero);
+                return;
+            }
         }
+
+
+        previousPosition = transform.position;
     }
 
     public void PlayFromStart()
@@ -70,36 +129,12 @@ public class AnimationPlayer : MonoBehaviour
             startColor = Drone.color;
             gameObject.SetActive(true);
             IsPlaying = true;
+            previousPosition = transform.position;
         }
         else
         {
             Debug.Log("No path was found");
         }
-    }
-
-    private Vector3 CalculateRepulsion() {
-        Vector3 totalForce = Vector3.zero;
-
-        Drone[] allDrones = FindObjectsByType<Drone>(FindObjectsSortMode.None);
-
-        foreach (var otherDrone in allDrones) {
-            if (otherDrone != Drone) {
-                float distance = Vector3.Distance(transform.position, otherDrone.transform.position);
-
-                if (distance < droneRepulsion.repulsionRadius && distance > 0.001f) {
-                    Vector3 direction = (transform.position - otherDrone.transform.position).normalized;
-
-                    float repulsionForce = (droneRepulsion.repulsionRadius - distance) * droneRepulsion.repulsionStrength;
-                    repulsionForce = Mathf.Pow(repulsionForce, 1.5f);  
-
-                    totalForce += direction * repulsionForce;
-                }
-            }
-        }
-
-        totalForce *= 0.05f;  
-
-        return totalForce;
     }
 
     private static Vector3 EvaluateSegment(DronePath segment, float t)
@@ -109,7 +144,6 @@ public class AnimationPlayer : MonoBehaviour
             Vector3 p0 = segment.Start;
             Vector3 p1 = segment.ControllA.Value;
             Vector3 p2 = segment.ControllB.Value;
-
             Vector3 p3 = segment.NextSegment != null
                 ? segment.NextSegment.Start
                 : BezierEvaluate(p0, p1, p2, 1f);
@@ -118,6 +152,15 @@ public class AnimationPlayer : MonoBehaviour
         }
 
         return segment.Start;
+    }
+
+    private static Vector3 EvaluateCubicTangent(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float t)
+    {
+        float u = 1f - t;
+        return
+            3f * u * u * (b - a) +
+            6f * u * t * (c - b) +
+            3f * t * t * (d - c);
     }
 
     private static Vector3 BezierEvaluate(Vector3 p0, Vector3 p1, Vector3 p2, float t)
@@ -145,7 +188,7 @@ public class AnimationPlayer : MonoBehaviour
         if (segment.ControllA.HasValue && segment.ControllB.HasValue)
         {
             float length = 0f;
-            int steps = 20;  
+            int steps = 20;
             Vector3 previousPoint = segment.Start;
 
             for (int i = 1; i <= steps; i++)
@@ -159,6 +202,6 @@ public class AnimationPlayer : MonoBehaviour
             return length;
         }
 
-        return 0f; 
+        return 0f;
     }
 }

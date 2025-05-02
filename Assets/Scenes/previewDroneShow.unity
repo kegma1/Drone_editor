@@ -1281,6 +1281,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1659493773}
   - component: {fileID: 1659493772}
+  - component: {fileID: 1659493774}
   m_Layer: 0
   m_Name: Droneshow
   m_TagString: Untagged
@@ -1319,6 +1320,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1659493774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659493771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca6d62a6035e4c4fb93e0f7656b55bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

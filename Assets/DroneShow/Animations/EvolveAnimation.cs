@@ -6,6 +6,7 @@ public enum PathStyle
     SmoothArc,
     SwaggySwoop,
     ZigZag,
+    Efficient
 }
 
 
@@ -16,7 +17,7 @@ public class EvolveAnimation : MonoBehaviour, IAnimation
     public Dictionary<Vector3, DronePath> Paths { get; set; } = new();
 
     private int populationSize = 20;
-    private int generations = 200;
+    private int generations = 500;
 
     [SerializeField]
     private PathStyle style = PathStyle.SwaggySwoop;
@@ -140,6 +141,11 @@ public class EvolveAnimation : MonoBehaviour, IAnimation
                 float chaos = (zig + zag);
                 float midHeight = (controlA.y + controlB.y) * 0.5f;
                 fitness += chaos * 0.6f + midHeight * 0.4f;
+                break;
+            case PathStyle.Efficient:
+                float totalDist = Vector3.Distance(controlA, controlB);
+                float directness = Vector3.Dot((controlB - controlA).normalized, dir.normalized);
+                fitness += -totalDist * 0.7f + directness * 0.3f; 
                 break;
 
             default:
