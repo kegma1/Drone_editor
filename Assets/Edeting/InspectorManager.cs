@@ -7,6 +7,7 @@ using System.Collections;
 public class InspectorManager : MonoBehaviour
 {
     public TimelineManager timelineManager;
+    public ProjectLoader projectLoader;
 
     public TMP_InputField PositionX;
     public TMP_InputField PositionY;
@@ -29,6 +30,8 @@ public class InspectorManager : MonoBehaviour
 
     public TMP_InputField FillOffsetX;
     public TMP_InputField FillOffsetY;
+    public TMP_InputField DroneRadius;
+
 
     private bool isInCode = false;
 
@@ -55,6 +58,9 @@ public class InspectorManager : MonoBehaviour
 
         FillOffsetX.text = data.Graphic.FillOffset[0].ToString();
         FillOffsetY.text = data.Graphic.FillOffset[1].ToString();
+
+        DroneRadius.text = projectLoader.ParsedProject.Global.DroneRadius.ToString();
+
         isInCode = false;
     }
 
@@ -77,9 +83,20 @@ public class InspectorManager : MonoBehaviour
     }
 
     private void OnFilesSelected( string[] filePaths ) {
-		for( int i = 0; i < filePaths.Length; i++ )
-			Debug.Log( filePaths[i] );
+		Debug.Log(filePaths[0]);
+        var currentGraphic = timelineManager.CurrentfocusedGraphic?.GetComponent<PanelData>();
+        if (currentGraphic) {
+            var data = currentGraphic.animationData;
+            data.Graphic.Source = filePaths[0]; 
+            currentGraphic.initSVG();
+        }
 	}
+
+    public void OnChangeDroneRadius(string newValue) {
+        if(projectLoader.ParsedProject != null && !isInCode) {
+            projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
+        }
+    }
 
     public void OnChangePositionX(string newValue) {
         if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {

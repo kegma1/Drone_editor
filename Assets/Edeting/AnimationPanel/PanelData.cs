@@ -30,7 +30,7 @@ public class PanelData : MonoBehaviour
 
 
 
-    private void initSVG() {
+    public void initSVG() {
 		svgContent = File.ReadAllText(_animationData.Graphic.Source);
 
 		var sceneInfo = loadSVG();
