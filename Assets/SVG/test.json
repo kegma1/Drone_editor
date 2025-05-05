@@ -2,34 +2,5 @@
     "Global" : {
         "DroneRadius" : 0.25
     },
-    "AnimationStart" : {
-        "Position" : [64, 20, -12],
-        "Rotation" : [-15, 125, 0],
-        "Graphic" : {
-            "Source" : "Assets/Ferry.svg",
-            "Scale" : 2,
-            "Outline" : true,
-            "OutlineSpacing" : 0.5,
-            "Fill" : true,
-            "FillSpacing" : 0.82,
-            "FillOffset" : [0.0, 22.6],
-            "FillRotation" : 0
-        },
-        "Type" : "LerpAnimation",
-        "Duration" : 2,
-        "NextAnimation" : {
-            "Position" : [41, 39.5, -35],
-            "Rotation" : [-43.5, 135, 0],
-            "Graphic" : {
-                "Source" : "Assets/Bus.svg",
-                "Scale" : 2.48,
-                "Outline" : true,
-                "OutlineSpacing" : 0.5,
-                "Fill" : true,
-                "FillSpacing" : 0.94,
-                "FillOffset" : [18, -6.38],
-                "FillRotation" : 45
-            }
-        }
-    }
+    "AnimationStart" : null
 }

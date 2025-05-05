@@ -899,7 +899,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 87134816}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1018403103}
+        m_TargetAssemblyTypeName: SaveingManager, Assembly-CSharp
+        m_MethodName: OnClickLoadProject
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &87134816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1886,7 +1898,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000041365623, y: 0}
+  m_AnchoredPosition: {x: -0.0000072717667, y: 0}
   m_SizeDelta: {x: 0, y: -0.0000076294}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &247884104
@@ -5504,7 +5516,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 770274139}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1018403103}
+        m_TargetAssemblyTypeName: SaveingManager, Assembly-CSharp
+        m_MethodName: onClickSave
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &770274139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7690,6 +7714,7 @@ GameObject:
   - component: {fileID: 1018403099}
   - component: {fileID: 1018403101}
   - component: {fileID: 1018403102}
+  - component: {fileID: 1018403103}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -7741,6 +7766,7 @@ MonoBehaviour:
   TimelineContent: {fileID: 247884103}
   inspectorManager: {fileID: 1018403102}
   AnimationPanelPrefab: {fileID: 5413791654448164859, guid: 5c83775d2c038004eb3beae7efc06905, type: 3}
+  addImageButton: {fileID: 795176802}
 --- !u!114 &1018403102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7772,6 +7798,20 @@ MonoBehaviour:
   FillOffsetX: {fileID: 1633809266}
   FillOffsetY: {fileID: 60099399}
   DroneRadius: {fileID: 390270580}
+--- !u!114 &1018403103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018403098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82d4585966b54684191bd5bae7fd7e59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectLoader: {fileID: 1911602655}
+  timelineManager: {fileID: 1018403101}
 --- !u!1 &1028401217
 GameObject:
   m_ObjectHideFlags: 0
@@ -11660,7 +11700,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 19870240}
   m_HandleRect: {fileID: 19870239}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -13750,7 +13790,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1887107268}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1018403103}
+        m_TargetAssemblyTypeName: SaveingManager, Assembly-CSharp
+        m_MethodName: onClicknNewProject
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1887107268
 MonoBehaviour:
   m_ObjectHideFlags: 0

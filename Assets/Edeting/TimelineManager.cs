@@ -6,6 +6,8 @@ public class TimelineManager : MonoBehaviour
     public InspectorManager inspectorManager;
     public GameObject AnimationPanelPrefab;
 
+    public GameObject addImageButton;
+
     private GameObject _currentfocusedGraphic;
     public GameObject CurrentfocusedGraphic {
         get => _currentfocusedGraphic;
@@ -23,6 +25,34 @@ public class TimelineManager : MonoBehaviour
         }
     }
     
+    public AnimationData getFullAnimation() {
+        AnimationData fullAnimation = null;
+        foreach (Transform child in TimelineContent) {
+            if(child.gameObject == addImageButton)
+                continue;
+
+            var panelComp = child.GetComponent<PanelData>();
+            AnimationData childAnimation = panelComp.animationData;
+            if (fullAnimation == null) {
+                fullAnimation = childAnimation;
+            } else {
+                childAnimation.NextAnimation = fullAnimation;
+                fullAnimation = childAnimation;
+            }
+        }
+
+        return fullAnimation;
+    }    
+
+    public void clearTimeline() {
+        CurrentfocusedGraphic = null;
+        foreach (Transform child in TimelineContent) {
+            if(child.gameObject == addImageButton)
+                continue;
+            else
+                Destroy(child.gameObject);
+        }
+    }
 
     public void OnAddAnimation() {
         var newPanel = Instantiate(AnimationPanelPrefab);

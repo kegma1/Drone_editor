@@ -17,26 +17,19 @@ public class ProjectLoader : MonoBehaviour
         get => _ProjectFilePath;
     }
     private string ProjectFileContent;
-    public DroneShowData ParsedProject;
+#nullable enable
+    public DroneShowData? ParsedProject = null;
+#nullable disable
 
     public GameObject TimelineContent;
     public TimelineManager timelineManager;
 
     public GameObject AnimationPanelPrefab;
 
-    void Start()
-    {
-        ProjectFilePath = "Assets/test.json";
-
-        if(ParsedProject == null) {
+    public void addToTimeline(AnimationData data) {
+        if (data == null)
             return;
-        }
 
-        addToTimeline(ParsedProject.AnimationStart);
-
-    }
-
-    private void addToTimeline(AnimationData data) {
         var newPanel = Instantiate(AnimationPanelPrefab);
 
         PanelData panelData = newPanel.GetComponent<PanelData>();
