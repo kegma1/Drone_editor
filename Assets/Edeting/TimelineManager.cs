@@ -34,9 +34,12 @@ public class TimelineManager : MonoBehaviour
             var panelComp = child.GetComponent<PanelData>();
             AnimationData childAnimation = panelComp.animationData;
             if (fullAnimation == null) {
+                childAnimation.NextAnimation = null;
+                childAnimation.Type = "NoneAnimation";
                 fullAnimation = childAnimation;
             } else {
                 childAnimation.NextAnimation = fullAnimation;
+                childAnimation.Type = "LerpAnimation";
                 fullAnimation = childAnimation;
             }
         }
