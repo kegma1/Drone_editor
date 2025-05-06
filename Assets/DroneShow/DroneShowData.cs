@@ -40,6 +40,9 @@ public class GraphicData {
     public float[] FillOffset;
     public float FillRotation;
 
+    public bool FlipHorizontal;
+    public bool FlipVertical;
+
     public GraphicData() {
         FillOffset = new float[] { 0f, 0f };
     }

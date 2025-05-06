@@ -11,8 +11,11 @@ public class VirtualDrone
         this.color = color;
     }
 
-    public Vector3 ApplyTransformation(Transform transform, Rect sceneViewport, float scale) {
-        Vector3 localPos = new(this.pos.x, -this.pos.y, 0);
+    public Vector3 ApplyTransformation(Transform transform, Rect sceneViewport, float scale, bool flipH, bool flipV) {
+        int IflipH = flipH ? -1 : 1;
+        int IflipV = flipV ? -1 : 1;
+        
+        Vector3 localPos = new(this.pos.x * IflipV, this.pos.y * IflipH, 0);
         localPos.x -= (sceneViewport.width/2) * scale;
         localPos.y += (sceneViewport.height/2) * scale;
 

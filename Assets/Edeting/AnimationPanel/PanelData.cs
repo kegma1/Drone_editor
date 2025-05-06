@@ -31,6 +31,7 @@ public class PanelData : MonoBehaviour
 
 
     public void initSVG() {
+		if (_animationData.Graphic.Source != null) {
 		svgContent = File.ReadAllText(_animationData.Graphic.Source);
 
 		var sceneInfo = loadSVG();
@@ -38,7 +39,7 @@ public class PanelData : MonoBehaviour
 
 		var sprite = VectorUtils.BuildSprite(geoms, 10.0f, VectorUtils.Alignment.Center, Vector2.zero, 128, true);
 		Icon.sprite = sprite;
-		
+		}
 	}
 
 	private SVGParser.SceneInfo loadSVG() {

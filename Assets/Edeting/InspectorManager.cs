@@ -32,6 +32,8 @@ public class InspectorManager : MonoBehaviour
     public TMP_InputField FillOffsetY;
     public TMP_InputField DroneRadius;
 
+    public Toggle FlipHorizontal;
+    public Toggle FlipVertical;
 
     private bool isInCode = false;
 
@@ -60,6 +62,9 @@ public class InspectorManager : MonoBehaviour
         FillOffsetY.text = data.Graphic.FillOffset[1].ToString();
 
         DroneRadius.text = projectLoader.ParsedProject.Global.DroneRadius.ToString();
+
+        FlipHorizontal.isOn = data.Graphic.FlipHorizontal;
+        FlipVertical.isOn = data.Graphic.FlipVertical;
 
         isInCode = false;
     }
@@ -217,6 +222,22 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.Outline = OutlineToggle.isOn;
+        }
+    }
+
+    public void OnChangeFlipHorizontalToggle(bool newValue) {
+        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
+            var data = currentGraphic.animationData;
+            data.Graphic.FlipHorizontal = FlipHorizontal.isOn;
+        }
+    }
+
+    public void OnChangeFlipVerticalToggle(bool newValue) {
+        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
+            var data = currentGraphic.animationData;
+            data.Graphic.FlipVertical = FlipVertical.isOn;
         }
     }
 

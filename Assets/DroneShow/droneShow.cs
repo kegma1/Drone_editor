@@ -131,7 +131,7 @@ public class droneShow : MonoBehaviour
 
             animComp.Path = AnimationComp.GeneratePath(
                 drone.transform.position, 
-                Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale)
+                Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical)
             );
             animComp.PlayFromStart();
             curretnDrones.Add(drone);
@@ -217,6 +217,9 @@ public class droneShow : MonoBehaviour
         graphic.FillRotation = data.Graphic.FillRotation;
         graphic.pointRadius = DroneRadius;
         graphic.bezierShader = bezierShader;
+
+        graphic.FlipHorizontal = data.Graphic.FlipHorizontal;
+        graphic.FlipHorizontal = data.Graphic.FlipVertical;
 
         graphic.GeneratePointsFromPath();
         return graphic;

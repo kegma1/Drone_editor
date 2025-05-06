@@ -1,6 +1,1 @@
-{
-	"Global" : {
-		"DroneRadius" : 0.25
-	},
-	"AnimationStart" : null
-}
+{"Global":{"DroneRadius":0.25},"AnimationStart":{"Position":[0.0,0.0,0.0],"Rotation":[0.0,0.0,0.0],"Graphic":{"Source":null,"Duration":0.0,"Scale":0.0,"Outline":false,"OutlineSpacing":0.0,"Fill":false,"FillSpacing":0.0,"FillOffset":[0.0,0.0],"FillRotation":0.0,"FlipHorizontal":true,"FlipVertical":true},"Type":null,"Speed":0.0,"NextAnimation":null}}

@@ -26,6 +26,9 @@ public class Graphic : MonoBehaviour
     public Vector2 FillOffset;
     public float FillRotation;
 
+    public bool FlipHorizontal;
+    public bool FlipVertical;
+
 
     public List<VirtualDrone> edgePoints = new List<VirtualDrone>();
     public Rect sceneViewport;

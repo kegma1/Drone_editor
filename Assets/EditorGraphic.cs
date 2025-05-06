@@ -27,6 +27,9 @@ public class EditorGraphic : MonoBehaviour
     public Vector2 fillOffset;
     public float fillRotation;
 
+    public bool FlipHorizontal;
+    public bool FlipVertical;
+
     private List<VirtualDrone> edgePoints = new List<VirtualDrone>();
     private Rect sceneViewport;
 
@@ -84,7 +87,7 @@ public class EditorGraphic : MonoBehaviour
         } else {
             foreach (var drone in edgePoints) {
                 var newDrone = Instantiate(dronePrefab);
-                newDrone.transform.position = drone.ApplyTransformation(transform, sceneViewport, Scale);
+                newDrone.transform.position = drone.ApplyTransformation(transform, sceneViewport, Scale, FlipHorizontal, FlipVertical);
                 var droneComp = newDrone.GetComponent<Drone>();
                 droneComp.color = drone.color;
                 droneComp.radius = pointRadius;
@@ -268,7 +271,7 @@ public class EditorGraphic : MonoBehaviour
         {
             Gizmos.color = drone.color;
 
-            Gizmos.DrawSphere(drone.ApplyTransformation(transform, sceneViewport, Scale), pointRadius);
+            Gizmos.DrawSphere(drone.ApplyTransformation(transform, sceneViewport, Scale, FlipHorizontal, FlipVertical), pointRadius);
         }
     }
 }
