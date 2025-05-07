@@ -150,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenuPanel: {fileID: 1306891526}
   MainUi: {fileID: 0}
+  toggleMenuAction: {fileID: 4490527313491805298, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!4 &444463245
 Transform:
   m_ObjectHideFlags: 0
@@ -962,9 +963,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c64f9cedecce694087d31d850fa24b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 1000
+  mouseSensitivity: 600
   playerBody: {fileID: 1020111165}
   pauseMenuPanel: {fileID: 1306891526}
+  lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!114 &1163740303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -980,6 +982,9 @@ MonoBehaviour:
   movementSpeed: 10
   boostMultiplier: 3
   climbSpeed: 5
+  moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  climbAction: {fileID: -7582661061898360658, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  boostAction: {fileID: -7471211009204490832, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &1306891526
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,6 +996,7 @@ GameObject:
   - component: {fileID: 1306891529}
   - component: {fileID: 1306891528}
   - component: {fileID: 1306891527}
+  - component: {fileID: 1306891530}
   m_Layer: 5
   m_Name: PauseMenuPanel
   m_TagString: Untagged
@@ -1056,6 +1062,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1306891530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306891526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: debc32fcbbfda6144bb586a192d17bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstSelected: {fileID: 915976972}
 --- !u!1 &1344550207
 GameObject:
   m_ObjectHideFlags: 0

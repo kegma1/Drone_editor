@@ -1,16 +1,23 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraControlls : MonoBehaviour
 {
     public float mouseSensitivity = 100f;
     public Transform playerBody;
     public GameObject pauseMenuPanel;
+    public InputActionReference lookAction;
 
     private float xRotation = 0f;
 
-    void Start()
+    void OnEnable()
     {
-        LockCursor();
+        lookAction.action.Enable();
+    }
+
+    void OnDisable()
+    {
+        lookAction.action.Disable();
     }
 
     void Update()
@@ -23,14 +30,19 @@ public class CameraControlls : MonoBehaviour
 
         LockCursor();
 
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
 
-        xRotation -= mouseY;
+        Vector2 controllerLook = lookAction.action.ReadValue<Vector2>();
+
+        float finalX = (mouseX + controllerLook.x) * mouseSensitivity * Time.deltaTime;
+        float finalY = (mouseY + controllerLook.y) * mouseSensitivity * Time.deltaTime;
+
+        xRotation -= finalY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        playerBody.Rotate(Vector3.up * mouseX);
+        playerBody.Rotate(Vector3.up * finalX);
     }
 
     void LockCursor()

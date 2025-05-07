@@ -1,36 +1,54 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FlightControl : MonoBehaviour
 {
     public float movementSpeed = 10f;
     public float boostMultiplier = 3f;
-    public float climbSpeed = 5f; // Controls the up/down speed (climb)
-    
-    private float horizontalSpeed;
-    private Vector3 moveDirection;
+    public float climbSpeed = 5f;
+
+    public InputActionReference moveAction;
+    public InputActionReference climbAction;
+    public InputActionReference boostAction;
+
+    void OnEnable()
+    {
+        moveAction.action.Enable();
+        climbAction.action.Enable();
+        boostAction.action.Enable();
+    }
+
+    void OnDisable()
+    {
+        moveAction.action.Disable();
+        climbAction.action.Disable();
+        boostAction.action.Disable();
+    }
 
     void Update()
     {
-        // Handle horizontal movement (WASD)
+        Vector2 controllerMove = moveAction.action.ReadValue<Vector2>();
+        float controllerClimb = climbAction.action.ReadValue<float>();
+        bool isControllerBoosting = boostAction.action.IsPressed();
+
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        // Handle vertical movement (E/Q for up/down)
         float moveY = 0f;
-        if (Input.GetKey(KeyCode.E)) // move up
-            moveY = 1f;
-        if (Input.GetKey(KeyCode.Q)) // move down
-            moveY = -1f;
+        if (Input.GetKey(KeyCode.E)) moveY = 1f;
+        if (Input.GetKey(KeyCode.Q)) moveY = -1f;
 
-        moveDirection = new Vector3(moveX, moveY, moveZ).normalized;
+        bool isKeyboardBoosting = Input.GetKey(KeyCode.LeftShift);
 
-        // Speed multiplier for boost (when holding shift)
-        horizontalSpeed = Input.GetKey(KeyCode.LeftShift) ? movementSpeed * boostMultiplier : movementSpeed;
+        Vector3 combinedMove = new Vector3(
+            moveX + controllerMove.x,
+            moveY + controllerClimb,
+            moveZ + controllerMove.y
+        ).normalized;
 
-        // Apply movement based on current speed and delta time
-        transform.Translate(moveDirection * horizontalSpeed * Time.deltaTime, Space.Self);
+        bool isBoosting = isKeyboardBoosting || isControllerBoosting;
+        float speed = isBoosting ? movementSpeed * boostMultiplier : movementSpeed;
 
-        // Apply climb speed for vertical (up/down) movement
-        transform.Translate(Vector3.up * climbSpeed * moveY * Time.deltaTime, Space.World);
+        transform.Translate(combinedMove * speed * Time.deltaTime, Space.Self);
     }
 }
