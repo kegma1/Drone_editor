@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using UnityEngine.Pool;
 using System.Collections.Generic;
 using System.Linq;
+using SimpleFileBrowser;
+using System.Collections;
 
 public class droneShow : MonoBehaviour
 {
@@ -25,6 +27,8 @@ public class droneShow : MonoBehaviour
     
     private Queue<GameObject> activeDrones = new();
 
+    public InGameMenuController ui;
+
 
     private float t = 0f;
     
@@ -33,13 +37,37 @@ public class droneShow : MonoBehaviour
         if (dronePrefab != null) {
             _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones, maxSize: MaxDrones);           
         }
-
         
+        ui.ToggleMenu();
+        StartCoroutine(PickFile());
+
+        // if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
+        //     ParseShow();
+        // }
+    }
+
+    public IEnumerator PickFile() {
+        FileBrowser.SetFilters( true, new FileBrowser.Filter( "Project", ".json"));
+
+		FileBrowser.SetDefaultFilter( ".json" );
+
+		FileBrowser.AddQuickLink( "Users", "C:\\Users", null );
+
+        yield return FileBrowser.WaitForLoadDialog( FileBrowser.PickMode.Files, false, null, null, "Select Files", "Load" );
+        Debug.Log( FileBrowser.Success );
+
+        if( FileBrowser.Success )
+			OnFilesSelected( FileBrowser.Result ); 
+    }
+
+    private void OnFilesSelected( string[] filePaths ) {
+        SourceFilePath = filePaths[0];
 
         if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
+            ui.ToggleMenu();
             ParseShow();
         }
-    }
+	}
 
     private void onDroneRelease(GameObject @object)
     {

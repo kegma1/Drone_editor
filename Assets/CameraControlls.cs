@@ -45,13 +45,13 @@ public class CameraControlls : MonoBehaviour
         playerBody.Rotate(Vector3.up * finalX);
     }
 
-    void LockCursor()
+    public void LockCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    void UnlockCursor()
+    public void UnlockCursor()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
