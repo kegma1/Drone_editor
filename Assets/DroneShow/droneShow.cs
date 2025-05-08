@@ -34,6 +34,8 @@ public class droneShow : MonoBehaviour
             _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones, maxSize: MaxDrones);           
         }
 
+        
+
         if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
             ParseShow();
         }

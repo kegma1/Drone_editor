@@ -644,6 +644,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 915976972}
   m_CullTransparentMesh: 1
+--- !u!1 &1013396325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1013396328}
+  - component: {fileID: 1013396327}
+  - component: {fileID: 1013396326}
+  m_Layer: 0
+  m_Name: IglooManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1013396326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013396325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a0f47ac0777f0b41a8edc946e244899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inPort: 9007
+  outPort: 9001
+  outIp: 127.0.0.1
+  oscIn: {fileID: 0}
+  oscOut: {fileID: 0}
+--- !u!114 &1013396327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013396325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4191cf7161ac5c14fab06d8aeb0e807a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  createOnAwake: 1
+  dontDestroyOnLoad: 0
+  customCameraPrefab: {fileID: 0}
+  followObject: {fileID: 1163740297}
+  parentObject: {fileID: 0}
+  spoutResources: {fileID: 11400000, guid: f449ebbe2051c2e4d993eaa773a410de, type: 2}
+  ndiResources: {fileID: 11400000, guid: 69304b86950074db7ba8caba75214004, type: 2}
+--- !u!4 &1013396328
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013396325}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1020111164
 GameObject:
   m_ObjectHideFlags: 0
@@ -653,6 +722,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1020111165}
+  - component: {fileID: 1020111166}
   m_Layer: 0
   m_Name: playerBody
   m_TagString: Untagged
@@ -676,6 +746,24 @@ Transform:
   - {fileID: 1163740301}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1020111166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020111164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 468fb8a0e5281284ebcdbf5c97a93130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 10
+  boostMultiplier: 3
+  climbSpeed: 5
+  moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  climbAction: {fileID: -7582661061898360658, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  boostAction: {fileID: -7471211009204490832, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &1129626868
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,6 +914,7 @@ GameObject:
   - component: {fileID: 1163740298}
   - component: {fileID: 1163740302}
   - component: {fileID: 1163740303}
+  - component: {fileID: 1163740304}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -963,7 +1052,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c64f9cedecce694087d31d850fa24b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 600
+  mouseSensitivity: 50
   playerBody: {fileID: 1020111165}
   pauseMenuPanel: {fileID: 1306891526}
   lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
@@ -974,7 +1063,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1163740297}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 468fb8a0e5281284ebcdbf5c97a93130, type: 3}
   m_Name: 
@@ -985,6 +1074,19 @@ MonoBehaviour:
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   climbAction: {fileID: -7582661061898360658, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   boostAction: {fileID: -7471211009204490832, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+--- !u!114 &1163740304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163740297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19492a29ada059c469df604c417e4c31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IglooCameraRig: {fileID: 0}
 --- !u!1 &1306891526
 GameObject:
   m_ObjectHideFlags: 0
@@ -1361,3 +1463,4 @@ SceneRoots:
   - {fileID: 544723248}
   - {fileID: 1392773267}
   - {fileID: 444463245}
+  - {fileID: 1013396328}
