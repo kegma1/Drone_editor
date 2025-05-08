@@ -89,20 +89,20 @@ public class droneShow : MonoBehaviour
     void Play() {
         IAnimation AnimationComp;
 
-        Graphic GraphicComp = null;
+        DroneGraphic GraphicComp = null;
 
         if (currentAnimation == null) {
             AnimationComp = new StartAnimation();
             AnimationComp.Speed = 5;
 
-            GraphicComp = GetComponentInChildren<Graphic>();
+            GraphicComp = GetComponentInChildren<DroneGraphic>();
         } else {
             AnimationComp = currentAnimation.GetComponent<IAnimation>();
             if (AnimationComp == null) return;
 
 
             foreach (Transform child in currentAnimation.transform) {
-                GraphicComp = child.GetComponent<Graphic>();
+                GraphicComp = child.GetComponent<DroneGraphic>();
                 if (GraphicComp != null)
                     break;
             }
@@ -204,8 +204,8 @@ public class droneShow : MonoBehaviour
         }
     }
 
-    private Graphic GetGraphic(AnimationData data, GameObject parrent) {
-        Graphic graphic = parrent.AddComponent<Graphic>();
+    private DroneGraphic GetGraphic(AnimationData data, GameObject parrent) {
+        DroneGraphic graphic = parrent.AddComponent<DroneGraphic>();
         graphic.svgFilePath = data.Graphic.Source;
         graphic.Scale = data.Graphic.Scale;
         graphic.Duration = data.Graphic.Duration;

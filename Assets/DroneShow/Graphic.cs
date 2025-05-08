@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Graphic : MonoBehaviour
+public class DroneGraphic : MonoBehaviour
 {
     public string svgFilePath;
 
