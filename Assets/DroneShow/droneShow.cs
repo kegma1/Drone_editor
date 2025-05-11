@@ -236,7 +236,7 @@ public class droneShow : MonoBehaviour
 
     private DroneGraphic GetGraphic(AnimationData data, GameObject parrent) {
         DroneGraphic graphic = parrent.AddComponent<DroneGraphic>();
-        graphic.svgFilePath = data.Graphic.Source;
+        graphic.svgContent = data.Graphic.Source;
         graphic.Scale = data.Graphic.Scale;
         graphic.Duration = data.Graphic.Duration;
         graphic.Outline = data.Graphic.Outline;

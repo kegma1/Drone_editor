@@ -6,7 +6,7 @@ using System.Linq;
 
 public class DroneGraphic : MonoBehaviour
 {
-    public string svgFilePath;
+    public string svgContent;
 
     [Min(0.01f)]
     public float Scale = 1f;
@@ -96,8 +96,6 @@ public class DroneGraphic : MonoBehaviour
 
     private SVGParser.SceneInfo LoadSVG()
     {
-        string svgContent = File.ReadAllText(svgFilePath);
-
         var svgDoc = SVGParser.ImportSVG(new StringReader(svgContent));
 
         return svgDoc;

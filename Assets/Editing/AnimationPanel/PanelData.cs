@@ -32,7 +32,7 @@ public class PanelData : MonoBehaviour
 
     public void initSVG() {
 		if (_animationData.Graphic.Source != null) {
-		svgContent = File.ReadAllText(_animationData.Graphic.Source);
+		svgContent = _animationData.Graphic.Source;
 
 		var sceneInfo = loadSVG();
 		var geoms = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions);

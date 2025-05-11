@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using SimpleFileBrowser;
 using TMPro;
 using System.Collections;
+using System.IO;
 
 public class InspectorManager : MonoBehaviour
 {
@@ -92,7 +93,8 @@ public class InspectorManager : MonoBehaviour
         var currentGraphic = timelineManager.CurrentfocusedGraphic?.GetComponent<PanelData>();
         if (currentGraphic) {
             var data = currentGraphic.animationData;
-            data.Graphic.Source = filePaths[0]; 
+
+            data.Graphic.Source = File.ReadAllText(filePaths[0]); 
             currentGraphic.initSVG();
         }
 	}
