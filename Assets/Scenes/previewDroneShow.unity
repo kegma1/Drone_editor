@@ -693,7 +693,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createOnAwake: 1
   dontDestroyOnLoad: 0
-  customCameraPrefab: {fileID: 0}
+  customCameraPrefab: {fileID: 4805420787787665017, guid: ad8ddd3d8c430154bbe1b3f8eb4b1419, type: 3}
   followObject: {fileID: 1163740297}
   parentObject: {fileID: 0}
   spoutResources: {fileID: 11400000, guid: f449ebbe2051c2e4d993eaa773a410de, type: 2}
