@@ -17,7 +17,7 @@
       "url": "https://package.openupm.com"
     },
     "com.igloo.toolkit": {
-      "version": "file:C:/Users/kenne/Downloads/com.igloo.toolkit-2.0.2.tgz",
+      "version": "file:../com.igloo.toolkit-2.0.2.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
