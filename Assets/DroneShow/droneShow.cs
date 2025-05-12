@@ -23,8 +23,8 @@ public class droneShow : MonoBehaviour
     public InGameMenuController ui;
     public TMP_Text counter;
 
-    private bool isShowRunning = false;
-    private bool isPaused = false;
+    public bool isShowRunning = false;
+    public bool isPaused = false;
 
     [Range(5f, 120f)]
     public float animationInterval = 30f;

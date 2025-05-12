@@ -1784,7 +1784,10 @@ MonoBehaviour:
   bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
   ui: {fileID: 444463244}
   counter: {fileID: 1239740177}
+  isShowRunning: 0
+  isPaused: 0
   animationInterval: 30
+  inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!4 &1659493773
 Transform:
   m_ObjectHideFlags: 0
