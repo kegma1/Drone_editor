@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SimpleFileBrowser;
 using System.Collections;
+using TMPro;
 
 public class droneShow : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class droneShow : MonoBehaviour
     private Queue<GameObject> activeDrones = new();
 
     public InGameMenuController ui;
+
+    public TMP_Text counter;
 
 
     private float t = 0f;
@@ -141,6 +144,8 @@ public class droneShow : MonoBehaviour
         if (GraphicComp == null) {
             return;
         }
+
+        counter.text = GraphicComp.edgePoints.Count.ToString();
 
         var curretnDrones = new List<GameObject>();
 

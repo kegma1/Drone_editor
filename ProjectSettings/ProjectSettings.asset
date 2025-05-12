@@ -817,19 +817,19 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   scriptingDefineSymbols:
-    Android: EXTOSC
-    EmbeddedLinux: EXTOSC
-    GameCoreXboxOne: EXTOSC
-    Nintendo Switch: EXTOSC
-    PS4: EXTOSC
-    PS5: EXTOSC
-    QNX: EXTOSC
-    ReservedCFE: EXTOSC
-    Standalone: EXTOSC
-    VisionOS: EXTOSC
-    WebGL: EXTOSC
-    XboxOne: EXTOSC
-    tvOS: EXTOSC
+    Android: EXTOSC;IGLOO_PLAYER
+    EmbeddedLinux: EXTOSC;IGLOO_PLAYER
+    GameCoreXboxOne: EXTOSC;IGLOO_PLAYER
+    Nintendo Switch: EXTOSC;IGLOO_PLAYER
+    PS4: EXTOSC;IGLOO_PLAYER
+    PS5: EXTOSC;IGLOO_PLAYER
+    QNX: EXTOSC;IGLOO_PLAYER
+    ReservedCFE: EXTOSC;IGLOO_PLAYER
+    Standalone: EXTOSC;IGLOO_PLAYER
+    VisionOS: EXTOSC;IGLOO_PLAYER
+    WebGL: EXTOSC;IGLOO_PLAYER
+    XboxOne: EXTOSC;IGLOO_PLAYER
+    tvOS: EXTOSC;IGLOO_PLAYER
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
