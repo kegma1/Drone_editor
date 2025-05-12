@@ -15,7 +15,8 @@
                 { "name": "ToggleMenu", "type": "Button", "id": "f0df83cb-f46e-4e6b-bb0f-faa1892c9e60" },
                 { "name": "Previous", "type": "Button", "id": "2776c80d-3c14-4091-8c56-d04ced07a2b0", "expectedControlType": "Button" },
                 { "name": "Next", "type": "Button", "id": "b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba", "expectedControlType": "Button" },
-                { "name": "Sprint", "type": "Button", "id": "641cd816-40e6-41b4-8c3d-04687c349290", "expectedControlType": "Button" }
+                { "name": "Sprint", "type": "Button", "id": "641cd816-40e6-41b4-8c3d-04687c349290", "expectedControlType": "Button" },
+                { "name": "PlayPause", "type": "Button", "id": "abc12345-1234-5678-9999-abcdefabcdef", "expectedControlType": "Button"}
             ],
             "bindings": [
                 { "name": "WASD", "id": "wasd-composite", "path": "2DVector", "action": "Move", "isComposite": true },
@@ -50,7 +51,9 @@
                 { "name": "", "id": "previous-keyboard", "path": "<Keyboard>/1", "action": "Previous" },
                 { "name": "", "id": "previous-gamepad", "path": "<Gamepad>/dpad/left", "action": "Previous" },
                 { "name": "", "id": "next-keyboard", "path": "<Keyboard>/2", "action": "Next" },
-                { "name": "", "id": "next-gamepad", "path": "<Gamepad>/dpad/right", "action": "Next" }
+                { "name": "", "id": "next-gamepad", "path": "<Gamepad>/dpad/right", "action": "Next" },
+                { "name": "", "id": "playpause-keyboard", "path": "<Keyboard>/space", "action": "PlayPause"},
+                { "name": "", "id": "playpause-gamepad", "path": "<Gamepad>/buttonSouth", "action": "PlayPause"}
             ]
         },
         {

@@ -8,27 +8,19 @@ using System.Linq;
 using SimpleFileBrowser;
 using System.Collections;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class droneShow : MonoBehaviour
 {
     public string SourceFilePath;
-
     private float DroneRadius;
-
     public int MaxDrones = 800;
-
     public GameObject dronePrefab;
-
     private ObjectPool<GameObject> _pool;
-
     public ComputeShader bezierShader;
-
     private GameObject currentAnimation = null;
-
     private Queue<GameObject> activeDrones = new();
-
     public InGameMenuController ui;
-
     public TMP_Text counter;
 
     private bool isShowRunning = false;
@@ -37,17 +29,54 @@ public class droneShow : MonoBehaviour
     [Range(5f, 120f)]
     public float animationInterval = 30f;
     private float animationTimer = 0f;
-
     private float t = 0f;
+
+    public InputActionAsset inputActions;
+    private InputAction playPauseAction;
 
     void Start()
     {
-        if (dronePrefab != null) {
+        if (dronePrefab != null)
+        {
             _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones, maxSize: MaxDrones);
         }
 
+        var playerMap = inputActions.FindActionMap("Player");
+        playPauseAction = playerMap.FindAction("PlayPause");
+        playPauseAction.performed += OnPlayPause;
+        playPauseAction.Enable();
+
         ui.ToggleMenu();
         StartCoroutine(PickFile());
+    }
+
+    void OnDisable()
+    {
+        if (playPauseAction != null)
+        {
+            playPauseAction.performed -= OnPlayPause;
+            playPauseAction.Disable();
+        }
+    }
+
+    private void OnPlayPause(InputAction.CallbackContext ctx)
+    {
+        ToggleShow();
+    }
+
+    private void ToggleShow()
+    {
+        if (!isShowRunning)
+        {
+            isShowRunning = true;
+            isPaused = false;
+            animationTimer = 0f;
+            Play();
+        }
+        else
+        {
+            isPaused = !isPaused;
+        }
     }
 
     public IEnumerator PickFile()
@@ -67,7 +96,8 @@ public class droneShow : MonoBehaviour
     {
         SourceFilePath = filePaths[0];
 
-        if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
+        if (SourceFilePath != null && bezierShader != null && dronePrefab != null)
+        {
             ui.ToggleMenu();
             ParseShow();
         }
@@ -83,17 +113,7 @@ public class droneShow : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (!isShowRunning)
-            {
-                isShowRunning = true;
-                isPaused = false;
-                animationTimer = 0f;
-                Play();
-            }
-            else
-            {
-                isPaused = !isPaused;
-            }
+            ToggleShow();
         }
 
         if (isShowRunning && !isPaused)
@@ -111,12 +131,7 @@ public class droneShow : MonoBehaviour
     private GameObject CreateDrone()
     {
         var drone = Instantiate(dronePrefab);
-
-        float xOffset = 0f;
-        float yOffset = 0f;
-        float zOffset = 0f;
-
-        drone.transform.position = new Vector3(xOffset, yOffset, zOffset);
+        drone.transform.position = Vector3.zero;
 
         var droneComp = drone.GetComponent<Drone>();
         if (droneComp != null)
@@ -131,7 +146,6 @@ public class droneShow : MonoBehaviour
             orca = drone.AddComponent<OrcaAgent>();
         }
 
-        float r = orca.Radius;
         orca.maxSpeed = 5f;
         orca.heightTolerance = 1.0f;
 
@@ -143,15 +157,19 @@ public class droneShow : MonoBehaviour
         IAnimation AnimationComp;
         DroneGraphic GraphicComp = null;
 
-        if (currentAnimation == null) {
+        if (currentAnimation == null)
+        {
             AnimationComp = new StartAnimation();
             AnimationComp.Speed = 5;
             GraphicComp = GetComponentInChildren<DroneGraphic>();
-        } else {
+        }
+        else
+        {
             AnimationComp = currentAnimation.GetComponent<IAnimation>();
             if (AnimationComp == null) return;
 
-            foreach (Transform child in currentAnimation.transform) {
+            foreach (Transform child in currentAnimation.transform)
+            {
                 GraphicComp = child.GetComponent<DroneGraphic>();
                 if (GraphicComp != null)
                     break;
@@ -161,18 +179,11 @@ public class droneShow : MonoBehaviour
         if (GraphicComp == null) return;
 
         counter.text = GraphicComp.edgePoints.Count.ToString();
-
         var curretnDrones = new List<GameObject>();
 
         foreach (var Vdrone in GraphicComp.edgePoints)
         {
-            GameObject drone;
-
-            if (activeDrones.Count > 0) {
-                drone = activeDrones.Dequeue();
-            } else {
-                drone = _pool.Get();
-            }
+            GameObject drone = activeDrones.Count > 0 ? activeDrones.Dequeue() : _pool.Get();
 
             var animComp = drone.GetComponent<AnimationPlayer>();
             animComp.Speed = AnimationComp.Speed;
@@ -183,37 +194,36 @@ public class droneShow : MonoBehaviour
                 drone.transform.position,
                 Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical)
             );
+
             animComp.PlayFromStart();
             curretnDrones.Add(drone);
         }
 
-        foreach (var drone in activeDrones) {
+        foreach (var drone in activeDrones)
+        {
             var animComp = drone.GetComponent<AnimationPlayer>();
             animComp.Speed = AnimationComp.Speed;
             animComp.targetColor = Color.black;
 
-            animComp.Path = AnimationComp.GeneratePath(
-                drone.transform.position,
-                animComp.startPosition
-            );
+            animComp.Path = AnimationComp.GeneratePath(drone.transform.position, animComp.startPosition);
             _pool.Release(drone);
         }
 
         activeDrones.Clear();
-
-        foreach (var drone in curretnDrones) {
-            activeDrones.Enqueue(drone);
-        }
-
+        foreach (var drone in curretnDrones) activeDrones.Enqueue(drone);
         curretnDrones.Clear();
 
-        if (currentAnimation == null) {
+        if (currentAnimation == null)
+        {
             currentAnimation = transform.GetChild(0).gameObject;
-        } else {
+        }
+        else
+        {
             var nextAnimation = currentAnimation.transform.childCount > 0
                 ? currentAnimation.transform.GetChild(0).gameObject
                 : null;
-            if (nextAnimation != null) {
+            if (nextAnimation != null)
+            {
                 currentAnimation = nextAnimation;
             }
         }
@@ -233,28 +243,34 @@ public class droneShow : MonoBehaviour
         GameObject animtionObject = new();
         animtionObject.transform.parent = parrent;
 
-        string animationType = data.Type;
-        Type T = Type.GetType(animationType);
+        Type T = Type.GetType(data.Type);
         IAnimation animation = (IAnimation)animtionObject.AddComponent(T);
 
         GetGraphic(data, animtionObject);
 
-        if (data.Position != null) {
+        if (data.Position != null)
+        {
             Vector3 pos = new((float)data.Position[0], (float)data.Position[1], (float)data.Position[2]);
             animtionObject.transform.position = pos;
-        } else {
+        }
+        else
+        {
             animtionObject.transform.position = parrent.position;
         }
 
-        if (data.Rotation != null) {
+        if (data.Rotation != null)
+        {
             Vector3 rot = new((float)data.Rotation[0], (float)data.Rotation[1], (float)data.Rotation[2]);
             animtionObject.transform.eulerAngles = rot;
-        } else {
+        }
+        else
+        {
             animtionObject.transform.eulerAngles = parrent.eulerAngles;
         }
 
         animation.Speed = data.Speed;
-        if (data.NextAnimation != null) {
+        if (data.NextAnimation != null)
+        {
             GetAnimation(data.NextAnimation, animtionObject.transform);
         }
     }
