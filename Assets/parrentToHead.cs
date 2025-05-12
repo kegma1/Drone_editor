@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class parrentToHead : MonoBehaviour
 {
@@ -6,6 +7,11 @@ public class parrentToHead : MonoBehaviour
     void Start()
     {
         var iglooCamera = GameObject.Find("IglooMainCamera");
+        var camera = iglooCamera.GetComponent<Camera>();
+        Debug.Log(camera);
+        var additionalData = camera.GetUniversalAdditionalCameraData();
+        additionalData.renderPostProcessing = true;
+        
         transform.parent = iglooCamera.transform;
     }
 }
