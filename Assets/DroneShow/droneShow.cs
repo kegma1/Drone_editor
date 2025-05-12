@@ -16,7 +16,7 @@ public class droneShow : MonoBehaviour
 
     public int MaxDrones = 800;
 
-    public GameObject dronePrefab; 
+    public GameObject dronePrefab;
 
     private ObjectPool<GameObject> _pool;
 
@@ -24,50 +24,51 @@ public class droneShow : MonoBehaviour
 
     private GameObject currentAnimation = null;
 
-    
     private Queue<GameObject> activeDrones = new();
 
     public InGameMenuController ui;
 
+    private bool isShowRunning = false;
+    private bool isPaused = false;
+
+    [Range(5f, 120f)]
+    public float animationInterval = 30f;
+    private float animationTimer = 0f;
 
     private float t = 0f;
-    
+
     void Start()
     {
         if (dronePrefab != null) {
-            _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones, maxSize: MaxDrones);           
+            _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones, maxSize: MaxDrones);
         }
-        
+
         ui.ToggleMenu();
         StartCoroutine(PickFile());
-
-        // if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
-        //     ParseShow();
-        // }
     }
 
-    public IEnumerator PickFile() {
-        FileBrowser.SetFilters( true, new FileBrowser.Filter( "Project", ".json"));
+    public IEnumerator PickFile()
+    {
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("Project", ".json"));
+        FileBrowser.SetDefaultFilter(".json");
+        FileBrowser.AddQuickLink("Users", "C:\\Users", null);
 
-		FileBrowser.SetDefaultFilter( ".json" );
+        yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.Files, false, null, null, "Select Files", "Load");
+        Debug.Log(FileBrowser.Success);
 
-		FileBrowser.AddQuickLink( "Users", "C:\\Users", null );
-
-        yield return FileBrowser.WaitForLoadDialog( FileBrowser.PickMode.Files, false, null, null, "Select Files", "Load" );
-        Debug.Log( FileBrowser.Success );
-
-        if( FileBrowser.Success )
-			OnFilesSelected( FileBrowser.Result ); 
+        if (FileBrowser.Success)
+            OnFilesSelected(FileBrowser.Result);
     }
 
-    private void OnFilesSelected( string[] filePaths ) {
+    private void OnFilesSelected(string[] filePaths)
+    {
         SourceFilePath = filePaths[0];
 
         if (SourceFilePath != null && bezierShader != null && dronePrefab != null) {
             ui.ToggleMenu();
             ParseShow();
         }
-	}
+    }
 
     private void onDroneRelease(GameObject @object)
     {
@@ -77,8 +78,30 @@ public class droneShow : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            Play();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (!isShowRunning)
+            {
+                isShowRunning = true;
+                isPaused = false;
+                animationTimer = 0f;
+                Play();
+            }
+            else
+            {
+                isPaused = !isPaused;
+            }
+        }
+
+        if (isShowRunning && !isPaused)
+        {
+            animationTimer += Time.deltaTime;
+
+            if (animationTimer >= animationInterval)
+            {
+                animationTimer = 0f;
+                Play();
+            }
         }
     }
 
@@ -86,9 +109,8 @@ public class droneShow : MonoBehaviour
     {
         var drone = Instantiate(dronePrefab);
 
-
         float xOffset = 0f;
-        float yOffset = 0f; 
+        float yOffset = 0f;
         float zOffset = 0f;
 
         drone.transform.position = new Vector3(xOffset, yOffset, zOffset);
@@ -108,28 +130,23 @@ public class droneShow : MonoBehaviour
 
         float r = orca.Radius;
         orca.maxSpeed = 5f;
-
         orca.heightTolerance = 1.0f;
 
         return drone;
     }
 
-
-
-    void Play() {
+    void Play()
+    {
         IAnimation AnimationComp;
-
         DroneGraphic GraphicComp = null;
 
         if (currentAnimation == null) {
             AnimationComp = new StartAnimation();
             AnimationComp.Speed = 5;
-
             GraphicComp = GetComponentInChildren<DroneGraphic>();
         } else {
             AnimationComp = currentAnimation.GetComponent<IAnimation>();
             if (AnimationComp == null) return;
-
 
             foreach (Transform child in currentAnimation.transform) {
                 GraphicComp = child.GetComponent<DroneGraphic>();
@@ -138,9 +155,7 @@ public class droneShow : MonoBehaviour
             }
         }
 
-        if (GraphicComp == null) {
-            return;
-        }
+        if (GraphicComp == null) return;
 
         var curretnDrones = new List<GameObject>();
 
@@ -160,7 +175,7 @@ public class droneShow : MonoBehaviour
             animComp.startPosition = drone.transform.position;
 
             animComp.Path = AnimationComp.GeneratePath(
-                drone.transform.position, 
+                drone.transform.position,
                 Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical)
             );
             animComp.PlayFromStart();
@@ -173,38 +188,43 @@ public class droneShow : MonoBehaviour
             animComp.targetColor = Color.black;
 
             animComp.Path = AnimationComp.GeneratePath(
-                drone.transform.position, 
+                drone.transform.position,
                 animComp.startPosition
             );
             _pool.Release(drone);
         }
+
         activeDrones.Clear();
 
         foreach (var drone in curretnDrones) {
             activeDrones.Enqueue(drone);
         }
+
         curretnDrones.Clear();
 
         if (currentAnimation == null) {
             currentAnimation = transform.GetChild(0).gameObject;
         } else {
-            var nextAnimation = currentAnimation.transform.GetChild(0).gameObject;
-            if(nextAnimation) {
+            var nextAnimation = currentAnimation.transform.childCount > 0
+                ? currentAnimation.transform.GetChild(0).gameObject
+                : null;
+            if (nextAnimation != null) {
                 currentAnimation = nextAnimation;
             }
         }
     }
 
-
-    void ParseShow() {
+    void ParseShow()
+    {
         string JsonContent = File.ReadAllText(SourceFilePath);
         DroneShowData ShowData = JsonConvert.DeserializeObject<DroneShowData>(JsonContent);
-        
+
         DroneRadius = ShowData.Global.DroneRadius;
         GetAnimation(ShowData.AnimationStart, transform);
     }
 
-    private void GetAnimation(AnimationData data, Transform parrent) {
+    private void GetAnimation(AnimationData data, Transform parrent)
+    {
         GameObject animtionObject = new();
         animtionObject.transform.parent = parrent;
 
@@ -229,12 +249,13 @@ public class droneShow : MonoBehaviour
         }
 
         animation.Speed = data.Speed;
-        if(data.NextAnimation != null) {
+        if (data.NextAnimation != null) {
             GetAnimation(data.NextAnimation, animtionObject.transform);
         }
     }
 
-    private DroneGraphic GetGraphic(AnimationData data, GameObject parrent) {
+    private DroneGraphic GetGraphic(AnimationData data, GameObject parrent)
+    {
         DroneGraphic graphic = parrent.AddComponent<DroneGraphic>();
         graphic.svgContent = data.Graphic.Source;
         graphic.Scale = data.Graphic.Scale;
@@ -254,5 +275,4 @@ public class droneShow : MonoBehaviour
         graphic.GeneratePointsFromPath();
         return graphic;
     }
-
 }
