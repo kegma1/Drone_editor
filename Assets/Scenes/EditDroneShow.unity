@@ -2048,7 +2048,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000038762577, y: 0}
+  m_AnchoredPosition: {x: -0.0000121593475, y: 0}
   m_SizeDelta: {x: 0, y: -0.0000076294}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &247884104
@@ -8161,7 +8161,7 @@ Transform:
   m_GameObject: {fileID: 1018403098}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 578.5, y: 259.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8197,6 +8197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timelineManager: {fileID: 1018403101}
   projectLoader: {fileID: 1911602655}
+  editorGraphic: {fileID: 1889326640}
   PositionX: {fileID: 1142741017}
   PositionY: {fileID: 146557946}
   PositionZ: {fileID: 640146030}
@@ -12209,7 +12210,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 19870240}
   m_HandleRect: {fileID: 19870239}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -14618,18 +14619,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 113a158a43746644f91fe4b2c8e1be43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  svgFilePath: 
-  Scale: 1
   pointRadius: 0.25
   dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
-  Outline: 1
-  OutlineSpacing: 0.5
-  Fill: 0
-  fillSpacing: 0.5
-  fillOffset: {x: 0, y: 0}
-  fillRotation: 0
-  FlipHorizontal: 0
-  FlipVertical: 0
   bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
 --- !u!4 &1889326641
 Transform:
@@ -14640,7 +14631,7 @@ Transform:
   m_GameObject: {fileID: 1889326639}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.6337934, y: -3.6348839, z: 11.647323}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

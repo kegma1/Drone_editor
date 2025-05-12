@@ -10,6 +10,8 @@ public class InspectorManager : MonoBehaviour
     public TimelineManager timelineManager;
     public ProjectLoader projectLoader;
 
+    public EditorGraphic editorGraphic;
+
     public TMP_InputField PositionX;
     public TMP_InputField PositionY;
     public TMP_InputField PositionZ;
@@ -67,6 +69,11 @@ public class InspectorManager : MonoBehaviour
         FlipHorizontal.isOn = data.Graphic.FlipHorizontal;
         FlipVertical.isOn = data.Graphic.FlipVertical;
 
+        editorGraphic.pointRadius = projectLoader.ParsedProject.Global.DroneRadius;
+        editorGraphic.graphic = data.Graphic;
+        editorGraphic.SetPos(data.Position[0], data.Position[1], data.Position[2]);
+        editorGraphic.SetRot(data.Rotation[0], data.Rotation[1], data.Rotation[2]);
+
         isInCode = false;
     }
 
@@ -95,6 +102,7 @@ public class InspectorManager : MonoBehaviour
             var data = currentGraphic.animationData;
 
             data.Graphic.Source = File.ReadAllText(filePaths[0]); 
+            editorGraphic.graphic = data.Graphic;
             currentGraphic.initSVG();
         }
 	}
@@ -102,6 +110,7 @@ public class InspectorManager : MonoBehaviour
     public void OnChangeDroneRadius(string newValue) {
         if(projectLoader.ParsedProject != null && !isInCode) {
             projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
+            editorGraphic.pointRadius = float.Parse(DroneRadius.text);
         }
     }
 
@@ -110,6 +119,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Position[0] = float.Parse(PositionX.text);
+            editorGraphic.SetPos(float.Parse(PositionX.text), null, null);
         }
     }
     public void OnChangePositionY(string newValue) {
@@ -117,6 +127,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Position[1] = float.Parse(PositionY.text);
+            editorGraphic.SetPos(null, float.Parse(PositionY.text), null);
         }
     }
     public void OnChangePositionZ(string newValue) {
@@ -124,6 +135,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Position[2] = float.Parse(PositionZ.text);
+            editorGraphic.SetPos(null, null, float.Parse(PositionZ.text));
         }
     }
     
@@ -132,6 +144,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Rotation[0] = float.Parse(RotationX.text);
+            editorGraphic.SetRot(float.Parse(RotationX.text), null, null);
         }
     }
     public void OnChangeRotationY(string newValue) {
@@ -139,6 +152,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Rotation[1] = float.Parse(RotationY.text);
+            editorGraphic.SetRot(null, float.Parse(RotationY.text), null);
         }
     }
     public void OnChangeRotationZ(string newValue) {
@@ -146,6 +160,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Rotation[2] = float.Parse(RotationZ.text);
+            editorGraphic.SetRot(null, null, float.Parse(RotationZ.text));
         }
     }
 
@@ -154,6 +169,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.Scale = float.Parse(Scale.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
 
@@ -162,6 +178,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.Duration = float.Parse(Duration.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
 
@@ -170,6 +187,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Speed = float.Parse(Speed.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
 
@@ -178,6 +196,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Graphic.OutlineSpacing = float.Parse(OutlineSpacing.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
     public void OnChangeFillSpacing(string newValue) {
@@ -185,6 +204,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Graphic.FillSpacing = float.Parse(FillSpacing.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
     public void OnChangeFillRotation(string newValue) {
@@ -192,6 +212,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Graphic.FillRotation = float.Parse(FillRotation.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
 
@@ -200,6 +221,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Graphic.FillOffset[0] = float.Parse(FillOffsetX.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
     public void OnChangeFillOffsetY(string newValue) {
@@ -207,6 +229,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;  
             data.Graphic.FillOffset[1] = float.Parse(FillOffsetY.text);
+            editorGraphic.graphic = data.Graphic;
         }
     }
 
@@ -217,6 +240,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.Fill = FillToggle.isOn;
+            editorGraphic.graphic = data.Graphic;
         }
     }
     public void OnChangeOutlineToggle(bool newValue) {
@@ -224,6 +248,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.Outline = OutlineToggle.isOn;
+            editorGraphic.graphic = data.Graphic;
         }
     }
 
@@ -232,6 +257,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.FlipHorizontal = FlipHorizontal.isOn;
+            editorGraphic.graphic = data.Graphic;
         }
     }
 
@@ -240,6 +266,7 @@ public class InspectorManager : MonoBehaviour
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             data.Graphic.FlipVertical = FlipVertical.isOn;
+            editorGraphic.graphic = data.Graphic;
         }
     }
 

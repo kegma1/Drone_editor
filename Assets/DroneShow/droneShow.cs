@@ -249,7 +249,7 @@ public class droneShow : MonoBehaviour
         graphic.bezierShader = bezierShader;
 
         graphic.FlipHorizontal = data.Graphic.FlipHorizontal;
-        graphic.FlipHorizontal = data.Graphic.FlipVertical;
+        graphic.FlipVertical = data.Graphic.FlipVertical;
 
         graphic.GeneratePointsFromPath();
         return graphic;

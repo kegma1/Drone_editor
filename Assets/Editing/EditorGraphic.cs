@@ -6,28 +6,49 @@ using System.Linq;
 
 public class EditorGraphic : MonoBehaviour
 {
-    public string svgFilePath;
+    private string svgContent;
 
-    [Min(0.01f)]
-    public float Scale = 1f;
-    [Min(0.01f)]
+    private float Scale = 1f;
     public float pointRadius = 0.25f;
     public GameObject dronePrefab; 
 
-    public bool Outline = true;
-    [Min(0f)]
-    public float OutlineSpacing = 0.5f; 
+    private bool Outline = true;
+
+    private float OutlineSpacing = 0.5f; 
 
 
-    public bool Fill = false;
+    private bool Fill = false;
 
-    [Min(0f)]
-    public float fillSpacing = 0.5f; 
-    public Vector2 fillOffset;
-    public float fillRotation;
+ 
+    private float fillSpacing = 0.5f; 
+    private Vector2 fillOffset;
+    private float fillRotation;
 
-    public bool FlipHorizontal;
-    public bool FlipVertical;
+    private bool FlipHorizontal;
+    private bool FlipVertical;
+    private GraphicData _graphic;
+    public GraphicData graphic {
+        get => _graphic;
+        set {
+            _graphic = value;
+
+            Scale = _graphic.Scale;
+            Outline = _graphic.Outline;
+            OutlineSpacing = _graphic.OutlineSpacing;
+
+            Fill = _graphic.Fill;
+            fillSpacing = _graphic.FillSpacing;
+            fillOffset = new(_graphic.FillOffset[0], _graphic.FillOffset[0]);
+            fillRotation = _graphic.FillRotation;
+
+            FlipHorizontal = _graphic.FlipHorizontal;
+            FlipVertical = _graphic.FlipVertical;
+
+            svgContent = _graphic.Source;
+
+            GeneratePointsFromPath();
+        }
+    }
 
     private List<VirtualDrone> edgePoints = new List<VirtualDrone>();
     private Rect sceneViewport;
@@ -38,18 +59,6 @@ public class EditorGraphic : MonoBehaviour
     private ComputeBuffer bezierBuffer;
     private ComputeBuffer pointBuffer;
     private ComputeBuffer resultBuffer;
-
-    private void OnValidate() {
-        if (svgFilePath != null) {
-            GeneratePointsFromPath();
-        }
-    }
-
-    private void Start() {
-        if (svgFilePath != null) {
-            GeneratePointsFromPath();
-        }
-    }
 
     public void GeneratePointsFromPath() {
         edgePoints.Clear();
@@ -78,20 +87,24 @@ public class EditorGraphic : MonoBehaviour
                 edgePoints.Add(drone);
             }
         }
+    }
 
-        if (!Application.isPlaying) 
-        {
-            foreach (Transform child in transform)
-                DestroyImmediate(child.gameObject);
-        } else {
-            foreach (var drone in edgePoints) {
-                var newDrone = Instantiate(dronePrefab);
-                newDrone.transform.position = drone.ApplyTransformation(transform, sceneViewport, Scale, FlipHorizontal, FlipVertical);
-                var droneComp = newDrone.GetComponent<Drone>();
-                droneComp.color = drone.color;
-                droneComp.radius = pointRadius;
-            }
-        }
+    public void SetPos(float? x, float? y, float? z) {
+        var newPos = transform.position;
+        if (x != null) newPos.x = (float)x; 
+        if (y != null) newPos.y = (float)y; 
+        if (z != null) newPos.z = (float)z; 
+
+        transform.position = newPos;
+    }
+
+    public void SetRot(float? x, float? y, float? z) {
+        var newRot = transform.rotation.eulerAngles;
+        if (x != null) newRot.x = (float)x; 
+        if (y != null) newRot.y = (float)y; 
+        if (z != null) newRot.z = (float)z; 
+
+        transform.rotation = Quaternion.Euler(newRot);
     }
 
     private List<(BezierContour, Color)> GetBezierContours(SceneNode Root) {
@@ -120,8 +133,6 @@ public class EditorGraphic : MonoBehaviour
 
     private SVGParser.SceneInfo LoadSVG()
     {
-        string svgContent = File.ReadAllText(svgFilePath);
-
         var svgDoc = SVGParser.ImportSVG(new StringReader(svgContent));
 
         return svgDoc;
