@@ -12,6 +12,6 @@ public class parrentToHead : MonoBehaviour
         var additionalData = camera.GetUniversalAdditionalCameraData();
         additionalData.renderPostProcessing = true;
         
-        transform.parent = iglooCamera.transform;
+        transform.SetParent(iglooCamera.transform);
     }
 }
