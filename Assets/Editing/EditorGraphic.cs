@@ -3,6 +3,7 @@ using Unity.VectorGraphics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 
 public class EditorGraphic : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class EditorGraphic : MonoBehaviour
     public DronePool dronePool;
 
     public List<GameObject> ActiveDrones;
+
+    public TMP_Text counter;
 
     private bool Outline = true;
 
@@ -114,6 +117,8 @@ public class EditorGraphic : MonoBehaviour
                 ActiveDrones.Add(drone);
             }
         }
+
+        counter.text = ActiveDrones.Count.ToString();
 
     }
 
