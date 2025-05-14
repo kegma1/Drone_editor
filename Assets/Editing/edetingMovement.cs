@@ -39,6 +39,10 @@ public class EditingMovement : MonoBehaviour
             Vector3 moveDir = CameraTransform.forward * vertical + CameraTransform.right * horizontal;
 
             transform.position += moveDir * MovementSpeed * Time.deltaTime;
+
+            if(Input.GetKeyDown("h")) {
+                transform.position = new(0f, 1.8f, 0f);
+            }
         }
     }
 }

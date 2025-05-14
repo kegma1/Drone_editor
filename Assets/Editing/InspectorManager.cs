@@ -71,7 +71,7 @@ public class InspectorManager : MonoBehaviour
         FlipVertical.isOn = data.Graphic.FlipVertical;
 
         editorGraphic.pointRadius = projectLoader.ParsedProject.Global.DroneRadius;
-        editorGraphic.MaxDones = projectLoader.ParsedProject.Global.MaxDrones;
+        editorGraphic.MaxDrones = projectLoader.ParsedProject.Global.MaxDrones;
         
 
         editorGraphic.graphic = data.Graphic;
@@ -121,7 +121,7 @@ public class InspectorManager : MonoBehaviour
     public void OnChangeMaxDrones(string newValue) {
         if(projectLoader.ParsedProject != null && !isInCode) {
             projectLoader.ParsedProject.Global.MaxDrones = int.Parse(MaxDones.text);
-            editorGraphic.MaxDones = projectLoader.ParsedProject.Global.MaxDrones;
+            editorGraphic.MaxDrones = projectLoader.ParsedProject.Global.MaxDrones;
         }
     }
 

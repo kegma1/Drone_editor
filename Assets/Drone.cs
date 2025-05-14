@@ -6,11 +6,13 @@ public class Drone : MonoBehaviour
     public float radius = 0.25f;
     private Renderer Renderer;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Awake()
+    {
+        Renderer = GetComponent<Renderer>();
+    }
     void Start()
     {   
         SetRadius(radius);
-        Renderer = GetComponent<Renderer>();
     }
 
     public void SetColor(Color newColor)

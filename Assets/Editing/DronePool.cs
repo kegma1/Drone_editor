@@ -12,7 +12,7 @@ public class DronePool : MonoBehaviour
     public void createPool() {
         if (dronePrefab != null && _pool == null)
         {
-            _pool = new ObjectPool<GameObject>(CreateDrone, onGetDrone, onDroneRelease, defaultCapacity: editorGraphic.MaxDones, maxSize: editorGraphic.MaxDones);
+            _pool = new ObjectPool<GameObject>(CreateDrone, onGetDrone, onDroneRelease, defaultCapacity: editorGraphic.MaxDrones, maxSize: editorGraphic.MaxDrones);
         }
     }
 
