@@ -37,6 +37,7 @@ public class InspectorManager : MonoBehaviour
 
     public Toggle FlipHorizontal;
     public Toggle FlipVertical;
+    public Toggle IsLooping;
 
     private bool isInCode = false;
 
@@ -67,12 +68,14 @@ public class InspectorManager : MonoBehaviour
         DroneRadius.text = projectLoader.ParsedProject.Global.DroneRadius.ToString();
         MaxDones.text = projectLoader.ParsedProject.Global.MaxDrones.ToString();
 
+
         FlipHorizontal.isOn = data.Graphic.FlipHorizontal;
         FlipVertical.isOn = data.Graphic.FlipVertical;
 
         editorGraphic.pointRadius = projectLoader.ParsedProject.Global.DroneRadius;
         editorGraphic.MaxDrones = projectLoader.ParsedProject.Global.MaxDrones;
         
+        IsLooping.isOn = projectLoader.ParsedProject.Global.IsLooping;
 
         editorGraphic.graphic = data.Graphic;
         editorGraphic.SetPos(data.Position[0], data.Position[1], data.Position[2]);
@@ -281,6 +284,14 @@ public class InspectorManager : MonoBehaviour
             var data = currentGraphic.animationData;
             data.Graphic.FlipVertical = FlipVertical.isOn;
             editorGraphic.graphic = data.Graphic;
+        }
+    }
+
+    public void OnChangeIsLoopingToggle(bool newValue) {
+        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
+            var data = currentGraphic.animationData;
+            projectLoader.ParsedProject.Global.IsLooping = IsLooping.isOn;
         }
     }
 

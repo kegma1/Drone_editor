@@ -8,6 +8,7 @@ public class DroneShowData {
 public class GlobalData {
     public float DroneRadius;
     public int MaxDrones;
+    public bool IsLooping;
 }
 
 [System.Serializable]

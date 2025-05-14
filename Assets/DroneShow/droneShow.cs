@@ -26,6 +26,8 @@ public class droneShow : MonoBehaviour
     public bool isShowRunning = false;
     public bool isPaused = false;
 
+    public bool IsLooping;
+
     [Range(5f, 120f)]
     public float animationInterval = 30f;
     private float animationTimer = 0f;
@@ -238,6 +240,7 @@ public class droneShow : MonoBehaviour
 
         DroneRadius = ShowData.Global.DroneRadius;
         MaxDrones = ShowData.Global.MaxDrones;
+        IsLooping = ShowData.Global.IsLooping;
         GetAnimation(ShowData.AnimationStart, transform);
     }
 

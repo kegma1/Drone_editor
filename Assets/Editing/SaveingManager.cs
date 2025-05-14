@@ -40,7 +40,7 @@ public class SaveingManager : MonoBehaviour
         if( FileBrowser.Success ) {
             string path = FileBrowser.Result[0];
 
-            string defaultJson = "{\"Global\" : {\"DroneRadius\" : 0.25, \"MaxDrones\": 1000},\"AnimationStart\" : null}";
+            string defaultJson = "{\"Global\" : {\"DroneRadius\" : 0.25, \"MaxDrones\": 1000, \"IsLooping\": false},\"AnimationStart\" : null}";
             File.WriteAllText(path, defaultJson);
 
 			OnFilesSelected( FileBrowser.Result ); 
