@@ -38,7 +38,7 @@ public class droneShow : MonoBehaviour
     {
         if (dronePrefab != null)
         {
-            _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones, maxSize: MaxDrones);
+            _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones);
         }
 
         var playerMap = inputActions.FindActionMap("Player");
@@ -183,20 +183,22 @@ public class droneShow : MonoBehaviour
 
         foreach (var Vdrone in GraphicComp.edgePoints)
         {
-            GameObject drone = activeDrones.Count > 0 ? activeDrones.Dequeue() : _pool.Get();
+            if (curretnDrones.Count < MaxDrones) {
+                GameObject drone = activeDrones.Count > 0 ? activeDrones.Dequeue() : _pool.Get();
 
-            var animComp = drone.GetComponent<AnimationPlayer>();
-            animComp.Speed = AnimationComp.Speed;
-            animComp.targetColor = Vdrone.color;
-            animComp.startPosition = drone.transform.position;
+                var animComp = drone.GetComponent<AnimationPlayer>();
+                animComp.Speed = AnimationComp.Speed;
+                animComp.targetColor = Vdrone.color;
+                animComp.startPosition = drone.transform.position;
 
-            animComp.Path = AnimationComp.GeneratePath(
-                drone.transform.position,
-                Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical)
-            );
+                animComp.Path = AnimationComp.GeneratePath(
+                    drone.transform.position,
+                    Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical)
+                );
 
-            animComp.PlayFromStart();
-            curretnDrones.Add(drone);
+                animComp.PlayFromStart();
+                curretnDrones.Add(drone);
+            }
         }
 
         foreach (var drone in activeDrones)
@@ -290,6 +292,7 @@ public class droneShow : MonoBehaviour
         graphic.FillRotation = data.Graphic.FillRotation;
         graphic.pointRadius = DroneRadius;
         graphic.bezierShader = bezierShader;
+        graphic.MaxDrones = MaxDrones;
 
         graphic.FlipHorizontal = data.Graphic.FlipHorizontal;
         graphic.FlipVertical = data.Graphic.FlipVertical;
