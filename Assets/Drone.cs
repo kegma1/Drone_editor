@@ -9,9 +9,8 @@ public class Drone : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {   
-        transform.localScale = new Vector3(radius*2, radius*2, radius*2);
+        SetRadius(radius);
         Renderer = GetComponent<Renderer>();
-        SetColor(color);
     }
 
     public void SetColor(Color newColor)
@@ -21,5 +20,10 @@ public class Drone : MonoBehaviour
             Renderer.material.SetColor("_Color", newColor);
             color = newColor;
         }
+    }
+
+    public void SetRadius(float newRadius)
+    {
+        transform.localScale = new Vector3(newRadius*2, newRadius*2, newRadius*2);
     }
 }

@@ -235,6 +235,7 @@ public class droneShow : MonoBehaviour
         DroneShowData ShowData = JsonConvert.DeserializeObject<DroneShowData>(JsonContent);
 
         DroneRadius = ShowData.Global.DroneRadius;
+        MaxDrones = ShowData.Global.MaxDrones;
         GetAnimation(ShowData.AnimationStart, transform);
     }
 

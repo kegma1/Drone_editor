@@ -7,6 +7,7 @@ public class DroneShowData {
 [System.Serializable]
 public class GlobalData {
     public float DroneRadius;
+    public int MaxDrones;
 }
 
 [System.Serializable]

@@ -1,4 +1,8 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using TMPro;
+using System;
+using SimpleFileBrowser;
 
 public class EditingControlls : MonoBehaviour
 {
@@ -18,6 +22,18 @@ public class EditingControlls : MonoBehaviour
     {
         if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
         {
+            UnlockCursor();
+            return;
+        }
+
+        var selected = EventSystem.current.currentSelectedGameObject;
+        if (selected != null && selected.GetComponent<TMP_InputField>() != null)
+        {
+            UnlockCursor();
+            return;
+        }
+
+        if (FileBrowser.IsOpen) {
             UnlockCursor();
             return;
         }

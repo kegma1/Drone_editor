@@ -10,7 +10,10 @@ public class EditorGraphic : MonoBehaviour
 
     private float Scale = 1f;
     public float pointRadius = 0.25f;
-    public GameObject dronePrefab; 
+    public int MaxDones;
+    public DronePool dronePool;
+
+    public List<GameObject> ActiveDrones;
 
     private bool Outline = true;
 
@@ -38,7 +41,7 @@ public class EditorGraphic : MonoBehaviour
 
             Fill = _graphic.Fill;
             fillSpacing = _graphic.FillSpacing;
-            fillOffset = new(_graphic.FillOffset[0], _graphic.FillOffset[0]);
+            fillOffset = new(_graphic.FillOffset[0], _graphic.FillOffset[1]);
             fillRotation = _graphic.FillRotation;
 
             FlipHorizontal = _graphic.FlipHorizontal;
@@ -46,13 +49,13 @@ public class EditorGraphic : MonoBehaviour
 
             svgContent = _graphic.Source;
 
+            dronePool.createPool();
             GeneratePointsFromPath();
         }
     }
 
     private List<VirtualDrone> edgePoints = new List<VirtualDrone>();
     private Rect sceneViewport;
-
 
     public ComputeShader bezierShader;
 
@@ -62,13 +65,16 @@ public class EditorGraphic : MonoBehaviour
 
     public void GeneratePointsFromPath() {
         edgePoints.Clear();
+        ActiveDrones.ForEach(d => dronePool.releaseDrone(d));
+        ActiveDrones.Clear();
 
         var svg = LoadSVG();
-        if (svg.Scene == null) {
+        if (svg == null || svg?.Scene == null) {
             return;
         }
-        var scene = svg.Scene;
-        sceneViewport = svg.SceneViewport;
+        var scene = svg?.Scene;
+
+        sceneViewport = (Rect)(svg?.SceneViewport);
 
         List<(BezierContour, Color)> contours = GetBezierContours(scene.Root);
 
@@ -87,6 +93,24 @@ public class EditorGraphic : MonoBehaviour
                 edgePoints.Add(drone);
             }
         }
+
+        foreach(var Vdrone in edgePoints) {
+            if (ActiveDrones.Count < MaxDones) {
+                var drone = dronePool.GetDrone();
+                var droneComp = drone.GetComponent<Drone>();
+
+                if (droneComp != null){
+                    droneComp.SetColor(Vdrone.color);
+                    droneComp.SetRadius(pointRadius);
+
+                    drone.transform.position = Vdrone.ApplyTransformation(transform, sceneViewport, Scale, FlipHorizontal, FlipVertical);
+                    
+                }
+
+                ActiveDrones.Add(drone);
+            }
+        }
+
     }
 
     public void SetPos(float? x, float? y, float? z) {
@@ -131,11 +155,14 @@ public class EditorGraphic : MonoBehaviour
         return contours;
     }
 
-    private SVGParser.SceneInfo LoadSVG()
+    private SVGParser.SceneInfo? LoadSVG()
     {
-        var svgDoc = SVGParser.ImportSVG(new StringReader(svgContent));
+        if (svgContent != null) {
+            var svgDoc = SVGParser.ImportSVG(new StringReader(svgContent));
 
-        return svgDoc;
+            return svgDoc;
+        } 
+        return null;
     }
 
     public List<VirtualDrone> GetEvenlySpacedPointsFromShape(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize) {
@@ -206,7 +233,6 @@ public class EditorGraphic : MonoBehaviour
         return points;
     }
 
-
     public static List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize)
     {
         List<VirtualDrone> evenlySpacedPoints = new();
@@ -275,13 +301,4 @@ public class EditorGraphic : MonoBehaviour
         return Vector2.Lerp(p0, p1, t);
     }
 
-    private void OnDrawGizmos()
-    {
-        foreach (var drone in edgePoints)
-        {
-            Gizmos.color = drone.color;
-
-            Gizmos.DrawSphere(drone.ApplyTransformation(transform, sceneViewport, Scale, FlipHorizontal, FlipVertical), pointRadius);
-        }
-    }
 }

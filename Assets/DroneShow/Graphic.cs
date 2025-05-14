@@ -190,7 +190,6 @@ public class DroneGraphic : MonoBehaviour
                 if (i != contour.Segments.Length - 1)
                     nextSegment = contour.Segments[i + 1];
 
-
                 float t = 0;
                 while(t <= 1) {
                     t += .1f;

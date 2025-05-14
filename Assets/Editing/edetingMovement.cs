@@ -1,4 +1,7 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using SimpleFileBrowser;
 
 public class EditingMovement : MonoBehaviour
 {
@@ -8,16 +11,8 @@ public class EditingMovement : MonoBehaviour
 
     private bool isFocused = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-
         if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
         {
             isFocused = true;
@@ -25,6 +20,17 @@ public class EditingMovement : MonoBehaviour
         } else {
             isFocused = false;
         }
+
+        if (FileBrowser.IsOpen) {
+            isFocused = true;
+        }
+
+        var selected = EventSystem.current.currentSelectedGameObject;
+        if (selected != null && selected.GetComponent<TMP_InputField>() != null)
+        {
+            isFocused = true;
+        }
+
 
         if(!isFocused) {
             float horizontal = Input.GetAxis("Horizontal");

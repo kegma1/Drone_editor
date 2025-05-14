@@ -9,7 +9,6 @@ public class InspectorManager : MonoBehaviour
 {
     public TimelineManager timelineManager;
     public ProjectLoader projectLoader;
-
     public EditorGraphic editorGraphic;
 
     public TMP_InputField PositionX;
@@ -34,6 +33,7 @@ public class InspectorManager : MonoBehaviour
     public TMP_InputField FillOffsetX;
     public TMP_InputField FillOffsetY;
     public TMP_InputField DroneRadius;
+    public TMP_InputField MaxDones;
 
     public Toggle FlipHorizontal;
     public Toggle FlipVertical;
@@ -65,11 +65,15 @@ public class InspectorManager : MonoBehaviour
         FillOffsetY.text = data.Graphic.FillOffset[1].ToString();
 
         DroneRadius.text = projectLoader.ParsedProject.Global.DroneRadius.ToString();
+        MaxDones.text = projectLoader.ParsedProject.Global.MaxDrones.ToString();
 
         FlipHorizontal.isOn = data.Graphic.FlipHorizontal;
         FlipVertical.isOn = data.Graphic.FlipVertical;
 
         editorGraphic.pointRadius = projectLoader.ParsedProject.Global.DroneRadius;
+        editorGraphic.MaxDones = projectLoader.ParsedProject.Global.MaxDrones;
+        
+
         editorGraphic.graphic = data.Graphic;
         editorGraphic.SetPos(data.Position[0], data.Position[1], data.Position[2]);
         editorGraphic.SetRot(data.Rotation[0], data.Rotation[1], data.Rotation[2]);
@@ -111,6 +115,13 @@ public class InspectorManager : MonoBehaviour
         if(projectLoader.ParsedProject != null && !isInCode) {
             projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
             editorGraphic.pointRadius = float.Parse(DroneRadius.text);
+        }
+    }
+
+    public void OnChangeMaxDrones(string newValue) {
+        if(projectLoader.ParsedProject != null && !isInCode) {
+            projectLoader.ParsedProject.Global.MaxDrones = int.Parse(MaxDones.text);
+            editorGraphic.MaxDones = projectLoader.ParsedProject.Global.MaxDrones;
         }
     }
 

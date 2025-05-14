@@ -8,6 +8,8 @@ public class TimelineManager : MonoBehaviour
 
     public GameObject addImageButton;
 
+    public ProjectLoader projectLoader;
+
     private GameObject _currentfocusedGraphic;
     public GameObject CurrentfocusedGraphic {
         get => _currentfocusedGraphic;
@@ -58,6 +60,8 @@ public class TimelineManager : MonoBehaviour
     }
 
     public void OnAddAnimation() {
+        if (projectLoader.ProjectFilePath == null || projectLoader.ParsedProject == null) return;
+
         var newPanel = Instantiate(AnimationPanelPrefab);
         var PanelManager = newPanel.GetComponentInChildren<PanelManager>();
         PanelManager.TimelineManager = this;
