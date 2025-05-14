@@ -171,6 +171,10 @@ public class EditorGraphic : MonoBehaviour
 
     public List<VirtualDrone> GetEvenlySpacedPointsFromShape(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize) {
         var points = GetPointsInViewport(sceneViewport, spacing, scale, pointSize);
+        if (points.Count > MaxDrones * 2) {
+            return new List<VirtualDrone>();
+        }
+        
         Dictionary<Vector2, VirtualDrone> drones = new();
         
         var results = new int[points.Count];
