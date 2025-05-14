@@ -13,6 +13,7 @@ public class DroneGraphic : MonoBehaviour
     public float Duration = 1f;
     [Min(0.01f)]
     public float pointRadius = 0.25f;
+    public int MaxDrones;
 
     public bool Outline = true;
     [Min(0f)]
@@ -56,7 +57,7 @@ public class DroneGraphic : MonoBehaviour
         List<VirtualDrone> possibleDrones = new();
 
         if(Outline) {
-            possibleDrones.AddRange(GetEvenlySpacedPointsFromPath(contours, OutlineSpacing, Scale, pointRadius));
+            possibleDrones.AddRange(GetEvenlySpacedPointsFromPath(contours, OutlineSpacing, Scale, pointRadius, MaxDrones));
         }
         
         if(Fill) {
@@ -103,6 +104,10 @@ public class DroneGraphic : MonoBehaviour
 
     public List<VirtualDrone> GetEvenlySpacedPointsFromShape(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize) {
         var points = GetPointsInViewport(sceneViewport, spacing, scale, pointSize);
+        if (points.Count > MaxDrones * 2) {
+            return new List<VirtualDrone>();
+        }
+        
         Dictionary<Vector2, VirtualDrone> drones = new();
         
         var results = new int[points.Count];
@@ -170,7 +175,7 @@ public class DroneGraphic : MonoBehaviour
     }
 
 
-    public static List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize)
+    public static List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize, int MaxDrones)
     {
         List<VirtualDrone> evenlySpacedPoints = new();
         float spacingWithSize = spacing + pointSize*5; //adjusting this to make it not look wonky with repulsion
@@ -206,6 +211,11 @@ public class DroneGraphic : MonoBehaviour
                         contourPoints.Add(newEvenlySpacedPoint);
                         distSinceLastPoint = overshootDist;
                         prevPoint = newEvenlySpacedPoint.pos;
+
+                        if (evenlySpacedPoints.Count + contourPoints.Count >= MaxDrones) {
+                            evenlySpacedPoints.AddRange(contourPoints);
+                            return evenlySpacedPoints;
+                        }
                     }
 
                     prevPoint = pointOnCurve;
