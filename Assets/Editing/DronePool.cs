@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -38,5 +39,10 @@ public class DronePool : MonoBehaviour
 
     public void releaseDrone(GameObject @object) {
         _pool.Release(@object);
+    }
+
+    public void removeDrone(GameObject @object) {
+        Destroy(@object);
+       _pool.Dispose();
     }
 }

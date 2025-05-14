@@ -117,6 +117,14 @@ public class EditorGraphic : MonoBehaviour
 
     }
 
+    public void CleanDrones() {
+        foreach (Transform child in transform) {
+            if (!child.gameObject.activeInHierarchy) {
+                dronePool.removeDrone(child.gameObject);
+            }
+        }
+    }
+
     public void SetPos(float? x, float? y, float? z) {
         var newPos = transform.position;
         if (x != null) newPos.x = (float)x; 

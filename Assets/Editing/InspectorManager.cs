@@ -115,6 +115,7 @@ public class InspectorManager : MonoBehaviour
         if(projectLoader.ParsedProject != null && !isInCode) {
             projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
             editorGraphic.pointRadius = float.Parse(DroneRadius.text);
+            editorGraphic.GeneratePointsFromPath();
         }
     }
 
@@ -122,6 +123,8 @@ public class InspectorManager : MonoBehaviour
         if(projectLoader.ParsedProject != null && !isInCode) {
             projectLoader.ParsedProject.Global.MaxDrones = int.Parse(MaxDones.text);
             editorGraphic.MaxDrones = projectLoader.ParsedProject.Global.MaxDrones;
+            editorGraphic.GeneratePointsFromPath(); 
+            editorGraphic.CleanDrones();
         }
     }
 
