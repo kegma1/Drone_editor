@@ -25,9 +25,8 @@ public class OrcaSimulationManager : MonoBehaviour
     }
 
     void Update()
-    {   
+    {
         bundle.orca.Schedule(Time.deltaTime);
-
     }
 
     void LateUpdate()

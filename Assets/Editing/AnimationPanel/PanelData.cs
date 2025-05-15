@@ -19,9 +19,9 @@ public class PanelData : MonoBehaviour
 
         }
     }
-
 	
-	private VectorUtils.TessellationOptions tessOptions = new VectorUtils.TessellationOptions() {
+	private VectorUtils.TessellationOptions tessOptions = new VectorUtils.TessellationOptions()
+	{
 		StepDistance = 100.0f,
 		MaxCordDeviation = 0.5f,
 		MaxTanAngleDeviation = 0.1f,

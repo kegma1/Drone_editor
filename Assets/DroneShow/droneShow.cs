@@ -244,6 +244,7 @@ public class droneShow : MonoBehaviour
                 animComp.Speed = AnimationComp.Speed;
                 animComp.targetColor = Vdrone.color;
                 animComp.startPosition = drone.transform.position;
+                animComp.droneShow = this;
 
                 animComp.Path = AnimationComp.GeneratePath(
                     drone.transform.position,

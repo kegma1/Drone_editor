@@ -27,7 +27,7 @@ public class OrcaAgent : MonoBehaviour
         if (bundle != null)
         {
             float3 pos3D = new float3(transform.position.x, transform.position.y, transform.position.z);
-            orcaAgent = bundle.NewAgent(pos3D);  
+            orcaAgent = bundle.NewAgent(pos3D);
             orcaAgent.radius = 0.4f;
             orcaAgent.maxSpeed = maxSpeed;
             orcaAgent.timeHorizon = 2.0f; //how far into the future orca predicts collisions with agents
@@ -73,6 +73,15 @@ public class OrcaAgent : MonoBehaviour
         }
         target = baseY;
         return false;
+    }
+
+    public void SetPaused(bool paused)
+    {
+        if (orcaAgent == null) return;
+
+        if (paused) orcaAgent.prefVelocity = 0f;
+        orcaAgent.navigationEnabled = !paused;
+        orcaAgent.collisionEnabled = !paused;
     }
 
 }

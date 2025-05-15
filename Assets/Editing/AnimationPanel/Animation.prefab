@@ -941,7 +941,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3286163911610860551, guid: 576b7177eb72295468182c78da468f5c, type: 3}
   m_PreserveAspect: 0
 --- !u!1 &8702931952934744218
 GameObject:

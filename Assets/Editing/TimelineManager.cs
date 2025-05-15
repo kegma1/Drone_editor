@@ -12,6 +12,8 @@ public class TimelineManager : MonoBehaviour
 
     public ErrorManager errorManager;
 
+    public GameObject Inspector;
+
     private GameObject _currentfocusedGraphic;
     public GameObject CurrentfocusedGraphic {
         get => _currentfocusedGraphic;
@@ -20,8 +22,10 @@ public class TimelineManager : MonoBehaviour
                 _currentfocusedGraphic = value;
                 if(_currentfocusedGraphic != null) {
                     var panelComp = _currentfocusedGraphic.GetComponent<PanelData>();
+                    Inspector.SetActive(true);
                     inspectorManager.setState(panelComp.animationData);
                 } else {
+                    Inspector.SetActive(false);
                     inspectorManager.setState(new());
                 }
 

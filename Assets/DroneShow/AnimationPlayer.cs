@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class AnimationPlayer : MonoBehaviour
 
     public Vector3 previousPosition;
 
+    public droneShow droneShow;
+
     void Start()
     {
         Drone = GetComponent<Drone>();
@@ -26,7 +29,17 @@ public class AnimationPlayer : MonoBehaviour
 
     void Update()
     {
-        if (!IsPlaying || currentSegment == null) return;
+        if (!IsPlaying || currentSegment == null || droneShow.IsPaused) {
+            if (orca != null) {
+                orca.SetPaused(true);
+            }
+
+            return;
+        } else {
+            if (orca != null) {
+                orca.SetPaused(false);
+            }
+        }
 
         Vector3 targetPosition = EvaluateSegment(currentSegment, T);
 
@@ -57,7 +70,17 @@ public class AnimationPlayer : MonoBehaviour
 
     void LateUpdate()
     {
-        if (!IsPlaying || currentSegment == null) return;
+        if (!IsPlaying || currentSegment == null || droneShow.IsPaused) {
+            if (orca != null) {
+                orca.SetPaused(true);
+            }
+
+            return;
+        } else {
+            if (orca != null) {
+                orca.SetPaused(false);
+            }
+        }
 
         Vector3 adjustedVelocity = orca != null
             ? new Vector3(orca.ORCAAgent.velocity.x, 0f, orca.ORCAAgent.velocity.z)

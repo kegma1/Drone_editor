@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using SimpleFileBrowser;
 
 public class InGameMenuController : MonoBehaviour
 {
     public GameObject pauseMenuPanel;
     public GameObject MainUi;
     public InputActionReference toggleMenuAction;
+    public Transform playerTransform;
 
     void OnEnable()
     {
@@ -20,9 +22,23 @@ public class InGameMenuController : MonoBehaviour
         toggleMenuAction.action.Disable();
     }
 
+    void Update()
+    {
+        if (FileBrowser.IsOpen) {
+            toggleMenuAction.action.Disable();
+        } else {
+            toggleMenuAction.action.Enable();
+        }
+    }
+
     private void OnToggleMenu(InputAction.CallbackContext context)
     {
         ToggleMenu();
+    }
+
+    public void OnGoHome()
+    {
+        playerTransform.position = new(0f, 1.8f, 0f);
     }
 
     public void ToggleMenu()
