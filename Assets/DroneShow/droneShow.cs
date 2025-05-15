@@ -26,6 +26,12 @@ public class droneShow : MonoBehaviour
     public bool isShowRunning = false;
     public bool isPaused = false;
 
+    private bool isLoopingNextCycle = false;
+    private float elapsedShowTime = 0f;
+    private int totalSceneCount = 0;
+
+
+
     public bool IsLooping;
 
     [Range(5f, 120f)]
@@ -35,6 +41,9 @@ public class droneShow : MonoBehaviour
 
     public InputActionAsset inputActions;
     private InputAction playPauseAction;
+
+    private InputAction restartAction;
+
 
     void Start()
     {
@@ -48,6 +57,10 @@ public class droneShow : MonoBehaviour
         playPauseAction.performed += OnPlayPause;
         playPauseAction.Enable();
 
+        restartAction = playerMap.FindAction("Restart");
+        restartAction.performed += OnRestart;
+        restartAction.Enable();
+
         ui.ToggleMenu();
         StartCoroutine(PickFile());
     }
@@ -59,6 +72,11 @@ public class droneShow : MonoBehaviour
             playPauseAction.performed -= OnPlayPause;
             playPauseAction.Disable();
         }
+        if (restartAction != null)
+        {
+            restartAction.performed -= OnRestart;
+            restartAction.Disable();
+        }
     }
 
     private void OnPlayPause(InputAction.CallbackContext ctx)
@@ -68,6 +86,7 @@ public class droneShow : MonoBehaviour
 
     private void ToggleShow()
     {
+
         if (!isShowRunning)
         {
             isShowRunning = true;
@@ -80,6 +99,23 @@ public class droneShow : MonoBehaviour
             isPaused = !isPaused;
         }
     }
+
+    private void OnRestart(InputAction.CallbackContext ctx)
+    {
+        RestartShow();
+    }
+
+    public void RestartShow()
+    {
+        animationTimer = 0f;
+        elapsedShowTime = 0f;
+        isPaused = false;
+        isShowRunning = true;
+        currentAnimation = null;
+        Play();
+    }
+
+
 
     public IEnumerator PickFile()
     {
@@ -113,18 +149,26 @@ public class droneShow : MonoBehaviour
 
     void Update()
     {
-
         if (isShowRunning && !isPaused)
         {
             animationTimer += Time.deltaTime;
+            elapsedShowTime += Time.deltaTime;
 
             if (animationTimer >= animationInterval)
             {
                 animationTimer = 0f;
                 Play();
             }
+
+            if (IsLooping && elapsedShowTime >= animationInterval * totalSceneCount)
+            {
+                RestartShow();
+            }
         }
     }
+
+
+
 
     private GameObject CreateDrone()
     {
@@ -222,11 +266,25 @@ public class droneShow : MonoBehaviour
             var nextAnimation = currentAnimation.transform.childCount > 0
                 ? currentAnimation.transform.GetChild(0).gameObject
                 : null;
+
             if (nextAnimation != null)
             {
                 currentAnimation = nextAnimation;
             }
+            else
+            {
+                if (IsLooping)
+                {
+                    isLoopingNextCycle = true;
+                    animationTimer = 0f;
+                }
+                else
+                {
+                    isPaused = true;
+                }
+            }
         }
+
     }
 
     void ParseShow()
@@ -238,7 +296,24 @@ public class droneShow : MonoBehaviour
         MaxDrones = ShowData.Global.MaxDrones;
         IsLooping = ShowData.Global.IsLooping;
         GetAnimation(ShowData.AnimationStart, transform);
+        totalSceneCount = CountAnimationChain(transform);
+
     }
+
+    private int CountAnimationChain(Transform parent)
+    {
+        int count = 0;
+        Transform current = parent;
+
+        while (current.childCount > 0)
+        {
+            current = current.GetChild(0);
+            count++;
+        }
+
+        return count;
+    }
+
 
     private void GetAnimation(AnimationData data, Transform parrent)
     {
