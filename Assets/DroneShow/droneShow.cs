@@ -4,7 +4,6 @@ using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Pool;
 using System.Collections.Generic;
-using System.Linq;
 using SimpleFileBrowser;
 using System.Collections;
 using TMPro;
@@ -28,7 +27,7 @@ public class droneShow : MonoBehaviour
 
     private bool isLoopingNextCycle = false;
     private float elapsedShowTime = 0f;
-    private int totalSceneCount = 0;
+    private float ShowLength = 0;
 
 
 
@@ -36,8 +35,7 @@ public class droneShow : MonoBehaviour
 
     [Range(5f, 120f)]
     public float animationInterval = 30f;
-    private float animationTimer = 0f;
-    private float t = 0f;
+    public float animationTimer = 0f;
 
     public InputActionAsset inputActions;
     private InputAction playPauseAction;
@@ -124,7 +122,6 @@ public class droneShow : MonoBehaviour
         FileBrowser.AddQuickLink("Users", "C:\\Users", null);
 
         yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.Files, false, null, null, "Select Files", "Load");
-        Debug.Log(FileBrowser.Success);
 
         if (FileBrowser.Success)
             OnFilesSelected(FileBrowser.Result);
@@ -160,7 +157,7 @@ public class droneShow : MonoBehaviour
                 Play();
             }
 
-            if (IsLooping && elapsedShowTime >= animationInterval * totalSceneCount)
+            if (IsLooping && elapsedShowTime >= ShowLength)
             {
                 RestartShow();
             }
@@ -219,6 +216,8 @@ public class droneShow : MonoBehaviour
         }
 
         if (GraphicComp == null) return;
+
+        animationInterval = GraphicComp.Duration;
 
         counter.text = GraphicComp.edgePoints.Count.ToString();
         var curretnDrones = new List<GameObject>();
@@ -296,22 +295,28 @@ public class droneShow : MonoBehaviour
         MaxDrones = ShowData.Global.MaxDrones;
         IsLooping = ShowData.Global.IsLooping;
         GetAnimation(ShowData.AnimationStart, transform);
-        totalSceneCount = CountAnimationChain(transform);
+        ShowLength = GetShowLength(transform);
 
     }
 
-    private int CountAnimationChain(Transform parent)
+    private float GetShowLength(Transform parent)
     {
-        int count = 0;
+        float length = 0;
         Transform current = parent;
 
         while (current.childCount > 0)
         {
             current = current.GetChild(0);
-            count++;
+            var currentGraphic = current.GetComponent<DroneGraphic>();
+            if (currentGraphic == null) {
+                Debug.Log("somethings wrong"); 
+                return length;
+            }
+
+            length += currentGraphic.Duration;
         }
 
-        return count;
+        return length;
     }
 
 

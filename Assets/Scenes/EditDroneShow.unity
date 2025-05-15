@@ -9125,7 +9125,7 @@ MonoBehaviour:
   MaxDones: {fileID: 175831943}
   FlipHorizontal: {fileID: 1892121971}
   FlipVertical: {fileID: 726736614}
-  IsLooping: {fileID: 0}
+  IsLooping: {fileID: 1767715918}
 --- !u!114 &1018403103
 MonoBehaviour:
   m_ObjectHideFlags: 0
