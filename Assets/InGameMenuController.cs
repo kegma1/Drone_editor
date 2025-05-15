@@ -37,4 +37,10 @@ public class InGameMenuController : MonoBehaviour
     {
         SceneManager.LoadScene("mainMenu");
     }
+
+    public void PickDiffrentShow()
+    {
+        var currenSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currenSceneName);
+    }
 }
