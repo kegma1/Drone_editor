@@ -8,7 +8,6 @@ using SimpleFileBrowser;
 using System.Collections;
 using TMPro;
 using UnityEngine.InputSystem;
-using TreeEditor;
 
 public class droneShow : MonoBehaviour
 {
@@ -319,6 +318,10 @@ public class droneShow : MonoBehaviour
             return;
         }
 
+        if (ShowData.Global == null) {
+            errorManager.DisplayError("ERROR: Malformed or unsupported json file, please try a different file", 5);
+            return;
+        }
         DroneRadius = ShowData.Global.DroneRadius;
         MaxDrones = ShowData.Global.MaxDrones;
         IsLooping = ShowData.Global.IsLooping;
