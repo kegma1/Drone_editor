@@ -23,11 +23,23 @@ public class droneShow : MonoBehaviour
     public TMP_Text counter;
 
     public bool isShowRunning = false;
-    public bool isPaused = false;
+    
+    private bool _isPaused = false;
+    public bool IsPaused {
+        get => _isPaused;
+        set {
+            _isPaused = value;
+            foreach (var indicator in playPauseIndicators) {
+                indicator.isPaused = _isPaused;
+            }
+        }
+    } 
 
     private bool isLoopingNextCycle = false;
     private float elapsedShowTime = 0f;
     private float ShowLength = 0;
+
+    public List<PlayPauseManager> playPauseIndicators;
 
 
 
@@ -88,13 +100,13 @@ public class droneShow : MonoBehaviour
         if (!isShowRunning)
         {
             isShowRunning = true;
-            isPaused = false;
+            IsPaused = false;
             animationTimer = 0f;
             Play();
         }
         else
         {
-            isPaused = !isPaused;
+            IsPaused = !IsPaused;
         }
     }
 
@@ -107,7 +119,7 @@ public class droneShow : MonoBehaviour
     {
         animationTimer = 0f;
         elapsedShowTime = 0f;
-        isPaused = false;
+        IsPaused = false;
         isShowRunning = true;
         currentAnimation = null;
         Play();
@@ -146,7 +158,7 @@ public class droneShow : MonoBehaviour
 
     void Update()
     {
-        if (isShowRunning && !isPaused)
+        if (isShowRunning && !IsPaused)
         {
             animationTimer += Time.deltaTime;
             elapsedShowTime += Time.deltaTime;
@@ -279,7 +291,7 @@ public class droneShow : MonoBehaviour
                 }
                 else
                 {
-                    isPaused = true;
+                    IsPaused = true;
                 }
             }
         }
