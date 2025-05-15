@@ -10,6 +10,8 @@ public class SaveingManager : MonoBehaviour
 
     public TimelineManager timelineManager;
 
+    public ErrorManager errorManager;
+
     public void onClickSave() {
         if (projectLoader.ProjectFilePath != null && projectLoader.ParsedProject != null) {
             var fullAnimation = timelineManager.getFullAnimation();
@@ -18,6 +20,7 @@ public class SaveingManager : MonoBehaviour
             
             var serializedProject = JsonConvert.SerializeObject(newProject);
             File.WriteAllText(projectLoader.ProjectFilePath, serializedProject);
+            errorManager.DisplayError("Saved successfully", 2);
         }
     }
 
@@ -44,6 +47,8 @@ public class SaveingManager : MonoBehaviour
             File.WriteAllText(path, defaultJson);
 
 			OnFilesSelected( FileBrowser.Result ); 
+        } else {
+            errorManager.DisplayError("ERROR: Unable to create new project", 5);
         }
     }
 
@@ -63,14 +68,16 @@ public class SaveingManager : MonoBehaviour
 
         if( FileBrowser.Success )
 			OnFilesSelected( FileBrowser.Result ); 
+        else
+            errorManager.DisplayError("ERROR: Unable to read file", 5);
     }
 
     private void OnFilesSelected( string[] filePaths ) {
-		Debug.Log(filePaths[0]);
         projectLoader.ProjectFilePath = filePaths[0];
 
         if (projectLoader.ParsedProject == null) {
-            Debug.Log("unable to parse project");
+            errorManager.DisplayError("ERROR: Malformed or unsupported json file, please try a different file", 5);
+            timelineManager.clearTimeline();
             return;
         }
 

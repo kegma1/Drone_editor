@@ -1,17 +1,28 @@
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using System;
 
 public class ProjectLoader : MonoBehaviour
 {
     private string _ProjectFilePath;
+    public ErrorManager errorManager;
 
     public string ProjectFilePath {
         set {
             _ProjectFilePath = value;
             ProjectFileContent = File.ReadAllText(_ProjectFilePath);
 
-            ParsedProject = JsonConvert.DeserializeObject<DroneShowData>(ProjectFileContent);
+            try {
+                ParsedProject = JsonConvert.DeserializeObject<DroneShowData>(ProjectFileContent);
+            } catch(Exception) {
+                errorManager.DisplayError("ERROR: Malformed or unsupported json file, please try a different file", 10);
+                _ProjectFilePath = null;
+                ParsedProject = null;
+                timelineManager.CurrentfocusedGraphic = null;
+                return;
+            }
+
             timelineManager.CurrentfocusedGraphic = null;
         }
         get => _ProjectFilePath;

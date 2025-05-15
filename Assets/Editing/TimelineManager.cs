@@ -10,6 +10,8 @@ public class TimelineManager : MonoBehaviour
 
     public ProjectLoader projectLoader;
 
+    public ErrorManager errorManager;
+
     private GameObject _currentfocusedGraphic;
     public GameObject CurrentfocusedGraphic {
         get => _currentfocusedGraphic;
@@ -60,7 +62,10 @@ public class TimelineManager : MonoBehaviour
     }
 
     public void OnAddAnimation() {
-        if (projectLoader.ProjectFilePath == null || projectLoader.ParsedProject == null) return;
+        if (projectLoader.ProjectFilePath == null || projectLoader.ParsedProject == null) {
+            errorManager.DisplayError("You Have to create/load a project", 10);
+            return;
+        }
 
         var newPanel = Instantiate(AnimationPanelPrefab);
         var PanelManager = newPanel.GetComponentInChildren<PanelManager>();

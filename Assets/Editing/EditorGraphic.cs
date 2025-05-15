@@ -7,6 +7,8 @@ using TMPro;
 
 public class EditorGraphic : MonoBehaviour
 {
+    public ErrorManager errorManager;
+
     private string svgContent;
 
     private float Scale = 1f;
@@ -72,7 +74,10 @@ public class EditorGraphic : MonoBehaviour
         ActiveDrones.Clear();
 
         var svg = LoadSVG();
-        if (svg == null || svg?.Scene == null) {
+        if (svg == null) {
+            return;
+        } else if (svg?.Scene == null) {
+            errorManager.DisplayError("ERROR: Unable to parse SVG", 5);
             return;
         }
         var scene = svg?.Scene;
@@ -87,13 +92,11 @@ public class EditorGraphic : MonoBehaviour
             possibleDrones.AddRange(GetEvenlySpacedPointsFromPath(contours, OutlineSpacing, Scale, pointRadius, MaxDrones));
         }
 
-        Debug.Log("outline done");
         
         if(Fill) {
             possibleDrones.AddRange(GetEvenlySpacedPointsFromShape(contours, fillSpacing, Scale, pointRadius));
         }
 
-        Debug.Log("fill done");
         
         foreach (var drone in possibleDrones) {
             if(!edgePoints.Any(p => Vector2.Distance(p.pos, drone.pos) < pointRadius*2)) {
@@ -185,6 +188,7 @@ public class EditorGraphic : MonoBehaviour
     public List<VirtualDrone> GetEvenlySpacedPointsFromShape(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize) {
         var points = GetPointsInViewport(sceneViewport, spacing, scale, pointSize);
         if (points.Count > MaxDrones * 2) {
+            errorManager.DisplayError("WARNING: Too many drones", 5);
             return new List<VirtualDrone>();
         }
         
@@ -254,7 +258,7 @@ public class EditorGraphic : MonoBehaviour
         return points;
     }
 
-    public static List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize, int MaxDrones)
+    public List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize, int MaxDrones)
     {
         List<VirtualDrone> evenlySpacedPoints = new();
         float spacingWithSize = spacing + pointSize*2;
@@ -293,7 +297,9 @@ public class EditorGraphic : MonoBehaviour
                         prevPoint = newEvenlySpacedPoint.pos;
 
                         if (evenlySpacedPoints.Count + contourPoints.Count >= MaxDrones) {
+                            errorManager.DisplayError("WARNING: Too many drones", 5);
                             evenlySpacedPoints.AddRange(contourPoints);
+                            
                             return evenlySpacedPoints;
                         }
                     }

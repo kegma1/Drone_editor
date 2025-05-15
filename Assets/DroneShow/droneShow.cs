@@ -8,9 +8,11 @@ using SimpleFileBrowser;
 using System.Collections;
 using TMPro;
 using UnityEngine.InputSystem;
+using TreeEditor;
 
 public class droneShow : MonoBehaviour
 {
+    public ErrorManager errorManager;
     public string SourceFilePath;
     private float DroneRadius;
     public int MaxDrones = 800;
@@ -300,8 +302,22 @@ public class droneShow : MonoBehaviour
 
     void ParseShow()
     {
-        string JsonContent = File.ReadAllText(SourceFilePath);
-        DroneShowData ShowData = JsonConvert.DeserializeObject<DroneShowData>(JsonContent);
+        string JsonContent;
+
+        try {
+            JsonContent = File.ReadAllText(SourceFilePath);
+        } catch (Exception) {
+            errorManager.DisplayError("ERROR: Unable to read file, please try a different file", 5);
+            return;
+        }
+
+        DroneShowData ShowData;
+        try {
+            ShowData = JsonConvert.DeserializeObject<DroneShowData>(JsonContent);
+        } catch (JsonException) {
+            errorManager.DisplayError("ERROR: Malformed or unsupported json file, please try a different file", 5);
+            return;
+        }
 
         DroneRadius = ShowData.Global.DroneRadius;
         MaxDrones = ShowData.Global.MaxDrones;

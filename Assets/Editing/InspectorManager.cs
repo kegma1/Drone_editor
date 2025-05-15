@@ -4,6 +4,7 @@ using SimpleFileBrowser;
 using TMPro;
 using System.Collections;
 using System.IO;
+using System;
 
 public class InspectorManager : MonoBehaviour
 {
@@ -40,6 +41,8 @@ public class InspectorManager : MonoBehaviour
     public Toggle IsLooping;
 
     private bool isInCode = false;
+
+    public ErrorManager errorManager;
 
     public void setState(AnimationData data) {
         isInCode = true;
@@ -100,6 +103,8 @@ public class InspectorManager : MonoBehaviour
 
         if( FileBrowser.Success )
 			OnFilesSelected( FileBrowser.Result ); 
+        else
+            errorManager.DisplayError("ERROR: Unable to read file", 5);
     }
 
     private void OnFilesSelected( string[] filePaths ) {
@@ -108,7 +113,12 @@ public class InspectorManager : MonoBehaviour
         if (currentGraphic) {
             var data = currentGraphic.animationData;
 
-            data.Graphic.Source = File.ReadAllText(filePaths[0]); 
+            try {
+                data.Graphic.Source = File.ReadAllText(filePaths[0]); 
+            } catch(Exception) {
+                errorManager.DisplayError("ERROR: Unable to read file", 5);
+                return;
+            }
             editorGraphic.graphic = data.Graphic;
             currentGraphic.initSVG();
         }
