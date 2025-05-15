@@ -251,7 +251,6 @@ public class InspectorManager : MonoBehaviour
     }
 
 
-
     public void OnChangeFillToggle(bool newValue) {
         if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();

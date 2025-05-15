@@ -3,7 +3,6 @@ using UnityEngine.Rendering.Universal;
 
 public class parrentToHead : MonoBehaviour
 {
-    //IglooMainCamera
     void Start()
     {
         var iglooCamera = GameObject.Find("IglooMainCamera");

@@ -40,7 +40,6 @@
                 { "name": "", "id": "look-stick", "path": "<Gamepad>/rightStick", "action": "Look" },
                 { "name": "", "id": "attack-mouse", "path": "<Mouse>/leftButton", "action": "Attack" },
                 { "name": "", "id": "attack-gamepad", "path": "<Gamepad>/buttonWest", "action": "Attack" },
-                { "name": "", "id": "jump-keyboard", "path": "<Keyboard>/space", "action": "Jump" },
                 { "name": "", "id": "jump-gamepad", "path": "<Gamepad>/buttonSouth", "action": "Jump" },
                 { "name": "", "id": "sprint-keyboard", "path": "<Keyboard>/leftShift", "action": "Sprint" },
                 { "name": "", "id": "sprint-gamepad", "path": "<Gamepad>/leftStickPress", "action": "Sprint" },
