@@ -4,23 +4,33 @@ using UnityEngine;
 public class LerpAnimation : MonoBehaviour, IAnimation
 {
     public float Speed { get; set; }
-    public Dictionary<Vector3, DronePath> Paths { get; set; } = new();
+    public Dictionary<Vector3Int, List<DronePath>> Paths { get; set; } = new();
 
-    public DronePath GeneratePath(Vector3 from, Vector3 to)
+    public DronePath GeneratePath(Vector3 from, Vector3 to, List<DronePath> existingPaths = null)
     {
-        var path = new DronePath() {
+        var path = new DronePath
+        {
             Start = from,
             ControllA = from,
             ControllB = to,
-            NextSegment = new() {
+            Waypoints = new List<Vector3> { from, to },
+            NextSegment = new DronePath
+            {
                 Start = to,
                 ControllA = null,
                 ControllB = null,
+                Waypoints = new List<Vector3> { to },
                 NextSegment = null
             }
         };
-        Paths[from] = path; 
+
+        Vector3Int key = Vector3Int.FloorToInt(from);
+
+        if (!Paths.ContainsKey(key))
+            Paths[key] = new List<DronePath>();
+
+        Paths[key].Add(path);
+
         return path;
     }
-
 }

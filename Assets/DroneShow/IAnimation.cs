@@ -1,9 +1,11 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 public interface IAnimation {
-    public float Speed { get; set; }
-    public Dictionary<Vector3, DronePath> Paths { get; set; }
+    float Speed { get; set; }
 
-    public DronePath GeneratePath(Vector3 from, Vector3 to);
+    // Change Vector3 to Vector3Int
+    Dictionary<Vector3Int, List<DronePath>> Paths { get; set; }
+
+    DronePath GeneratePath(Vector3 from, Vector3 to, List<DronePath> existingPaths);
 }

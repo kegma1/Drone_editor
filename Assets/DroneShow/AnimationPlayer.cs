@@ -1,5 +1,4 @@
 using UnityEngine;
-using Unity.Mathematics;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -12,15 +11,18 @@ public class AnimationPlayer : MonoBehaviour
     public Color targetColor;
     private Color startColor;
     public float Speed;
-    private OrcaAgent orca;
-
+    private OrcaAgent orca; 
+    public float TimeOffset = 0f;
+    private float elapsedTime = 0f;
     public Vector3 previousPosition;
+
+    private const float TargetTolerance = 0.02f;
 
     void Start()
     {
         Drone = GetComponent<Drone>();
         currentSegment = Path;
-        orca = GetComponent<OrcaAgent>();
+        orca = GetComponent<OrcaAgent>(); 
         previousPosition = transform.position;
     }
 
@@ -28,28 +30,29 @@ public class AnimationPlayer : MonoBehaviour
     {
         if (!IsPlaying || currentSegment == null) return;
 
-        Vector3 targetPosition = EvaluateSegment(currentSegment, T);
+        elapsedTime += Time.deltaTime;
 
+        if (elapsedTime < TimeOffset) return;
+
+        Vector3 targetPosition = EvaluateSmoothedPath(currentSegment, T);
         Vector3 tangent = Vector3.zero;
 
-        if (currentSegment.ControllA.HasValue && currentSegment.ControllB.HasValue)
+        if (currentSegment.SmoothedPoints != null && currentSegment.SmoothedPoints.Count > 1)
         {
-            Vector3 p0 = currentSegment.Start;
-            Vector3 p1 = currentSegment.ControllA.Value;
-            Vector3 p2 = currentSegment.ControllB.Value;
-            Vector3 p3 = currentSegment.NextSegment != null
-                ? currentSegment.NextSegment.Start
-                : BezierEvaluate(p0, p1, p2, 1f);
-
-            tangent = EvaluateCubicTangent(p0, p1, p2, p3, T).normalized;
+            int index = Mathf.FloorToInt(T * (currentSegment.SmoothedPoints.Count - 1));
+            Vector3 p0 = currentSegment.SmoothedPoints[index];
+            Vector3 p1 = currentSegment.SmoothedPoints[Mathf.Min(index + 1, currentSegment.SmoothedPoints.Count - 1)];
+            tangent = (p1 - p0).normalized;
         }
 
+ 
         Vector3 desiredVelocity = tangent * Speed;
 
-        if (orca != null)
-        {
-            orca.SetTargetHeight(targetPosition.y);
-            orca.SetPreferredVelocity(desiredVelocity);
+
+         if (orca != null)
+         {
+             orca.SetTargetHeight(targetPosition.y); 
+             orca.SetPreferredVelocity(desiredVelocity); 
         }
 
         Drone.SetColor(Color.Lerp(startColor, targetColor, T));
@@ -57,15 +60,39 @@ public class AnimationPlayer : MonoBehaviour
 
     void LateUpdate()
     {
-        if (!IsPlaying || currentSegment == null) return;
+        if (!IsPlaying || currentSegment == null || elapsedTime < TimeOffset) return;
 
-        Vector3 adjustedVelocity = orca != null
-            ? new Vector3(orca.ORCAAgent.velocity.x, 0f, orca.ORCAAgent.velocity.z)
-            : Vector3.zero;
+        Vector3 targetPosition = EvaluateSmoothedPath(currentSegment, T);
+        float distanceToGoal = Vector3.Distance(transform.position, targetPosition);
 
-        transform.position += adjustedVelocity * Time.deltaTime;
+        Vector3 tangent = Vector3.zero;
 
-        //Y-axis smoothing
+        if (currentSegment.SmoothedPoints != null && currentSegment.SmoothedPoints.Count > 1)
+        {
+            int index = Mathf.FloorToInt(T * (currentSegment.SmoothedPoints.Count - 1));
+            Vector3 p0 = currentSegment.SmoothedPoints[index];
+            Vector3 p1 = currentSegment.SmoothedPoints[Mathf.Min(index + 1, currentSegment.SmoothedPoints.Count - 1)];
+            tangent = (p1 - p0).normalized;
+        }
+
+
+        Vector3 desiredVelocity = tangent * Speed;
+
+        if (orca != null)
+        {
+            Vector3 adjustedVelocity = new Vector3(orca.ORCAAgent.velocity.x, 0f, orca.ORCAAgent.velocity.z);
+
+            targetPosition = EvaluateSmoothedPath(currentSegment, T);
+            
+            Vector3 desiredPosition = transform.position + adjustedVelocity * Time.deltaTime;
+
+            transform.position = Vector3.Lerp(transform.position, desiredPosition, 0.2f);  
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Speed * Time.deltaTime);
+        }
+
         Vector3 newPos = transform.position;
         if (orca != null && orca.GetTargetHeight(out float targetY))
         {
@@ -78,53 +105,35 @@ public class AnimationPlayer : MonoBehaviour
         transform.position = newPos;
 
 
-        float actualDistanceMoved = Vector3.Distance(transform.position, previousPosition);
-        float segmentLength = GetSegmentLength(currentSegment); 
-        float adjustedSegmentLength = Mathf.Max(segmentLength, 0.01f);
-        float incrementT = actualDistanceMoved / adjustedSegmentLength;
-
-        if (actualDistanceMoved < 0.01f)
+        if (T >= 1f && distanceToGoal < TargetTolerance)
         {
-            T += Time.deltaTime * 0.05f; 
+            transform.position = targetPosition;  
+            T = 1f;  
+            orca?.SetPreferredVelocity(Vector3.zero);  
+            IsPlaying = false;  
+        }
+        else
+        {
+            float moved = Vector3.Distance(transform.position, previousPosition);
+            float pathLength = GetSmoothedPathLength(currentSegment);
+            float deltaT = (Speed * Time.deltaTime) / Mathf.Max(pathLength, 0.01f);
+            deltaT = Mathf.Min(deltaT, 1f - T); 
+
+            T += deltaT;  
         }
 
-        T += incrementT;
+        transform.position = Vector3.Lerp(transform.position, targetPosition, Speed * Time.deltaTime);
 
-        if (T >= 1f || Vector3.Distance(transform.position, EvaluateSegment(currentSegment, 1f)) < 0.2f)
-        {
-            Vector3 targetPos = EvaluateSegment(currentSegment, 1f);
-            float distance = Vector3.Distance(transform.position, targetPos);
-
-            if (distance > 0.1f)
-            {
-                //in case orca steered agent off the curve
-                orca.SetPreferredVelocity((targetPos - transform.position).normalized * Speed);
-                return;
-            }
-
-            //transform.position = targetPos;
-
-            T = 0f;
-            currentSegment = currentSegment.NextSegment;
-            
-            if (currentSegment == null || currentSegment.NextSegment == null)
-            {
-                IsPlaying = false;
-                orca?.SetPreferredVelocity(Vector3.zero);
-                return;
-            }
-        }
-
-
-        previousPosition = transform.position;
+        previousPosition = transform.position;  
     }
 
     public void PlayFromStart()
     {
         Drone = GetComponent<Drone>();
-        if (Path != null)
+        if (Path != null && Path.SmoothedPoints != null && Path.SmoothedPoints.Count > 1)
         {
             T = 0f;
+            elapsedTime = 0f;
             currentSegment = Path;
             startColor = Drone.color;
             gameObject.SetActive(true);
@@ -133,75 +142,42 @@ public class AnimationPlayer : MonoBehaviour
         }
         else
         {
-            Debug.Log("No path was found");
+            Debug.LogWarning("No valid path or smoothed points.");
         }
     }
 
-    private static Vector3 EvaluateSegment(DronePath segment, float t)
+    private Vector3 EvaluateSmoothedPath(DronePath segment, float t)
     {
-        if (segment.ControllA.HasValue && segment.ControllB.HasValue)
-        {
-            Vector3 p0 = segment.Start;
-            Vector3 p1 = segment.ControllA.Value;
-            Vector3 p2 = segment.ControllB.Value;
-            Vector3 p3 = segment.NextSegment != null
-                ? segment.NextSegment.Start
-                : BezierEvaluate(p0, p1, p2, 1f);
+        var pts = segment.SmoothedPoints;
 
-            return EvaluateCubic(p0, p1, p2, p3, t);
-        }
+        if (pts == null || pts.Count < 4)
+            return segment.Start;
 
-        return segment.Start;
+        t = Mathf.Clamp01(t);
+        int numSegments = pts.Count - 3;
+        float totalT = t * numSegments;
+        int segIndex = Mathf.Min(Mathf.FloorToInt(totalT), numSegments - 1);
+
+        float localT = totalT - segIndex;
+
+        Vector3 p0 = pts[segIndex];
+        Vector3 p1 = pts[segIndex + 1];
+        Vector3 p2 = pts[segIndex + 2];
+        Vector3 p3 = pts[segIndex + 3];
+
+        return DronePathBuilder.CatmullRom(p0, p1, p2, p3, localT);
     }
 
-    private static Vector3 EvaluateCubicTangent(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float t)
+    private float GetSmoothedPathLength(DronePath segment)
     {
-        float u = 1f - t;
-        return
-            3f * u * u * (b - a) +
-            6f * u * t * (c - b) +
-            3f * t * t * (d - c);
-    }
+        if (segment.SmoothedPoints == null || segment.SmoothedPoints.Count < 2)
+            return 1f;
 
-    private static Vector3 BezierEvaluate(Vector3 p0, Vector3 p1, Vector3 p2, float t)
-    {
-        float u = 1f - t;
-        return u * u * p0 + 2f * u * t * p1 + t * t * p2;
-    }
+        float length = 0f;
+        var pts = segment.SmoothedPoints;
+        for (int i = 1; i < pts.Count; i++)
+            length += Vector3.Distance(pts[i - 1], pts[i]);
 
-    private static Vector3 EvaluateQuadratic(Vector3 a, Vector3 b, Vector3 c, float t)
-    {
-        Vector3 p0 = Vector3.Lerp(a, b, t);
-        Vector3 p1 = Vector3.Lerp(b, c, t);
-        return Vector3.Lerp(p0, p1, t);
-    }
-
-    private static Vector3 EvaluateCubic(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float t)
-    {
-        Vector3 p0 = EvaluateQuadratic(a, b, c, t);
-        Vector3 p1 = EvaluateQuadratic(b, c, d, t);
-        return Vector3.Lerp(p0, p1, t);
-    }
-
-    private float GetSegmentLength(DronePath segment)
-    {
-        if (segment.ControllA.HasValue && segment.ControllB.HasValue)
-        {
-            float length = 0f;
-            int steps = 20;
-            Vector3 previousPoint = segment.Start;
-
-            for (int i = 1; i <= steps; i++)
-            {
-                float t = i / (float)steps;
-                Vector3 point = EvaluateSegment(segment, t);
-                length += Vector3.Distance(previousPoint, point);
-                previousPoint = point;
-            }
-
-            return length;
-        }
-
-        return 0f;
+        return length;
     }
 }
