@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using SimpleFileBrowser;
+using UnityEngine.InputSystem;
 
 public class EditingMovement : MonoBehaviour
 {
@@ -10,6 +11,17 @@ public class EditingMovement : MonoBehaviour
     public float MovementSpeed = 100;
 
     private bool isFocused = false;
+    public InputActionReference HomeAction;
+
+    void OnEnable()
+    {
+        HomeAction.action.Enable();
+    }
+
+    void OnDisable()
+    {
+        HomeAction.action.Disable();
+    }
 
     void Update()
     {
@@ -40,7 +52,7 @@ public class EditingMovement : MonoBehaviour
 
             transform.position += moveDir * MovementSpeed * Time.deltaTime;
 
-            if(Input.GetKeyDown("h")) {
+            if(HomeAction.action.IsPressed()) {
                 transform.position = new(0f, 1.8f, 0f);
             }
         }

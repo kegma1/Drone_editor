@@ -10,12 +10,14 @@ public class FlightControl : MonoBehaviour
     public InputActionReference moveAction;
     public InputActionReference climbAction;
     public InputActionReference boostAction;
+    public InputActionReference HomeAction;
 
     void OnEnable()
     {
         moveAction.action.Enable();
         climbAction.action.Enable();
         boostAction.action.Enable();
+        HomeAction.action.Enable();
     }
 
     void OnDisable()
@@ -23,6 +25,7 @@ public class FlightControl : MonoBehaviour
         moveAction.action.Disable();
         climbAction.action.Disable();
         boostAction.action.Disable();
+        HomeAction.action.Disable();
     }
 
     void Update()
@@ -50,5 +53,10 @@ public class FlightControl : MonoBehaviour
         float speed = isBoosting ? movementSpeed * boostMultiplier : movementSpeed;
 
         transform.Translate(combinedMove * speed * Time.deltaTime, Space.Self);
+
+        if (HomeAction.action.IsPressed()) {
+            transform.position = new(0, 1.8f, 0);
+        }
+
     }
 }
