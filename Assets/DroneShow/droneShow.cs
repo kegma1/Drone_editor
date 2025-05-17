@@ -20,7 +20,8 @@ public class droneShow : MonoBehaviour
 
     private float DroneRadius;
 
-    public int MaxDrones = 1500;
+    public int MaxDrones = 800;
+    private int MaxDronesNeeded;
 
     public GameObject dronePrefab;
 
@@ -31,7 +32,7 @@ public class droneShow : MonoBehaviour
     private GameObject currentAnimation = null;
 
     private Queue<GameObject> activeDrones = new();
-    private Queue<GameObject> groundedDrones = new(); 
+    private Queue<GameObject> shadowDrones = new(); 
 
     private bool gridCreated = false;
     public InGameMenuController ui;
@@ -254,24 +255,23 @@ public class droneShow : MonoBehaviour
 
         if (!gridCreated)
         {
-            int gridSize = Mathf.CeilToInt(Mathf.Sqrt(MaxDrones));
+            int gridSize = Mathf.CeilToInt(Mathf.Sqrt(MaxDronesNeeded));
             float spacing = 5f; 
-            float offset = 5;
+            float offsetx = 50;
+            float offsetz = -100;
 
-
-            for (int i = 0; i < MaxDrones; i++)
+            for (int i = 0; i < MaxDronesNeeded; i++)
             {
                 int row = i % gridSize;
                 int col = i / gridSize;
 
-                float xOffset = row * spacing;
-                float zOffset = col * spacing + offset;
+                float xOffset = row * spacing + offsetx;
+                float zOffset = col * spacing + offsetz;
                 float yOffset = 0f;  
 
                 var currentDrone = _pool.Get();
                 currentDrone.transform.position = new Vector3(xOffset, yOffset, zOffset);
-
-                groundedDrones.Enqueue(currentDrone);
+                shadowDrones.Enqueue(currentDrone);
                 gridCreated = true;
             }
         }
@@ -280,29 +280,37 @@ public class droneShow : MonoBehaviour
         animationInterval = GraphicComp.Duration;
 
         counter.text = GraphicComp.edgePoints.Count.ToString();
-        var curretnDrones = new List<GameObject>();
-
         
 
         List<Vector3> goals = GraphicComp.edgePoints
             .Select(p => p.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical))
             .ToList();
-
-        var difference = Math.Abs(goals.Count - activeDrones.Count);
+        
+        int difference = goals.Count - activeDrones.Count; 
+        List<GameObject> newlyShadowedDrones = new();     
+        GameObject traitorDrone;  
         for (int i = 0; i < difference; i++)
         {
             if (goals.Count > activeDrones.Count)
-            {
-                var traitorDrone = groundedDrones.Dequeue();
-                activeDrones.Enqueue(traitorDrone);
+            {   
+                if (shadowDrones.Count > 0)
+                {
+                    traitorDrone = shadowDrones.Dequeue();
+                    activeDrones.Enqueue(traitorDrone);
+                }
+                else
+                {
+                    traitorDrone = _pool.Get();
+                    activeDrones.Enqueue(traitorDrone);
+                }
             }
             else
-            {   
-                var traitorDrone = activeDrones.Dequeue();
-                groundedDrones.Enqueue(traitorDrone);
+            {
+                traitorDrone = activeDrones.Dequeue();
+                newlyShadowedDrones.Add(traitorDrone); 
+                shadowDrones.Enqueue(traitorDrone);
             }
         }
-
 
 
         List<Vector3> starts = activeDrones.Select(d => d.transform.position).ToList();
@@ -316,17 +324,6 @@ public class droneShow : MonoBehaviour
   
         List<(GameObject drone, Vector3 goal, Color goalColor)> goalAssignments = GoalAssignment.AssignGoalsToDrones(activeDrones.ToList(), goals, goalColors);
 
- 
-        if (goalAssignments.Count != activeDrones.Count)
-        {
-            Debug.LogWarning($"Warning: Number of assigned goals ({goalAssignments.Count}) does not match the number of drones ({activeDrones.Count})");
-        }
-        else
-        {
-            Debug.Log($"Success: {goalAssignments.Count} goals assigned to {activeDrones.Count} drones.");
-        }
-
- 
         foreach (var (drone, goal, goalColor) in goalAssignments)
         {
             var path = DronePathBuilder.FromStartToGoal(drone.transform.position, goal);
@@ -337,39 +334,71 @@ public class droneShow : MonoBehaviour
         }
 
 
+        Vector3 viewerPosition = Vector3.zero;
+        Vector3 viewDirection = Vector3.forward;
+
+        foreach (var drone in newlyShadowedDrones) 
+        {
+            Vector3 currentPosition = drone.transform.position;
+            Vector3 shadowGoal = currentPosition + (currentPosition - viewerPosition).normalized * 5f;
+
+            var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal);
+            paths.Add(path);
+
+            var animComp = drone.GetComponent<AnimationPlayer>();
+            animComp.targetColor = Color.black;
+        }
+
+        foreach (var drone in shadowDrones)
+        {
+            if (newlyShadowedDrones.Contains(drone)) continue;
+
+            Vector3 currentPosition = drone.transform.position;
+            Vector3 directionToDrone = (currentPosition - viewerPosition).normalized;
+            float forwardDot = Vector3.Dot(directionToDrone, viewDirection);
+
+            if (forwardDot > 0f) 
+            {
+                Vector3 shadowGoal = currentPosition + directionToDrone * 30f;
+
+                var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal);
+                paths.Add(path);
+
+                var animComp = drone.GetComponent<AnimationPlayer>();
+                animComp.targetColor = Color.black;
+            }
+        }
+
+
+
         List<MotionPlan> plans;
-
-        // if (!firstAnimationPlayed)
-        // {
-        //     plans = paths.Select(path => new MotionPlan
-        //     {
-        //         Path = path,
-        //         Speed = AnimationComp.Speed,
-        //         TimeOffset = 0f
-        //     }).ToList();
-
-        //     firstAnimationPlayed = true;
-        // }
-        // else
         
         plans = DroneConstraintSolverORTools.SchedulePaths(paths, DroneRadius, AnimationComp.Speed);
         
 
+        var droneList = activeDrones.ToList();  
+        var startPositions = droneList.Select(d => d.transform.position).ToList(); 
+
         for (int i = 0; i < plans.Count; i++)
         {
-            GameObject drone = activeDrones.Count > 0 ? activeDrones.Dequeue() : _pool.Get();
-            var animComp = drone.GetComponent<AnimationPlayer>();
-        
+            GameObject drone;
 
+            if (i < droneList.Count)
+                drone = droneList[i];
+            else
+                drone = shadowDrones.Dequeue(); 
+
+            var animComp = drone.GetComponent<AnimationPlayer>();
             animComp.Speed = plans[i].Speed ?? AnimationComp.Speed;
             animComp.Path = plans[i].Path;
             animComp.TimeOffset = plans[i].TimeOffset ?? 0f;
-            animComp.startPosition = starts[i];
+            animComp.startPosition = i < startPositions.Count ? startPositions[i] : drone.transform.position;
             animComp.droneShow = this;
 
             animComp.PlayFromStart();
             currentDrones.Add(drone);
         }
+
 
         activeDrones.Clear(); 
 
@@ -438,26 +467,25 @@ public class droneShow : MonoBehaviour
         IsLooping = ShowData.Global.IsLooping;
         GetAnimation(ShowData.AnimationStart, transform);
         ShowLength = GetShowLength(transform);
+        MaxDronesNeeded = CalculateMaxDrones(ShowData.AnimationStart);
+
 
     }
 
     private int CalculateMaxDrones(AnimationData data)
     {
-        int totalEdgePoints = 0;
+        if (data == null)
+            return 0;
 
-        if (data != null)
-        {
-            DroneGraphic graphic = GetGraphic(data, new GameObject());
-            totalEdgePoints += graphic.edgePoints.Count;
+        // Count drones in this animation
+        int currentCount = GetGraphic(data, new GameObject()).edgePoints.Count;
 
-            if (data.NextAnimation != null)
-            {
-                totalEdgePoints += CalculateMaxDrones(data.NextAnimation);
-            }
-        }
+        // Recursively find max from the rest of the chain
+        int nextMax = CalculateMaxDrones(data.NextAnimation);
 
-        return totalEdgePoints;
+        return Mathf.Max(currentCount, nextMax);
     }
+
 
         private float GetShowLength(Transform parent)
     {

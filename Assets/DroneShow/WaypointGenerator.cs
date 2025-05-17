@@ -21,7 +21,7 @@ public static class WaypointGenerator
             float heightOffset = Mathf.Sin(t * Mathf.PI) * totalDistance * offsetStrength;
             float lateralOffset = Mathf.Sin(t * Mathf.PI) * totalDistance * offsetStrength * lateralCurve;
 
-            lateralOffset *= 5f; 
+            lateralOffset *= 2f; 
 
             Vector3 offset = up * heightOffset + right * lateralOffset;
             Vector3 waypoint = basePoint + offset;
