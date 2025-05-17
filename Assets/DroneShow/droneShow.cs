@@ -8,18 +8,32 @@ using SimpleFileBrowser;
 using System.Collections;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Linq;
+
 
 public class droneShow : MonoBehaviour
 {
+    private bool firstAnimationPlayed = false;
+
     public ErrorManager errorManager;
     public string SourceFilePath;
+
     private float DroneRadius;
-    public int MaxDrones = 800;
+
+    public int MaxDrones = 1500;
+
     public GameObject dronePrefab;
+
     private ObjectPool<GameObject> _pool;
+
     public ComputeShader bezierShader;
+
     private GameObject currentAnimation = null;
+
     private Queue<GameObject> activeDrones = new();
+    private Queue<GameObject> groundedDrones = new(); 
+
+    private bool gridCreated = false;
     public InGameMenuController ui;
     public TMP_Text counter;
 
@@ -56,6 +70,9 @@ public class droneShow : MonoBehaviour
     private InputAction restartAction;
 
 
+
+    private float t = 0f;
+
     void Start()
     {
         if (dronePrefab != null)
@@ -63,6 +80,7 @@ public class droneShow : MonoBehaviour
             _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones);
         }
 
+        
         var playerMap = inputActions.FindActionMap("Player");
         playPauseAction = playerMap.FindAction("PlayPause");
         playPauseAction.performed += OnPlayPause;
@@ -138,7 +156,7 @@ public class droneShow : MonoBehaviour
 
         if (FileBrowser.Success)
             OnFilesSelected(FileBrowser.Result);
-    }
+        }
 
     private void OnFilesSelected(string[] filePaths)
     {
@@ -166,7 +184,7 @@ public class droneShow : MonoBehaviour
 
             if (animationTimer >= animationInterval)
             {
-                animationTimer = 0f;
+                    animationTimer = 0f;
                 Play();
             }
 
@@ -183,7 +201,7 @@ public class droneShow : MonoBehaviour
     private GameObject CreateDrone()
     {
         var drone = Instantiate(dronePrefab);
-        drone.transform.position = Vector3.zero;
+
 
         var droneComp = drone.GetComponent<Drone>();
         if (droneComp != null)
@@ -198,7 +216,7 @@ public class droneShow : MonoBehaviour
             orca = drone.AddComponent<OrcaAgent>();
         }
 
-        orca.maxSpeed = 5f;
+        orca.maxSpeed = 15f;
         orca.heightTolerance = 1.0f;
 
         return drone;
@@ -212,7 +230,7 @@ public class droneShow : MonoBehaviour
         if (currentAnimation == null)
         {
             AnimationComp = new StartAnimation();
-            AnimationComp.Speed = 5;
+            AnimationComp.Speed = 15;
             GraphicComp = GetComponentInChildren<DroneGraphic>();
         }
         else
@@ -229,46 +247,138 @@ public class droneShow : MonoBehaviour
         }
 
         if (GraphicComp == null) return;
+        
+
+        var currentDrones = new List<GameObject>();
+        var paths = new List<DronePath>();
+
+        if (!gridCreated)
+        {
+            int gridSize = Mathf.CeilToInt(Mathf.Sqrt(MaxDrones));
+            float spacing = 5f; 
+            float offset = 5;
+
+
+            for (int i = 0; i < MaxDrones; i++)
+            {
+                int row = i % gridSize;
+                int col = i / gridSize;
+
+                float xOffset = row * spacing;
+                float zOffset = col * spacing + offset;
+                float yOffset = 0f;  
+
+                var currentDrone = _pool.Get();
+                currentDrone.transform.position = new Vector3(xOffset, yOffset, zOffset);
+
+                groundedDrones.Enqueue(currentDrone);
+                gridCreated = true;
+            }
+        }
+
 
         animationInterval = GraphicComp.Duration;
 
         counter.text = GraphicComp.edgePoints.Count.ToString();
         var curretnDrones = new List<GameObject>();
 
-        foreach (var Vdrone in GraphicComp.edgePoints)
+        
+
+        List<Vector3> goals = GraphicComp.edgePoints
+            .Select(p => p.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical))
+            .ToList();
+
+        var difference = Math.Abs(goals.Count - activeDrones.Count);
+        for (int i = 0; i < difference; i++)
         {
-            if (curretnDrones.Count < MaxDrones) {
-                GameObject drone = activeDrones.Count > 0 ? activeDrones.Dequeue() : _pool.Get();
-
-                var animComp = drone.GetComponent<AnimationPlayer>();
-                animComp.Speed = AnimationComp.Speed;
-                animComp.targetColor = Vdrone.color;
-                animComp.startPosition = drone.transform.position;
-                animComp.droneShow = this;
-
-                animComp.Path = AnimationComp.GeneratePath(
-                    drone.transform.position,
-                    Vdrone.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical)
-                );
-
-                animComp.PlayFromStart();
-                curretnDrones.Add(drone);
+            if (goals.Count > activeDrones.Count)
+            {
+                var traitorDrone = groundedDrones.Dequeue();
+                activeDrones.Enqueue(traitorDrone);
+            }
+            else
+            {   
+                var traitorDrone = activeDrones.Dequeue();
+                groundedDrones.Enqueue(traitorDrone);
             }
         }
 
-        foreach (var drone in activeDrones)
-        {
-            var animComp = drone.GetComponent<AnimationPlayer>();
-            animComp.Speed = AnimationComp.Speed;
-            animComp.targetColor = Color.black;
 
-            animComp.Path = AnimationComp.GeneratePath(drone.transform.position, animComp.startPosition);
-            _pool.Release(drone);
+
+        List<Vector3> starts = activeDrones.Select(d => d.transform.position).ToList();
+        
+
+        List<Color> goalColors = GraphicComp.edgePoints
+            .Select(p => p.color)
+            .ToList();
+
+
+  
+        List<(GameObject drone, Vector3 goal, Color goalColor)> goalAssignments = GoalAssignment.AssignGoalsToDrones(activeDrones.ToList(), goals, goalColors);
+
+ 
+        if (goalAssignments.Count != activeDrones.Count)
+        {
+            Debug.LogWarning($"Warning: Number of assigned goals ({goalAssignments.Count}) does not match the number of drones ({activeDrones.Count})");
+        }
+        else
+        {
+            Debug.Log($"Success: {goalAssignments.Count} goals assigned to {activeDrones.Count} drones.");
         }
 
-        activeDrones.Clear();
-        foreach (var drone in curretnDrones) activeDrones.Enqueue(drone);
-        curretnDrones.Clear();
+ 
+        foreach (var (drone, goal, goalColor) in goalAssignments)
+        {
+            var path = DronePathBuilder.FromStartToGoal(drone.transform.position, goal);
+            paths.Add(path);
+
+            var animComp = drone.GetComponent<AnimationPlayer>();
+            animComp.targetColor = goalColor;  
+        }
+
+
+        List<MotionPlan> plans;
+
+        // if (!firstAnimationPlayed)
+        // {
+        //     plans = paths.Select(path => new MotionPlan
+        //     {
+        //         Path = path,
+        //         Speed = AnimationComp.Speed,
+        //         TimeOffset = 0f
+        //     }).ToList();
+
+        //     firstAnimationPlayed = true;
+        // }
+        // else
+        
+        plans = DroneConstraintSolverORTools.SchedulePaths(paths, DroneRadius, AnimationComp.Speed);
+        
+
+        for (int i = 0; i < plans.Count; i++)
+        {
+            GameObject drone = activeDrones.Count > 0 ? activeDrones.Dequeue() : _pool.Get();
+            var animComp = drone.GetComponent<AnimationPlayer>();
+        
+
+            animComp.Speed = plans[i].Speed ?? AnimationComp.Speed;
+            animComp.Path = plans[i].Path;
+            animComp.TimeOffset = plans[i].TimeOffset ?? 0f;
+            animComp.startPosition = starts[i];
+            animComp.droneShow = this;
+
+            animComp.PlayFromStart();
+            currentDrones.Add(drone);
+        }
+
+        activeDrones.Clear(); 
+
+        foreach (var drone in currentDrones)
+        {
+            activeDrones.Enqueue(drone);
+        }
+
+        currentDrones.Clear(); 
 
         if (currentAnimation == null)
         {
@@ -295,8 +405,8 @@ public class droneShow : MonoBehaviour
                 {
                     IsPaused = true;
                 }
-            }
         }
+    }
 
     }
 
@@ -331,7 +441,25 @@ public class droneShow : MonoBehaviour
 
     }
 
-    private float GetShowLength(Transform parent)
+    private int CalculateMaxDrones(AnimationData data)
+    {
+        int totalEdgePoints = 0;
+
+        if (data != null)
+        {
+            DroneGraphic graphic = GetGraphic(data, new GameObject());
+            totalEdgePoints += graphic.edgePoints.Count;
+
+            if (data.NextAnimation != null)
+            {
+                totalEdgePoints += CalculateMaxDrones(data.NextAnimation);
+            }
+        }
+
+        return totalEdgePoints;
+    }
+
+        private float GetShowLength(Transform parent)
     {
         float length = 0;
         Transform current = parent;
@@ -411,4 +539,91 @@ public class droneShow : MonoBehaviour
         graphic.GeneratePointsFromPath();
         return graphic;
     }
+
+    void UpdateDrones(List<MotionPlan> plans)
+    {
+        foreach (var plan in plans)
+        {
+            var drone = activeDrones.Dequeue(); 
+            var animComp = drone.GetComponent<AnimationPlayer>();
+            animComp.Path = plan.Path;  
+            animComp.Speed = plan.Speed.Value;  
+            animComp.TimeOffset = plan.TimeOffset.Value;  
+            
+            animComp.PlayFromStart();
+        }
+    }
+
+    public class GoalAssignment
+    {
+        
+        public static List<(GameObject drone, Vector3 goal, Color goalColor)> AssignGoalsToDrones(
+            List<GameObject> drones,
+            List<Vector3> goals,
+            List<Color> goalColors)
+        {
+            List<(GameObject drone, Vector3 goal, Color goalColor)> assignments = new List<(GameObject, Vector3, Color)>();
+
+
+            if (drones == null || goals == null || goalColors == null || drones.Count == 0 || goals.Count == 0 || goalColors.Count == 0)
+            {
+                return assignments; 
+            }
+
+    
+            List<bool> goalAssigned = new List<bool>(new bool[goals.Count]);
+
+            Vector3 furthestDronePosition = Vector3.zero;
+            float maxDistance = 0;
+            int goalCount = 0;
+
+            foreach (var drone in drones)
+            {
+                if (goalCount < goals.Count)
+                {
+                    Vector3 dronePosition = drone.transform.position;
+                    float closestDistance = float.MaxValue;
+                    int closestGoalIndex = -1;
+
+                    for (int i = 0; i < goals.Count; i++)
+                    {
+                        if (goalAssigned[i]) continue; 
+
+                        float distance = Vector3.Distance(dronePosition, goals[i]);
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestGoalIndex = i;
+                        }
+                    }
+
+                    if (closestGoalIndex != -1)
+                    {
+                        goalAssigned[closestGoalIndex] = true;  
+                        goalCount++;
+                        assignments.Add((drone, goals[closestGoalIndex], goalColors[closestGoalIndex])); 
+
+                        float distanceToOrigin = dronePosition.magnitude;
+                        if (distanceToOrigin > maxDistance)
+                        {
+                            maxDistance = distanceToOrigin;
+                            furthestDronePosition = dronePosition;
+                        }
+                    }
+                }
+                else
+                {
+                    Vector3 direction = (drone.transform.position - furthestDronePosition).normalized;
+
+                    Vector3 relativePosition = drone.transform.position + direction * 3f;
+
+                    assignments.Add((drone, relativePosition, Color.black));
+                }
+            }
+
+
+            return assignments;
+        }
+    }
+
 }

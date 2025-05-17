@@ -30,7 +30,7 @@ public class OrcaAgent : MonoBehaviour
             orcaAgent = bundle.NewAgent(pos3D);
             orcaAgent.radius = 0.4f;
             orcaAgent.maxSpeed = maxSpeed;
-            orcaAgent.timeHorizon = 2.0f; //how far into the future orca predicts collisions with agents
+            orcaAgent.timeHorizon = 1f; //how far into the future orca predicts collisions with agents
             orcaAgent.height = 1.0f;
             orcaAgent.radiusObst = 1.0f;
             orcaAgent.maxNeighbors = 25;
@@ -65,7 +65,7 @@ public class OrcaAgent : MonoBehaviour
 
     public bool GetTargetHeight(out float target)
     {
-        //Maybe move the handling of the y-axis into AnimationPlayer
+
         if (_targetY.HasValue)
         {
             target = _targetY.Value;

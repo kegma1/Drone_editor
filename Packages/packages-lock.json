@@ -24,6 +24,13 @@
         "com.unity.ugui": "1.0.0"
       }
     },
+    "com.github-glitchenzo.nugetforunity": {
+      "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f8f1902ebec77284fd4ac83d043e0ef664d31831"
+    },
     "com.nebukam.common": {
       "version": "file:.com.nebukam.common@0.1.7",
       "depth": 0,
