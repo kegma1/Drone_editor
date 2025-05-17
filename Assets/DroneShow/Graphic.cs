@@ -175,7 +175,7 @@ public class DroneGraphic : MonoBehaviour
     }
 
 
-    public static List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize, int MaxDrones)
+    public List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize, int MaxDrones)
     {
         List<VirtualDrone> evenlySpacedPoints = new();
         float spacingWithSize = spacing + pointSize*5; //adjusting this to make it not look wonky with repulsion
