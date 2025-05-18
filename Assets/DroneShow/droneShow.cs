@@ -21,11 +21,15 @@ public class droneShow : MonoBehaviour
     private float DroneRadius;
 
     public int MaxDrones = 800;
+
+    private float curvatureFactor = 0;
     private int MaxDronesNeeded;
 
     public GameObject dronePrefab;
 
     private ObjectPool<GameObject> _pool;
+
+    private int MaxSolverTries = 100;
 
     public ComputeShader bezierShader;
 
@@ -191,7 +195,7 @@ public class droneShow : MonoBehaviour
                     break;
                 }
             }
-            Debug.Log($"{formationDone}");
+            
             if (formationDone)
             {
                 animationTimer += Time.deltaTime;
@@ -348,48 +352,59 @@ public class droneShow : MonoBehaviour
             animComp.targetColor = goalColor;  
         }
 
-
         Vector3 viewerPosition = Vector3.zero;
         Vector3 viewDirection = Vector3.forward;
 
-        foreach (var drone in newlyShadowedDrones) 
-        {
-            Vector3 currentPosition = drone.transform.position;
-            Vector3 shadowGoal = currentPosition + (currentPosition - viewerPosition).normalized * 5f;
 
-            var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal);
-            paths.Add(path);
-
-            var animComp = drone.GetComponent<AnimationPlayer>();
-            animComp.targetColor = Color.black;
-        }
-
-        foreach (var drone in shadowDrones)
-        {
-            if (newlyShadowedDrones.Contains(drone)) continue;
-
-            Vector3 currentPosition = drone.transform.position;
-            Vector3 directionToDrone = (currentPosition - viewerPosition).normalized;
-            float forwardDot = Vector3.Dot(directionToDrone, viewDirection);
-
-            if (forwardDot > 0f) 
+        List<MotionPlan> plans = new List<MotionPlan>();
+        int solverTries = 0;
+        while (plans.Count == 0 && solverTries < MaxSolverTries)
+        {   
+            solverTries++;
+            curvatureFactor += 4;
+            foreach (var drone in newlyShadowedDrones) 
             {
-                Vector3 shadowGoal = currentPosition + directionToDrone * 30f;
+                Vector3 currentPosition = drone.transform.position;
+                Vector3 shadowGoal = currentPosition + (currentPosition - viewerPosition).normalized * 5f;
 
-                var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal);
-                paths.Add(path);
+                var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
+                paths.Add(path); 
 
                 var animComp = drone.GetComponent<AnimationPlayer>();
                 animComp.targetColor = Color.black;
             }
+
+            foreach (var drone in shadowDrones)
+            {
+                if (newlyShadowedDrones.Contains(drone)) continue;
+
+                Vector3 currentPosition = drone.transform.position;
+                Vector3 directionToDrone = (currentPosition - viewerPosition).normalized;
+                float forwardDot = Vector3.Dot(directionToDrone, viewDirection);
+
+                if (forwardDot > 0f) 
+                {
+                    Vector3 shadowGoal = currentPosition + directionToDrone * 30f;
+
+                    var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
+                    paths.Add(path); 
+
+                    var animComp = drone.GetComponent<AnimationPlayer>();
+                    animComp.targetColor = Color.black;
+                }
+            }
+
+            plans = DroneConstraintSolverORTools.SchedulePaths(paths, DroneRadius, AnimationComp.Speed);
+            if (plans.Count == 0)
+            {
+                Debug.LogError("Failed to find a feasible solution even after calculating paths.");
+            }
+            else
+            {
+                Debug.Log("Paths successfully calculated.");
+            }
         }
 
-
-
-        List<MotionPlan> plans;
-        
-        plans = DroneConstraintSolverORTools.SchedulePaths(paths, DroneRadius, AnimationComp.Speed);
-        
 
         var droneList = activeDrones.ToList();  
         var startPositions = droneList.Select(d => d.transform.position).ToList(); 

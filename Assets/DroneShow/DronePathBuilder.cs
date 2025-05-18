@@ -96,19 +96,20 @@ public static class DronePathBuilder
         return padded;
     }
 
-    public static DronePath FromStartToGoal(Vector3 start, Vector3 goal)
-    {
-        List<Vector3> controlPoints = new() { start };
+    public static DronePath FromStartToGoal(Vector3 start, Vector3 goal, float curvatureFactor = 1.0f)
+{
+    List<Vector3> controlPoints = new() { start };
 
-        controlPoints.AddRange(WaypointGenerator.GenerateWaypointsBetween(start, goal, 20, 0.15f, 0.6f));
+    controlPoints.AddRange(WaypointGenerator.GenerateWaypointsBetween(start, goal, 20, 0.15f * curvatureFactor, 0.6f));
 
-        controlPoints.Add(goal);
+    controlPoints.Add(goal);
 
-        controlPoints = PadEndpoints(controlPoints);
-        var smoothed = GenerateCatmullRomPath(controlPoints, 40);
+    controlPoints = PadEndpoints(controlPoints);
+    var smoothed = GenerateCatmullRomPath(controlPoints, 40);
 
-        return new DronePath { Start = start, End = goal, SmoothedPoints = smoothed };
-    }
+    return new DronePath { Start = start, End = goal, SmoothedPoints = smoothed };
+}
+
 
 
 }
