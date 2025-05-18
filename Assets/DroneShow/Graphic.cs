@@ -41,6 +41,8 @@ public class DroneGraphic : MonoBehaviour
     private ComputeBuffer pointBuffer;
     private ComputeBuffer resultBuffer;
 
+    private int pointSizeMultiplier = 5;
+
 
     public void GeneratePointsFromPath() {
         edgePoints.Clear();
@@ -178,8 +180,12 @@ public class DroneGraphic : MonoBehaviour
     public List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize, int MaxDrones)
     {
         List<VirtualDrone> evenlySpacedPoints = new();
-        float spacingWithSize = spacing + pointSize*5; //adjusting this to make it not look wonky with repulsion
-
+        if (StaticDroneGraphic.Instance != null)
+        {
+            pointSizeMultiplier = StaticDroneGraphic.Instance.pointSizeMultiplier;
+        }
+        float spacingWithSize = spacing + pointSize * pointSizeMultiplier; //adjusting this to make it not look wonky with repulsion
+        
         foreach (var (contour, color) in contours) {
             List<VirtualDrone> contourPoints = new()
             {

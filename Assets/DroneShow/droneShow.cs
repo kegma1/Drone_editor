@@ -399,10 +399,6 @@ public class droneShow : MonoBehaviour
             {
                 Debug.LogError("Failed to find a feasible solution even after calculating paths.");
             }
-            else
-            {
-                Debug.Log("Paths successfully calculated.");
-            }
         }
 
 
