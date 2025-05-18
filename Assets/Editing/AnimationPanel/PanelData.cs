@@ -10,6 +10,7 @@ public class PanelData : MonoBehaviour
 	private string svgContent;
 	public Image PanelBackground;
 
+	// når animationData endrer seg så oppdaterer vi bildet i timelinen.
 	public AnimationData animationData
 	{
 		get => _animationData;
@@ -25,6 +26,7 @@ public class PanelData : MonoBehaviour
 		}
 	}
 
+	// opsjonen for teselering av svg i timelinen. dette gjør svg-en om til et sprite som unity kan vise
 	private VectorUtils.TessellationOptions tessOptions = new VectorUtils.TessellationOptions()
 	{
 		StepDistance = 100.0f,

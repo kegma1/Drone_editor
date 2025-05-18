@@ -7,7 +7,7 @@ using TMPro;
 
 public class EditorGraphic : MonoBehaviour
 {
-    public ErrorManager errorManager;
+    public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
 
     private string svgContent;
 

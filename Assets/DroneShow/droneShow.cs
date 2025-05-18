@@ -15,7 +15,7 @@ public class droneShow : MonoBehaviour
 {
     private bool firstAnimationPlayed = false;
 
-    public ErrorManager errorManager;
+    public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
     public string SourceFilePath;
 
     private float DroneRadius;

@@ -8,6 +8,7 @@ using System;
 
 public class InspectorManager : MonoBehaviour
 {
+    // håndterer all ui-en som er i inspector panelet
     public TimelineManager timelineManager;
     public ProjectLoader projectLoader;
     public EditorGraphic editorGraphic;
@@ -42,14 +43,16 @@ public class InspectorManager : MonoBehaviour
 
     private bool isInCode = false;
 
-    public ErrorManager errorManager;
+    public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
 
-    public void setState(AnimationData data) {
-        isInCode = true;
+    // oppdaterer alle tekstboksene med verdiene fra det valgte bildet.
+    public void setState(AnimationData data)
+    {
+        isInCode = true; // setter denne sann for å hindre en loop med hendelseslytter
         PositionX.text = data.Position[0].ToString();
         PositionY.text = data.Position[1].ToString();
         PositionZ.text = data.Position[2].ToString();
-        
+
         RotationX.text = data.Rotation[0].ToString();
         RotationY.text = data.Rotation[1].ToString();
         RotationZ.text = data.Rotation[2].ToString();
@@ -77,7 +80,7 @@ public class InspectorManager : MonoBehaviour
 
         editorGraphic.pointRadius = projectLoader.ParsedProject.Global.DroneRadius;
         editorGraphic.MaxDrones = projectLoader.ParsedProject.Global.MaxDrones;
-        
+
         IsLooping.isOn = projectLoader.ParsedProject.Global.IsLooping;
 
         editorGraphic.graphic = data.Graphic;
@@ -91,20 +94,22 @@ public class InspectorManager : MonoBehaviour
         StartCoroutine(PickFile());
     }
 
-    public IEnumerator PickFile() {
-        FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".svg"));
+    // lar brukeren plukke ut en svg fil
+    public IEnumerator PickFile()
+    {
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("Images", ".svg"));
 
-		FileBrowser.SetDefaultFilter( ".svg" );
+        FileBrowser.SetDefaultFilter(".svg");
 
-		FileBrowser.AddQuickLink( "Users", "C:\\Users", null );
+        FileBrowser.AddQuickLink("Users", "C:\\Users", null);
 
-        yield return FileBrowser.WaitForLoadDialog( FileBrowser.PickMode.Files, true, null, null, "Select Files", "Load" );
-        Debug.Log( FileBrowser.Success );
+        yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.Files, true, null, null, "Select Files", "Load");
+        Debug.Log(FileBrowser.Success);
 
-        if( FileBrowser.Success )
-			OnFilesSelected( FileBrowser.Result ); 
+        if (FileBrowser.Success)
+            OnFilesSelected(FileBrowser.Result);
         else
-            errorManager.DisplayError("ERROR: Unable to read file", 5);
+            errorManager.DisplayError("No file selected", 2);
     }
 
     private void OnFilesSelected( string[] filePaths ) {
@@ -124,8 +129,19 @@ public class InspectorManager : MonoBehaviour
         }
 	}
 
-    public void OnChangeDroneRadius(string newValue) {
-        if(projectLoader.ParsedProject != null && !isInCode) {
+    private void ModifyAnimationData(Action<AnimationData> modification)
+    {
+        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
+            var data = currentGraphic.animationData;
+            modification(data);
+        }
+    }
+
+    public void OnChangeDroneRadius(string newValue)
+    {
+        if (projectLoader.ParsedProject != null && !isInCode)
+        {
             projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
             editorGraphic.pointRadius = float.Parse(DroneRadius.text);
             editorGraphic.GeneratePointsFromPath();
@@ -149,10 +165,19 @@ public class InspectorManager : MonoBehaviour
             editorGraphic.SetPos(float.Parse(PositionX.text), null, null);
         }
     }
-    public void OnChangePositionY(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+
+    public void OnChangePositionX(string newValue) {
+        ModifyAnimationData(data => {
+            data.Position[0] = float.Parse(PositionX.text);
+            editorGraphic.SetPos(float.Parse(PositionX.text), null, null);
+        });
+    }
+    public void OnChangePositionY(string newValue)
+    {
+        if (timelineManager.CurrentfocusedGraphic != null && !isInCode)
+        {
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+            var data = currentGraphic.animationData;
             data.Position[1] = float.Parse(PositionY.text);
             editorGraphic.SetPos(null, float.Parse(PositionY.text), null);
         }
@@ -306,3 +331,12 @@ public class InspectorManager : MonoBehaviour
 
 
 }
+
+
+// public void OnChangeIsLoopingToggle(bool newValue) {
+//     Foo( data =>
+//     {
+//         projectLoader.ParsedProject.Global.IsLooping = IsLooping.isOn;
+//     });
+ 
+// }

@@ -35,10 +35,23 @@ public class StaticDroneGraphic : MonoBehaviour
 
     void Start()
     {
-        sceneViewport = new Rect(0, 0, 0, 100);
+        Camera cam = Camera.main;
+
+        float distance = 10f; 
+        float frustumHeight = 2f * distance * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
+        float frustumWidth = frustumHeight * cam.aspect;
+
+        Vector3 frustumCenter = cam.transform.position + cam.transform.forward * distance;
+        Vector3 bottomLeft = frustumCenter 
+                        - cam.transform.right * (frustumWidth / 2f) 
+                        - cam.transform.up * (frustumHeight / 2f);
+
+        float sceneWidth = frustumWidth * 0.8f;
+        float sceneHeight = frustumHeight * 0.5f;
+
+        sceneViewport = new Rect(bottomLeft.x, bottomLeft.y, sceneWidth, sceneHeight);
 
         LoadSVGContent();
-
         ApplyStaticTransformations();
     }
 
@@ -72,45 +85,57 @@ public class StaticDroneGraphic : MonoBehaviour
     }
 
     void ApplyStaticTransformations()
-{
-    if (droneGraphic != null)
     {
-        droneGraphic.sceneViewport = sceneViewport;
-        droneGraphic.GeneratePointsFromPath();
-
-        formationPosition = new Vector3(44, -55, 65);
-  
-        foreach (var edgePoint in droneGraphic.edgePoints)
+        if (droneGraphic != null)
         {
-            VirtualDrone virtualDrone = new VirtualDrone(edgePoint.pos, edgePoint.color);
+            droneGraphic.sceneViewport = sceneViewport;
+            droneGraphic.GeneratePointsFromPath();
+
+       
+            float xOffset = sceneViewport.width * 3f;  
+            float yOffset = sceneViewport.height * 8.5f; 
+
+         
+            formationPosition = new Vector3(
+                sceneViewport.x + sceneViewport.width * 0.7f + xOffset,  
+                sceneViewport.y + sceneViewport.height * 0.25f - yOffset, 
+                Camera.main.transform.position.z + 65f  
+            );
+
+            Debug.Log($"Formation position: {formationPosition}");
+    
+            foreach (var edgePoint in droneGraphic.edgePoints)
+            {
+                VirtualDrone virtualDrone = new VirtualDrone(edgePoint.pos, edgePoint.color);
+                    
+
+                Vector3 transformedPos = virtualDrone.ApplyTransformation(transform, sceneViewport, droneGraphic.Scale, droneGraphic.FlipHorizontal, droneGraphic.FlipVertical);
+        
+                transformedPos.z = Camera.main.transform.position.z + 5f;  
                 
 
-            Vector3 transformedPos = virtualDrone.ApplyTransformation(transform, sceneViewport, droneGraphic.Scale, droneGraphic.FlipHorizontal, droneGraphic.FlipVertical);
-       
-            transformedPos.z = Camera.main.transform.position.z + 5f;  
-            
 
-            transformedPos += formationPosition;
+                transformedPos += formationPosition;
 
-    
-            GameObject drone = CreateDrone();
-            drone.transform.position = transformedPos;
+        
+                GameObject drone = CreateDrone();
+                drone.transform.position = transformedPos;
 
-            var droneComp = drone.GetComponent<Drone>();
-            if (droneComp != null)
-            {
-                droneComp.color = edgePoint.color;
-                droneComp.radius = pointRadius;
+                var droneComp = drone.GetComponent<Drone>();
+                if (droneComp != null)
+                {
+                    droneComp.color = edgePoint.color;
+                    droneComp.radius = pointRadius;
+                }
+
+                Debug.DrawLine(Camera.main.transform.position, transformedPos, Color.red, 5f); 
             }
-
-            Debug.DrawLine(Camera.main.transform.position, transformedPos, Color.red, 5f); 
+        }
+        else
+        {
+            Debug.LogError("DroneGraphic is not initialized.");
         }
     }
-    else
-    {
-        Debug.LogError("DroneGraphic is not initialized.");
-    }
-}
 
 
     private GameObject CreateDrone()

@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class EditingMovement : MonoBehaviour
 {
+    // movemen som blir brukt i editoren
     public Transform CameraTransform;
     public GameObject pauseMenuPanel;
     public float MovementSpeed = 100;
@@ -25,18 +26,24 @@ public class EditingMovement : MonoBehaviour
 
     void Update()
     {
+        // Hvis brukeren er i pausemenyen...
         if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
         {
             isFocused = true;
             return;
-        } else {
+        }
+        else
+        {
             isFocused = false;
         }
 
-        if (FileBrowser.IsOpen) {
+        // eller i fil utforkseren skal ikke kamera bevege seg.
+        if (FileBrowser.IsOpen)
+        {
             isFocused = true;
         }
 
+        // Hvis brukeren skriver i en tekstboks burde ikke kamera bevege seg
         var selected = EventSystem.current.currentSelectedGameObject;
         if (selected != null && selected.GetComponent<TMP_InputField>() != null)
         {

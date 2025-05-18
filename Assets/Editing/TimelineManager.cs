@@ -1,7 +1,9 @@
+using Google.OrTools.Sat;
 using UnityEngine;
 
 public class TimelineManager : MonoBehaviour
 {
+    // håndterer timlinen
     public Transform TimelineContent;
     public InspectorManager inspectorManager;
     public GameObject AnimationPanelPrefab;
@@ -10,7 +12,7 @@ public class TimelineManager : MonoBehaviour
 
     public ProjectLoader projectLoader;
 
-    public ErrorManager errorManager;
+    public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
 
     public GameObject Inspector;
 
@@ -43,20 +45,29 @@ public class TimelineManager : MonoBehaviour
             }
         }
     }
-    
-    public AnimationData getFullAnimation() {
+
+    // Looper gjennom timelinen og konstruerer animasjonen
+    // siden timelinen viser objektene baklengs er den siste animasjonen på index 1 og den førster er på slutten av listen
+    // derfor setter NextAnimation til fullAnimation og så blir fullAnimation satt til NextAnimation.
+    public AnimationData getFullAnimation()
+    {
         AnimationData fullAnimation = null;
-        foreach (Transform child in TimelineContent) {
-            if(child.gameObject == addImageButton)
+        foreach (Transform child in TimelineContent)
+        {
+            // Skip addImageButton
+            if (child.gameObject == addImageButton)
                 continue;
 
             var panelComp = child.GetComponent<PanelData>();
             AnimationData childAnimation = panelComp.animationData;
-            if (fullAnimation == null) {
+            if (fullAnimation == null)
+            {
                 childAnimation.NextAnimation = null;
                 childAnimation.Type = "NoneAnimation";
                 fullAnimation = childAnimation;
-            } else {
+            }
+            else
+            {
                 childAnimation.NextAnimation = fullAnimation;
                 childAnimation.Type = "LerpAnimation";
                 fullAnimation = childAnimation;
@@ -66,28 +77,36 @@ public class TimelineManager : MonoBehaviour
         return fullAnimation;
     }    
 
-    public void clearTimeline() {
+    public void clearTimeline()
+    {
         CurrentfocusedGraphic = null;
-        foreach (Transform child in TimelineContent) {
-            if(child.gameObject == addImageButton)
+        foreach (Transform child in TimelineContent)
+        {
+            if (child.gameObject == addImageButton)
                 continue;
             else
                 Destroy(child.gameObject);
         }
     }
 
-    public void OnAddAnimation() {
-        if (projectLoader.ProjectFilePath == null || projectLoader.ParsedProject == null) {
+    // når plussknappen blir trykket blir lager vi et nytt panel og fokuserer på det
+    public void OnAddAnimation()
+    {
+        // brukeren må ha et valid prosjekt for å lage nytt bilde
+        if (projectLoader.ProjectFilePath == null || projectLoader.ParsedProject == null)
+        {
             errorManager.DisplayError("You Have to create/load a project", 10);
             return;
         }
-
+ 
         var newPanel = Instantiate(AnimationPanelPrefab);
         var PanelManager = newPanel.GetComponentInChildren<PanelManager>();
         PanelManager.TimelineManager = this;
 
 
         newPanel.transform.SetParent(TimelineContent);
+        // timelinen viser ting baklegs. dette er for å ungå å flytte rundt på ting unødvendig.
+        // plussknappen er det førse elementet så det nye bildet blir plassert på index 1.
         newPanel.transform.SetSiblingIndex(1);
 
         CurrentfocusedGraphic = newPanel;

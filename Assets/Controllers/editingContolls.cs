@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
-using System;
 using SimpleFileBrowser;
 
 public class EditingControlls : MonoBehaviour
 {
+    // mus kontrollen som blir brukt i editoren
     public float mouseSensitivity = 100f;
     public Transform playerBody;
     public GameObject pauseMenuPanel;
@@ -20,12 +20,14 @@ public class EditingControlls : MonoBehaviour
 
     void Update()
     {
+        // Muse pekeren burde være tilgjengelig i pausemenyen
         if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
         {
             UnlockCursor();
             return;
         }
 
+        // Muse pekeren burde være tilgjengelig hvis brukeren er i en tekst boks
         var selected = EventSystem.current.currentSelectedGameObject;
         if (selected != null && selected.GetComponent<TMP_InputField>() != null)
         {
@@ -33,20 +35,25 @@ public class EditingControlls : MonoBehaviour
             return;
         }
 
-        if (FileBrowser.IsOpen) {
+        // Muse pekeren burde være tilgjengelig hvis fil utforskeren er åpen
+        if (FileBrowser.IsOpen)
+        {
             UnlockCursor();
             return;
         }
 
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetMouseButtonDown(1))
+        {
             isAiming = true;
             LockCursor();
-        } else if (Input.GetMouseButtonUp(1)) {
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
             isAiming = false;
             UnlockCursor();
         }
 
-
+        // Hvis høyre museknapp er nede kan brukeren rotere kamera
         if (isAiming) {
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;

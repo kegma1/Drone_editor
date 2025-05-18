@@ -1,14 +1,14 @@
 [System.Serializable]
 public class DroneShowData {
-    public GlobalData Global;
-    public AnimationData AnimationStart;
+    public GlobalData Global = new();
+    public AnimationData AnimationStart = null;
 }
 
 [System.Serializable]
 public class GlobalData {
-    public float DroneRadius;
-    public int MaxDrones;
-    public bool IsLooping;
+    public float DroneRadius = .25f;
+    public int MaxDrones = 1000;
+    public bool IsLooping = true;
 }
 
 [System.Serializable]

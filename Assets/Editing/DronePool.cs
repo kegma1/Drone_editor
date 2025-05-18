@@ -1,11 +1,9 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
 public class DronePool : MonoBehaviour
 {
-    
+    // Denne klassen håndterer objekt poolet for droner i editoren.
     public GameObject dronePrefab; 
     private ObjectPool<GameObject> _pool;
     public EditorGraphic editorGraphic;

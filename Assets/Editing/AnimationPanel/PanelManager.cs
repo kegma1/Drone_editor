@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class PanelManager : MonoBehaviour
 {
+    // Håndterer uien som er på de individuelle panelene
     public TimelineManager TimelineManager;
 
 
@@ -20,6 +21,7 @@ public class PanelManager : MonoBehaviour
     {
         var currentIndex = transform.parent.GetSiblingIndex();
         var newIndex = currentIndex + 1;
+        // bound checking slik at bildet ikke havner utenfor listen
         if (newIndex == TimelineManager.TimelineContent.childCount) return;
 
         var sibling = TimelineManager.TimelineContent.GetChild(newIndex);
@@ -31,6 +33,7 @@ public class PanelManager : MonoBehaviour
     {
         var currentIndex = transform.parent.GetSiblingIndex();
         var newIndex = currentIndex - 1;
+        // bound checking slik at bildet ikke havner utenfor listen
         if (newIndex < 1) return;
 
         var sibling = TimelineManager.TimelineContent.GetChild(newIndex);

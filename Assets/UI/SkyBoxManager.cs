@@ -6,7 +6,7 @@ using System.IO;
 
 public class SkyBoxManager : MonoBehaviour
 {
-    public ErrorManager errorManager;
+    public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
     private Material skybox;
     
     public Texture2D OriginalSkybox;
