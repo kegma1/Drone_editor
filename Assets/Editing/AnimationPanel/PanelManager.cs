@@ -1,18 +1,23 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PanelManager : MonoBehaviour
 {
     public TimelineManager TimelineManager;
 
-    public void OnDelete() {
+
+    public void OnDelete()
+    {
         TimelineManager.CurrentfocusedGraphic = null;
         Destroy(transform.parent.gameObject);
     }
 
-    public void OnFocus() {
+    public void OnFocus()
+    {
         TimelineManager.CurrentfocusedGraphic = transform.parent.gameObject;
     }
-    public void onMoveLeft() {
+    public void onMoveLeft()
+    {
         var currentIndex = transform.parent.GetSiblingIndex();
         var newIndex = currentIndex + 1;
         if (newIndex == TimelineManager.TimelineContent.childCount) return;
@@ -22,7 +27,8 @@ public class PanelManager : MonoBehaviour
         transform.parent.SetSiblingIndex(newIndex);
     }
 
-    public void onMoveRight() {
+    public void onMoveRight()
+    {
         var currentIndex = transform.parent.GetSiblingIndex();
         var newIndex = currentIndex - 1;
         if (newIndex < 1) return;

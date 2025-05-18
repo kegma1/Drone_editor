@@ -1,4 +1,5 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: c9c7caf9eecc4012821a79dd8adc6560
 labels:
 - NuGetForUnity
@@ -69,3 +70,6 @@ PluginImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+=======
+guid: c9c7caf9eecc4012821a79dd8adc6560
+>>>>>>> 3e008bf4a7a6a55224359668d2704e427a695841

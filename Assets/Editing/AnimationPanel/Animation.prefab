@@ -691,6 +691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Icon: {fileID: 2946876623911261648}
+  PanelBackground: {fileID: 8553638504242772245}
 --- !u!1 &6433575340495427289
 GameObject:
   m_ObjectHideFlags: 0
