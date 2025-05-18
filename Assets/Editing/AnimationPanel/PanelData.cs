@@ -61,12 +61,12 @@ public class PanelData : MonoBehaviour
 	
 	public void Select()
     {
-        PanelBackground.color = new(0, 0, 0, 0.5f);
+        PanelBackground.color = new Color32(8, 65, 72, 255); 
     }
 
     public void Deselect()
     {
-        PanelBackground.color = new(1, 1, 1, 0.5f);        
+        PanelBackground.color = new Color32(12, 90, 99, 255);        
     }
 
 }

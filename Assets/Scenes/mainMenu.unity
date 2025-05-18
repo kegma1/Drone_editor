@@ -1381,81 +1381,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1158606685
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1158606686}
-  - component: {fileID: 1158606688}
-  - component: {fileID: 1158606687}
-  m_Layer: 5
-  m_Name: Image
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1158606686
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1158606685}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1893021793}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5101797, y: 0.15200001}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.1000366, y: -19.799988}
-  m_SizeDelta: {x: -122.04999, y: -106.053986}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1158606687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1158606685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -1338190883, guid: 02c17d3cd0b6eb147a4de12847258500, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1158606688
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1158606685}
-  m_CullTransparentMesh: 1
 --- !u!1 &1459152171
 GameObject:
   m_ObjectHideFlags: 0
@@ -1485,10 +1410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ac27fab910ffe44a50c75093d40573, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonColor: {r: 0.23137255, g: 0.40392157, b: 0.5647059, a: 1}
-  textColor: {r: 1, g: 1, b: 1, a: 1}
-  newUnityFont: {fileID: 12800000, guid: 7c6ee210006469f40a9da3e8c6f9fd43, type: 3}
-  newTMPFont: {fileID: 11400000, guid: e9818fa0f53e2fb4b897a89ee82bdc0d, type: 2}
 --- !u!4 &1459152173
 Transform:
   m_ObjectHideFlags: 0
@@ -1815,7 +1736,6 @@ RectTransform:
   - {fileID: 401298487}
   - {fileID: 948497879}
   - {fileID: 570979225}
-  - {fileID: 1158606686}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1867,26 +1787,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bezierShader: {fileID: 7200000, guid: 66b16cb1c14565248b4b86459b7a7097, type: 3}
   dronePrefab: {fileID: 919100528352424351, guid: 44fd5eb4f30088d4799b121a617b6458, type: 3}
-  svgFilePath: Assets/SVG/uit.svg
-  Scale: 0.03
-  Duration: 4
-  pointRadius: 0.25
-  MaxDrones: 3000
-  Outline: 1
-  OutlineSpacing: 0.5
-  Fill: 0
-  FillSpacing: 0
-  FillOffset: {x: 0, y: 0}
-  FillRotation: 1
-  FlipHorizontal: 0
-  FlipVertical: 0
-  sceneViewport:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  formationPosition: {x: 280, y: -400, z: 0}
 --- !u!4 &1912140183
 Transform:
   m_ObjectHideFlags: 0
