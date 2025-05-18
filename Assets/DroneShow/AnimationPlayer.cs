@@ -18,11 +18,12 @@ public class AnimationPlayer : MonoBehaviour
     private float elapsedTime = 0f;
     public Vector3 previousPosition;
     
-    public bool quiteDone = false;
+    public bool quiteDone;
 
     private const float TargetTolerance = 0.02f;
 
     public droneShow droneShow;
+    private Vector3 goal;
 
     void Start()
     {
@@ -149,10 +150,12 @@ public class AnimationPlayer : MonoBehaviour
         else
         {   
             //Approximately done
-            if (Vector3.Distance(transform.position, previousPosition) < 0.5f) 
+            if (Vector3.Distance(transform.position, currentSegment.End) < 1.5f) 
             {
                 quiteDone = true; 
             }
+            
+            //Debug.Log($"{Vector3.Distance(transform.position, currentSegment.End)}");
             
             float moved = Vector3.Distance(transform.position, previousPosition);
             float pathLength = GetSmoothedPathLength(currentSegment);
@@ -178,6 +181,7 @@ public class AnimationPlayer : MonoBehaviour
             startColor = Drone.color;
             gameObject.SetActive(true);
             IsPlaying = true;
+            quiteDone = false;
             previousPosition = transform.position;
         }
         else

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class DronePathBuilder
 {
+
    public static DronePath FromVectorPath(List<Vector3> rawPath, Vector3? trueFinalGoal = null)
     {
         if (rawPath == null || rawPath.Count < 2)
@@ -99,14 +100,15 @@ public static class DronePathBuilder
     {
         List<Vector3> controlPoints = new() { start };
 
-        controlPoints.AddRange(WaypointGenerator.GenerateWaypointsBetween(start, goal, 20, 0.15f, 0.6f)); 
+        controlPoints.AddRange(WaypointGenerator.GenerateWaypointsBetween(start, goal, 20, 0.15f, 0.6f));
 
         controlPoints.Add(goal);
 
-        controlPoints = PadEndpoints(controlPoints);  
-        var smoothed = GenerateCatmullRomPath(controlPoints, 40);  
+        controlPoints = PadEndpoints(controlPoints);
+        var smoothed = GenerateCatmullRomPath(controlPoints, 40);
 
         return new DronePath { Start = start, End = goal, SmoothedPoints = smoothed };
     }
+
 
 }

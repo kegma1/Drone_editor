@@ -191,7 +191,7 @@ public class droneShow : MonoBehaviour
                     break;
                 }
             }
-
+            Debug.Log($"{formationDone}");
             if (formationDone)
             {
                 animationTimer += Time.deltaTime;
