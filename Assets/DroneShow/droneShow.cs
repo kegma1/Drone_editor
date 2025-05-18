@@ -180,18 +180,33 @@ public class droneShow : MonoBehaviour
     {
         if (isShowRunning && !IsPaused)
         {
-            animationTimer += Time.deltaTime;
-            elapsedShowTime += Time.deltaTime;
-
-            if (animationTimer >= animationInterval)
+            bool formationDone = true;
+            foreach (var drone in activeDrones)
             {
-                    animationTimer = 0f;
-                Play();
+                
+                var animComp = drone.GetComponent<AnimationPlayer>();
+                if (animComp == null || !animComp.quiteDone)
+                {
+                    formationDone = false;
+                    break;
+                }
             }
 
-            if (IsLooping && elapsedShowTime >= ShowLength)
+            if (formationDone)
             {
-                RestartShow();
+                animationTimer += Time.deltaTime;
+                elapsedShowTime += Time.deltaTime;
+                
+                if (animationTimer >= animationInterval)
+                {
+                    animationTimer = 0f;
+                    Play();
+                }
+
+                if (IsLooping && elapsedShowTime >= ShowLength)
+                {
+                    RestartShow();
+                }
             }
         }
     }

@@ -17,6 +17,8 @@ public class AnimationPlayer : MonoBehaviour
     public float TimeOffset = 0f;
     private float elapsedTime = 0f;
     public Vector3 previousPosition;
+    
+    public bool quiteDone = false;
 
     private const float TargetTolerance = 0.02f;
 
@@ -145,7 +147,13 @@ public class AnimationPlayer : MonoBehaviour
             IsPlaying = false;  
         }
         else
-        {
+        {   
+            //Approximately done
+            if (Vector3.Distance(transform.position, previousPosition) < 0.5f) 
+            {
+                quiteDone = true; 
+            }
+            
             float moved = Vector3.Distance(transform.position, previousPosition);
             float pathLength = GetSmoothedPathLength(currentSegment);
             float deltaT = (Speed * Time.deltaTime) / Mathf.Max(pathLength, 0.01f);
