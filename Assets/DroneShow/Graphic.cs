@@ -65,7 +65,7 @@ public class DroneGraphic : MonoBehaviour
         }
         
         foreach (var drone in possibleDrones) {
-            if(!edgePoints.Any(p => Vector2.Distance(p.pos, drone.pos) < pointRadius*2)) {
+            if(!edgePoints.Any(p => Vector2.Distance(p.pos, drone.pos) < pointRadius*2 + 0.5)) {
                 edgePoints.Add(drone);
             }
         }
@@ -178,7 +178,7 @@ public class DroneGraphic : MonoBehaviour
     public List<VirtualDrone> GetEvenlySpacedPointsFromPath(List<(BezierContour, Color)> contours, float spacing, float scale, float pointSize, int MaxDrones)
     {
         List<VirtualDrone> evenlySpacedPoints = new();
-        float spacingWithSize = spacing + pointSize*12; //adjusting this to make it not look wonky with repulsion
+        float spacingWithSize = spacing + pointSize*5; //adjusting this to make it not look wonky with repulsion
 
         foreach (var (contour, color) in contours) {
             List<VirtualDrone> contourPoints = new()

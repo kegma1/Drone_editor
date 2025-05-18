@@ -162,9 +162,8 @@ public static class DroneConstraintSolverORTools
         }
         else
         {
-            Debug.LogError("Failed to find a feasible solution with OR-Tools.");
-
-            Debug.LogError($"Solver status: {status}");
+            //No feasable solution found
+            return new List<MotionPlan>();
         }
 
         return plans;
