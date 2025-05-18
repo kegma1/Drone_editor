@@ -129,9 +129,12 @@ public class InspectorManager : MonoBehaviour
         }
 	}
 
+    // nesten alle tekstboksene og knappene må gjøre dette.
+    //                              V- dette er hva som skal skje når en gitt tekst boks er endret
     private void ModifyAnimationData(Action<AnimationData> modification)
     {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
+        if (timelineManager.CurrentfocusedGraphic != null && !isInCode)
+        {
             var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
             var data = currentGraphic.animationData;
             modification(data);
@@ -145,9 +148,14 @@ public class InspectorManager : MonoBehaviour
         }
     }
 
+    // dette stemmer for alle men newValue er egentlig ikke new value, men en statisk verdi du kan sette i unity.
+    // derfor henter alle den nye verdien direkte fra ui-elementet sitt.
+    // På mange kjøres koden "editorGraphic.graphic = data.Graphic;". 
+    // dette oppdaterer grafikken slik at den matcher de nye verdien.
     public void OnChangeDroneRadius(string newValue)
     {
-        ModifyGlobalData(() => {
+        ModifyGlobalData(() =>
+        {
             projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
             editorGraphic.pointRadius = float.Parse(DroneRadius.text);
             editorGraphic.GeneratePointsFromPath();
