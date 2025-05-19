@@ -259,7 +259,7 @@ public class droneShow : MonoBehaviour
         var droneComp = drone.GetComponent<Drone>();
         if (droneComp != null)
         {
-            droneComp.color = Color.black;
+            // droneComp.color = Color.black;
         }
     }
 
@@ -333,8 +333,6 @@ public class droneShow : MonoBehaviour
         // de som er til overs blir puttet i skygge køen
         int difference = math.abs(goals.Count - activeDrones.Count);
         List<GameObject> newlyShadowedDrones = new();
-        Debug.Log("activeDrones before " + activeDrones.Count);
-        Debug.Log("shadowDrones before " + shadowDrones.Count);
 
         while (activeDrones.Count < goals.Count)
         {
@@ -350,9 +348,6 @@ public class droneShow : MonoBehaviour
             newlyShadowedDrones.Add(traitorDrone);
             shadowDrones.Enqueue(traitorDrone);
         }
-
-        Debug.Log("activeDrones after " + activeDrones.Count);
-        Debug.Log("shadowDrones after " + shadowDrones.Count);
 
         List<Color> goalColors = GraphicComp.edgePoints
             .Select(p => p.color)
@@ -387,10 +382,10 @@ public class droneShow : MonoBehaviour
 
                 var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
                 paths.Add(path);
-                Debug.Log("added newly shadowed drone");
 
                 var animComp = drone.GetComponent<AnimationPlayer>();
                 animComp.targetColor = Color.black;
+                animComp.targetColor.a = 0f;
             }
 
             foreach (var drone in shadowDrones)
@@ -407,10 +402,10 @@ public class droneShow : MonoBehaviour
 
                     var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
                     paths.Add(path);
-                    Debug.Log("added shadowed drone");
 
                     var animComp = drone.GetComponent<AnimationPlayer>();
                     animComp.targetColor = Color.black;
+                    animComp.targetColor.a = 0f;
                 }
             }
 
@@ -423,7 +418,6 @@ public class droneShow : MonoBehaviour
 
         var assignedDrones = goalAssignments.Select(a => a.drone).ToList();
         var startPositions = assignedDrones.Select(d => d.transform.position).ToList();
-        Debug.Log(plans.Count);
 
         var usedThisFrame = new HashSet<GameObject>(assignedDrones.Concat(newlyShadowedDrones).Concat(shadowDrones));
 
