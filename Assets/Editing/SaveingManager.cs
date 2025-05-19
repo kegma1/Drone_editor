@@ -6,18 +6,24 @@ using Newtonsoft.Json;
 
 public class SaveingManager : MonoBehaviour
 {
+    // håndterer funksjonaliteten for saving, lasting og laging av nytt prosjekt
     public ProjectLoader projectLoader;
 
     public TimelineManager timelineManager;
 
-    public ErrorManager errorManager;
+    public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
 
     public void onClickSave() {
-        if (projectLoader.ProjectFilePath != null && projectLoader.ParsedProject != null) {
+        // Hvis vi har et valid prosjekt lastet så lagerer vi prosjektet
+        if (projectLoader.ProjectFilePath != null && projectLoader.ParsedProject != null)
+        {
+            // hent ut alle animasjonene og bildene i form av et tre
             var fullAnimation = timelineManager.getFullAnimation();
+            // hent alle globale verdier
             var newProject = projectLoader.ParsedProject;
             newProject.AnimationStart = fullAnimation;
-            
+
+            // serialiser prosjektet og skriv det til angitt fil 
             var serializedProject = JsonConvert.SerializeObject(newProject);
             File.WriteAllText(projectLoader.ProjectFilePath, serializedProject);
             errorManager.DisplayError("Saved successfully", 2);
@@ -43,7 +49,8 @@ public class SaveingManager : MonoBehaviour
         if( FileBrowser.Success ) {
             string path = FileBrowser.Result[0];
 
-            string defaultJson = "{\"Global\" : {\"DroneRadius\" : 0.25, \"MaxDrones\": 1000, \"IsLooping\": false},\"AnimationStart\" : null}";
+            // Lag et tumt prosjekt 
+            string defaultJson = JsonConvert.SerializeObject(new DroneShowData());
             File.WriteAllText(path, defaultJson);
 
 			OnFilesSelected( FileBrowser.Result ); 

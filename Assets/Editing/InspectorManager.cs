@@ -8,6 +8,7 @@ using System;
 
 public class InspectorManager : MonoBehaviour
 {
+    // håndterer all ui-en som er i inspector panelet
     public TimelineManager timelineManager;
     public ProjectLoader projectLoader;
     public EditorGraphic editorGraphic;
@@ -42,14 +43,16 @@ public class InspectorManager : MonoBehaviour
 
     private bool isInCode = false;
 
-    public ErrorManager errorManager;
+    public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
 
-    public void setState(AnimationData data) {
-        isInCode = true;
+    // oppdaterer alle tekstboksene med verdiene fra det valgte bildet.
+    public void setState(AnimationData data)
+    {
+        isInCode = true; // setter denne sann for å hindre en loop med hendelseslytter
         PositionX.text = data.Position[0].ToString();
         PositionY.text = data.Position[1].ToString();
         PositionZ.text = data.Position[2].ToString();
-        
+
         RotationX.text = data.Rotation[0].ToString();
         RotationY.text = data.Rotation[1].ToString();
         RotationZ.text = data.Rotation[2].ToString();
@@ -77,7 +80,7 @@ public class InspectorManager : MonoBehaviour
 
         editorGraphic.pointRadius = projectLoader.ParsedProject.Global.DroneRadius;
         editorGraphic.MaxDrones = projectLoader.ParsedProject.Global.MaxDrones;
-        
+
         IsLooping.isOn = projectLoader.ParsedProject.Global.IsLooping;
 
         editorGraphic.graphic = data.Graphic;
@@ -91,20 +94,22 @@ public class InspectorManager : MonoBehaviour
         StartCoroutine(PickFile());
     }
 
-    public IEnumerator PickFile() {
-        FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".svg"));
+    // lar brukeren plukke ut en svg fil
+    public IEnumerator PickFile()
+    {
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("Images", ".svg"));
 
-		FileBrowser.SetDefaultFilter( ".svg" );
+        FileBrowser.SetDefaultFilter(".svg");
 
-		FileBrowser.AddQuickLink( "Users", "C:\\Users", null );
+        FileBrowser.AddQuickLink("Users", "C:\\Users", null);
 
-        yield return FileBrowser.WaitForLoadDialog( FileBrowser.PickMode.Files, true, null, null, "Select Files", "Load" );
-        Debug.Log( FileBrowser.Success );
+        yield return FileBrowser.WaitForLoadDialog(FileBrowser.PickMode.Files, true, null, null, "Select Files", "Load");
+        Debug.Log(FileBrowser.Success);
 
-        if( FileBrowser.Success )
-			OnFilesSelected( FileBrowser.Result ); 
+        if (FileBrowser.Success)
+            OnFilesSelected(FileBrowser.Result);
         else
-            errorManager.DisplayError("ERROR: Unable to read file", 5);
+            errorManager.DisplayError("No file selected", 2);
     }
 
     private void OnFilesSelected( string[] filePaths ) {
@@ -124,185 +129,174 @@ public class InspectorManager : MonoBehaviour
         }
 	}
 
-    public void OnChangeDroneRadius(string newValue) {
-        if(projectLoader.ParsedProject != null && !isInCode) {
-            projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
-            editorGraphic.pointRadius = float.Parse(DroneRadius.text);
-            editorGraphic.GeneratePointsFromPath();
+    // nesten alle tekstboksene og knappene må gjøre dette.
+    //                              V- dette er hva som skal skje når en gitt tekst boks er endret
+    private void ModifyAnimationData(Action<AnimationData> modification)
+    {
+        if (timelineManager.CurrentfocusedGraphic != null && !isInCode)
+        {
+            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
+            var data = currentGraphic.animationData;
+            modification(data);
         }
     }
 
-    public void OnChangeMaxDrones(string newValue) {
+    private void ModifyGlobalData(Action modification)
+    {
         if(projectLoader.ParsedProject != null && !isInCode) {
+            modification();
+        }
+    }
+
+    // dette stemmer for alle men newValue er egentlig ikke new value, men en statisk verdi du kan sette i unity.
+    // derfor henter alle den nye verdien direkte fra ui-elementet sitt.
+    // På mange kjøres koden "editorGraphic.graphic = data.Graphic;". 
+    // dette oppdaterer grafikken slik at den matcher de nye verdien.
+    public void OnChangeDroneRadius(string newValue)
+    {
+        ModifyGlobalData(() =>
+        {
+            projectLoader.ParsedProject.Global.DroneRadius = float.Parse(DroneRadius.text);
+            editorGraphic.pointRadius = float.Parse(DroneRadius.text);
+            editorGraphic.GeneratePointsFromPath();
+        });
+    }
+
+    public void OnChangeMaxDrones(string newValue) {
+        ModifyGlobalData(() => {
             projectLoader.ParsedProject.Global.MaxDrones = int.Parse(MaxDones.text);
             editorGraphic.MaxDrones = projectLoader.ParsedProject.Global.MaxDrones;
             editorGraphic.GeneratePointsFromPath(); 
             editorGraphic.CleanDrones();
-        }
+        });
+    }
+    
+    public void OnChangeIsLoopingToggle(bool newValue) {
+        ModifyGlobalData(() => {
+            projectLoader.ParsedProject.Global.IsLooping = IsLooping.isOn;
+        });
     }
 
-    public void OnChangePositionX(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+    public void OnChangePositionX(string newValue)
+    {
+        ModifyAnimationData(data =>
+        {
             data.Position[0] = float.Parse(PositionX.text);
             editorGraphic.SetPos(float.Parse(PositionX.text), null, null);
-        }
+        });
     }
-    public void OnChangePositionY(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+    public void OnChangePositionY(string newValue)
+    {
+        ModifyAnimationData(data => {
             data.Position[1] = float.Parse(PositionY.text);
             editorGraphic.SetPos(null, float.Parse(PositionY.text), null);
-        }
+        });
     }
     public void OnChangePositionZ(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Position[2] = float.Parse(PositionZ.text);
             editorGraphic.SetPos(null, null, float.Parse(PositionZ.text));
-        }
+        });
     }
     
     public void OnChangeRotationX(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Rotation[0] = float.Parse(RotationX.text);
             editorGraphic.SetRot(float.Parse(RotationX.text), null, null);
-        }
+        });
     }
     public void OnChangeRotationY(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Rotation[1] = float.Parse(RotationY.text);
             editorGraphic.SetRot(null, float.Parse(RotationY.text), null);
-        }
+        });
     }
     public void OnChangeRotationZ(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Rotation[2] = float.Parse(RotationZ.text);
             editorGraphic.SetRot(null, null, float.Parse(RotationZ.text));
-        }
+        });
     }
 
     public void OnChangeScale(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
+        ModifyAnimationData(data => {
             data.Graphic.Scale = float.Parse(Scale.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
 
     public void OnChangeDuration(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
+        ModifyAnimationData(data => {
             data.Graphic.Duration = float.Parse(Duration.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
 
     public void OnChangeSpeed(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
+        ModifyAnimationData(data => {
             data.Speed = float.Parse(Speed.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
 
     public void OnChangeOutlineSpacing(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Graphic.OutlineSpacing = float.Parse(OutlineSpacing.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
     public void OnChangeFillSpacing(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Graphic.FillSpacing = float.Parse(FillSpacing.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
     public void OnChangeFillRotation(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Graphic.FillRotation = float.Parse(FillRotation.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
 
     public void OnChangeFillOffsetX(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Graphic.FillOffset[0] = float.Parse(FillOffsetX.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
     public void OnChangeFillOffsetY(string newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;  
+        ModifyAnimationData(data => {  
             data.Graphic.FillOffset[1] = float.Parse(FillOffsetY.text);
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
 
 
     public void OnChangeFillToggle(bool newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
+        ModifyAnimationData(data => {
             data.Graphic.Fill = FillToggle.isOn;
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
     public void OnChangeOutlineToggle(bool newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
+        ModifyAnimationData(data => {
             data.Graphic.Outline = OutlineToggle.isOn;
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
 
     public void OnChangeFlipHorizontalToggle(bool newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
+        ModifyAnimationData(data => {
             data.Graphic.FlipHorizontal = FlipHorizontal.isOn;
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
 
     public void OnChangeFlipVerticalToggle(bool newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
+        ModifyAnimationData(data => {
             data.Graphic.FlipVertical = FlipVertical.isOn;
             editorGraphic.graphic = data.Graphic;
-        }
+        });
     }
-
-    public void OnChangeIsLoopingToggle(bool newValue) {
-        if(timelineManager.CurrentfocusedGraphic != null && !isInCode) {
-            var currentGraphic = timelineManager.CurrentfocusedGraphic.GetComponent<PanelData>();
-            var data = currentGraphic.animationData;
-            projectLoader.ParsedProject.Global.IsLooping = IsLooping.isOn;
-        }
-    }
-
 
 }
