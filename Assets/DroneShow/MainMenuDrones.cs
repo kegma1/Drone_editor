@@ -106,7 +106,6 @@ public class StaticDroneGraphic : MonoBehaviour
                 Camera.main.transform.position.z + 65f  
             );
 
-            Debug.Log($"Formation position: {formationPosition}");
     
             foreach (var edgePoint in droneGraphic.edgePoints)
             {
@@ -133,10 +132,8 @@ public class StaticDroneGraphic : MonoBehaviour
                 }
 
                 Debug.DrawLine(Camera.main.transform.position, transformedPos, Color.red, 5f); 
-<<<<<<< HEAD
+
                 pointSizeMultiplier = 5;
-=======
->>>>>>> origin
             }
         }
         else
