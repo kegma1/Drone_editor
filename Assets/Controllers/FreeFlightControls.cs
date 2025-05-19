@@ -1,3 +1,4 @@
+using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,6 +32,11 @@ public class FlightControl : MonoBehaviour
 
     void Update()
     {
+        if (FileBrowser.IsOpen)
+        {
+            return;
+        }
+
         Vector2 controllerMove = moveAction.action.ReadValue<Vector2>();
         float controllerClimb = climbAction.action.ReadValue<float>();
         bool isControllerBoosting = boostAction.action.IsPressed();

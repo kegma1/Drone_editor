@@ -34,7 +34,7 @@ bool EdgeIntersectsRay(float2 a, float2 b, float2 testPoint)
     if ((a.y > testPoint.y) == (b.y > testPoint.y)) return false; 
     // sjekker hvor på x aksen den eventuelt krysser
     float xIntersection = a.x + (b.x - a.x) * (testPoint.y - a.y) / (b.y - a.y);
-    // hvis den krysser x aksen på høyre side bettyr det at den krysset formen
+    // hvis den krysser x aksen på høyre side betyr det at den krysset formen
     return xIntersection > testPoint.x; 
 }
 
