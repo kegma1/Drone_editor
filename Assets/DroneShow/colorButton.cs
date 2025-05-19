@@ -150,10 +150,18 @@ public class UIChangesAcrossScenes : MonoBehaviour
             if (processedElements.Contains(go))
                 continue;
 
-            if (go.GetComponent<Button>() != null || go.GetComponent<InputField>() != null || go.GetComponent<TMP_InputField>() != null)
+            if (go.GetComponent<Button>() != null || 
+                go.GetComponent<InputField>() != null || 
+                go.GetComponent<TMP_InputField>() != null)
                 continue;
 
-            if (go.name.ToLower().Contains("file") || go.transform.parent?.name.ToLower().Contains("file") == true)
+            string name = go.name.ToLower();
+            string parentName = go.transform.parent != null ? go.transform.parent.name.ToLower() : "";
+
+            if (name.Contains("sky") || parentName.Contains("sky"))
+                continue;
+
+            if (name.Contains("file") || parentName.Contains("file"))
                 img.color = fileItemColor;
             else
                 img.color = panelColor;
@@ -161,6 +169,7 @@ public class UIChangesAcrossScenes : MonoBehaviour
             processedElements.Add(go);
         }
     }
+
 
     void ChangeInputFields()
     {
