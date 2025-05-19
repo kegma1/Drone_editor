@@ -13,7 +13,13 @@ float2 scale;
 // Løser en bezier kurn. bruker denne fordi det ikke er en lerp funksjon i hlsl som jeg fant
 float2 BezierPoint(float2 p0, float2 p1, float2 p2, float2 p3, float t)
 {
+    // u blir brukt for å gjøre neste linje litt mer kompakt
     float u = 1.0 - t;
+    // dette er den vanlige formelen for en Kubisk Bézier kurv 
+    // B(t) = (1 - t)^3 * p0
+    //      + 3 * (1 - t)^2 * t * p1
+    //      + 3 * (1 - t) * t^2 * p2
+    //      + t^3 * p3
     return u * u * u * p0 +
            3.0 * u * u * t * p1 +
            3.0 * u * t * t * p2 +
@@ -21,22 +27,27 @@ float2 BezierPoint(float2 p0, float2 p1, float2 p2, float2 p3, float t)
 }
 
 // sjekker om en punkt ligger på kanten av fromen
+// dette gjør den ved å skyte en ray høyre fra testPoint
 bool EdgeIntersectsRay(float2 a, float2 b, float2 testPoint)
 {
+    // sjekker at a og b er på forskjellige sider, hvis de ikke er er det umulig at punktene testPoint ligger linjen som a og b lager
     if ((a.y > testPoint.y) == (b.y > testPoint.y)) return false; 
+    // sjekker hvor på x aksen den eventuelt krysser
     float xIntersection = a.x + (b.x - a.x) * (testPoint.y - a.y) / (b.y - a.y);
+    // hvis den krysser x aksen på høyre side bettyr det at den krysset formen
     return xIntersection > testPoint.x; 
 }
 
 [numthreads(256, 1, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
+    // noen ganger må vi dispatche flere threads en det er punkt.
     if (id.x >= points.Length) return; 
 
     float2 testPoint = points[id.x]; 
     int crossings = 0;
 
-    
+    // loop gjennom alle segmentene og test tell hvor mange ganger en ray krysser formen
     for (int i = 0; i < bezierSegments.Length - 1; i++) 
     {
         BezierSegment seg = bezierSegments[i];
@@ -65,6 +76,6 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         }
     }
 
-    
+    // sett testpunktet til 1 hvis det er i formen og 0 hvis den er utenfor
     results[id.x] = (crossings % 2 == 1) ? 1 : 0;
 }

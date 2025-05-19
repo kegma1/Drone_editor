@@ -1,9 +1,5 @@
 using UnityEngine;
 using System;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using System.Data.Common;
-
 public class AnimationPlayer : MonoBehaviour
 {
     public DronePath Path;

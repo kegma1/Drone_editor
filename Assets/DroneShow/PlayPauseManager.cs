@@ -8,12 +8,17 @@ public class PlayPauseManager : MonoBehaviour
     private bool _isPaused;
     public bool isPaused {
         get => _isPaused;
-        set {
+        // endrer hvilket ikon som er synelig
+        set
+        {
             _isPaused = value;
-            if(_isPaused) {
+            if (_isPaused)
+            {
                 playIcon.SetActive(true);
                 pauseIcon.SetActive(false);
-            } else {
+            }
+            else
+            {
                 playIcon.SetActive(false);
                 pauseIcon.SetActive(true);
             }

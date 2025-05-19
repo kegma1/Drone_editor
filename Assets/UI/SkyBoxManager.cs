@@ -49,21 +49,28 @@ public class SkyBoxManager : MonoBehaviour
 
         var backgroundFilePath = result[0];
 
-        try {
+        // hvis vi har bilde dataen gjør vi den til en tekstur og oppdaterer teksturen til skybokesn og oppdaterer envoirmentet
+        try
+        {
             byte[] backgroundData = File.ReadAllBytes(backgroundFilePath);
             var texture = new Texture2D(1, 1);
-            
-            if (texture.LoadImage(backgroundData)) {
+
+            if (texture.LoadImage(backgroundData))
+            {
                 texture.wrapMode = TextureWrapMode.Repeat;
 
                 skybox.SetTexture("_MainTex", texture);
                 RenderSettings.skybox = skybox;
 
                 DynamicGI.UpdateEnvironment();
-            } else {
+            }
+            else
+            {
                 errorManager.DisplayError("ERROR: Unable to load background", 5);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             errorManager.DisplayError("Error: " + e.Message, 5);
         }
     }

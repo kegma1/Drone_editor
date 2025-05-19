@@ -4,8 +4,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEngine.UI;
-using Unity.VisualScripting;
 
 public class EditorGraphic : MonoBehaviour
 {
@@ -267,7 +265,7 @@ public class EditorGraphic : MonoBehaviour
             int threadGroups = Mathf.CeilToInt(points.Count / 256f);
             bezierShader.Dispatch(kernelHandle, threadGroups, 1, 1);
 
-            // henter ut resultatet og 
+            // henter ut resultatet
             resultBuffer.GetData(results);
 
             // filterer ut alle punkter som ikke er i formen, en virituell drone for de som er.
@@ -399,6 +397,4 @@ public class EditorGraphic : MonoBehaviour
         Vector2 p1 = Vector2.Lerp(b, c, t);
         return Vector2.Lerp(p0, p1, t);
     }
-
-
 }

@@ -5,6 +5,7 @@ public class parrentToHead : MonoBehaviour
 {
     void Start()
     {
+        // setter igloo kamera som forelderen til Igloo ui-en
         var iglooCamera = GameObject.Find("IglooMainCamera");
         var camera = iglooCamera.GetComponent<Camera>();
         Debug.Log(camera);

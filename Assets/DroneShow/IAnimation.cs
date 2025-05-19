@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public interface IAnimation {
+public interface IAnimation
+{
     float Speed { get; set; }
 
     // Change Vector3 to Vector3Int

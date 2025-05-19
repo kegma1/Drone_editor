@@ -13,6 +13,7 @@ using System.Linq;
 
 public class droneShow : MonoBehaviour
 {
+    // denne klassen styrer og håndterer alle dronene samt alle bildene og animasjonene for å se et droneshow
     private bool firstAnimationPlayed = false;
 
     public ErrorManager errorManager; // Referanse til objekt brukt for å vise feilmeldinger til brukeren
@@ -48,6 +49,7 @@ public class droneShow : MonoBehaviour
     public bool IsPaused {
         get => _isPaused;
         set {
+            // det er flere en en indikator som viser om vi har pauset
             _isPaused = value;
             foreach (var indicator in playPauseIndicators) {
                 indicator.isPaused = _isPaused;
@@ -81,12 +83,13 @@ public class droneShow : MonoBehaviour
 
     void Start()
     {
+        // vi skaper drone poolet som brukes nå vi viser droner
         if (dronePrefab != null)
         {
             _pool = new ObjectPool<GameObject>(CreateDrone, null, onDroneRelease, defaultCapacity: MaxDrones);
         }
 
-        
+        // finn og aktiver inputActions for pause og restart 
         var playerMap = inputActions.FindActionMap("Player");
         playPauseAction = playerMap.FindAction("PlayPause");
         playPauseAction.performed += OnPlayPause;
@@ -96,6 +99,7 @@ public class droneShow : MonoBehaviour
         restartAction.performed += OnRestart;
         restartAction.Enable();
 
+        // skru pause menyen på og tving brukeren til å velge et droneshow
         ui.ToggleMenu();
         StartCoroutine(PickFile());
     }
@@ -140,6 +144,7 @@ public class droneShow : MonoBehaviour
         RestartShow();
     }
 
+    // reset nødvendige variabler og start på nytt
     public void RestartShow()
     {
         animationTimer = 0f;
@@ -185,12 +190,13 @@ public class droneShow : MonoBehaviour
     {
         if (isShowRunning && !IsPaused)
         {
-            
+            // når alle dronene er på plass så teller vi opp animasjons timerene
             if (dronesCompleted >= activeDrones.Count)
             {
                 animationTimer += Time.deltaTime;
                 elapsedShowTime += Time.deltaTime;
-                
+
+                // vi går videre til neste bilde i showet
                 if (animationTimer >= animationInterval)
                 {
                     dronesCompleted = 0;
@@ -198,6 +204,7 @@ public class droneShow : MonoBehaviour
                     Play();
                 }
 
+                // hvis vi showet skal loope og vi er på slutten av showet så restarter vi
                 if (IsLooping && elapsedShowTime >= ShowLength)
                 {
                     RestartShow();
@@ -233,6 +240,7 @@ public class droneShow : MonoBehaviour
         return drone;
     }
 
+    // starter neste animasjon
     void Play()
     {
         IAnimation AnimationComp;
@@ -453,8 +461,8 @@ public class droneShow : MonoBehaviour
                 {
                     IsPaused = true;
                 }
+            }
         }
-    }
 
     }
 
@@ -469,6 +477,7 @@ public class droneShow : MonoBehaviour
             return;
         }
 
+        // prøver å parse droneshowet og returnerer hvis den ikke kan parses
         DroneShowData ShowData;
         try {
             ShowData = JsonConvert.DeserializeObject<DroneShowData>(JsonContent);
@@ -477,14 +486,18 @@ public class droneShow : MonoBehaviour
             return;
         }
 
+        // hvis droneshowert ikke har rett struktur så returnerer vi
         if (ShowData.Global == null) {
             errorManager.DisplayError("ERROR: Malformed or unsupported json file, please try a different file", 5);
             return;
         }
+
+        // setter globale variabler
         DroneRadius = ShowData.Global.DroneRadius;
         MaxDrones = ShowData.Global.MaxDrones;
         IsLooping = ShowData.Global.IsLooping;
         GetAnimation(ShowData.AnimationStart, transform);
+        // regner ut lenged på showet og antall droner som er nødvendig
         ShowLength = GetShowLength(transform);
         MaxDronesNeeded = CalculateMaxDrones(ShowData.AnimationStart);
 
@@ -505,8 +518,8 @@ public class droneShow : MonoBehaviour
         return Mathf.Max(currentCount, nextMax);
     }
 
-
-        private float GetShowLength(Transform parent)
+    // summerer opp dration for alle bilder
+    private float GetShowLength(Transform parent)
     {
         float length = 0;
         Transform current = parent;
@@ -526,7 +539,7 @@ public class droneShow : MonoBehaviour
         return length;
     }
 
-
+    // recursively skaper alle animasjons komponentene
     private void GetAnimation(AnimationData data, Transform parrent)
     {
         GameObject animtionObject = new();
@@ -564,6 +577,7 @@ public class droneShow : MonoBehaviour
         }
     }
 
+    // skaper en grafikk komponenet og ber den lage regne ut alle posisjonene
     private DroneGraphic GetGraphic(AnimationData data, GameObject parrent)
     {
         DroneGraphic graphic = parrent.AddComponent<DroneGraphic>();

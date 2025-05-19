@@ -1,3 +1,4 @@
+// denne filen og disse klassene definerer hvordan prosjekt fil formatert er byggd opp. setter også standard verdier
 [System.Serializable]
 public class DroneShowData {
     public GlobalData Global = new();

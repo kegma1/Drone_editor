@@ -20,26 +20,37 @@ public class ErrorManager : MonoBehaviour
     }
 
     void Update()
-    {
-        if (isDisplaying) {
+    {   
+        // hvis vi har errorer i køen viser vi dem til det er tumt
+        if (isDisplaying)
+        {
             panel.SetActive(true);
-            if (t >= DisplayTime && ErrorQueue.Count > 0) {
+            if (t >= DisplayTime && ErrorQueue.Count > 0)
+            {
                 currentError = ErrorQueue.Dequeue();
                 t = 0f;
                 DisplayText.text = currentError.Item1;
                 DisplayTime = currentError.Item2;
 
-            } else if (t >= DisplayTime && ErrorQueue.Count == 0) {
+            }
+            else if (t >= DisplayTime && ErrorQueue.Count == 0)
+            {
                 isDisplaying = false;
-            } else {
+            }
+            else
+            {
                 t += .01f;
             }
-        } else {
+        }
+        else
+        {
             panel.SetActive(false);
         }
     }
 
-    public void DisplayError(string message, float time) {
+    // legger til den nye erroren i køen
+    public void DisplayError(string message, float time)
+    {
         ErrorQueue.Enqueue((message, time));
         isDisplaying = true;
     }
