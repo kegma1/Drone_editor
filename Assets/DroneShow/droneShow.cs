@@ -313,33 +313,59 @@ public class droneShow : MonoBehaviour
         // de som er til overs blir puttet i skygge køen
         int difference = math.abs(goals.Count - activeDrones.Count); 
         List<GameObject> newlyShadowedDrones = new();     
-        GameObject traitorDrone;  
-        for (int i = 0; i < difference; i++)
+        // GameObject traitorDrone;
+        Debug.Log("activeDrones before " + activeDrones.Count);
+        Debug.Log("shadowDrones before " + shadowDrones.Count);
+
+        // for (int i = 0; i < difference; i++)
+        // {
+        //     if (goals.Count > activeDrones.Count)
+        //     {
+        //         if (shadowDrones.Count > 0)
+        //         {
+        //             traitorDrone = shadowDrones.Dequeue();
+        //             activeDrones.Enqueue(traitorDrone);
+        //         }
+        //         else
+        //         {
+        //             traitorDrone = _pool.Get();
+        //             activeDrones.Enqueue(traitorDrone);
+        //         }
+        //     }
+        //     else
+        //     {
+        //         traitorDrone = activeDrones.Dequeue();
+        //         newlyShadowedDrones.Add(traitorDrone);
+        //         shadowDrones.Enqueue(traitorDrone);
+        //     }
+        // }
+
+        while (activeDrones.Count < goals.Count)
         {
-            if (goals.Count > activeDrones.Count)
+            GameObject drone = null;
+
+            if (shadowDrones.Count > 0)
             {
-                if (shadowDrones.Count > 0)
-                {
-                    traitorDrone = shadowDrones.Dequeue();
-                    activeDrones.Enqueue(traitorDrone);
-                }
-                else
-                {
-                    traitorDrone = _pool.Get();
-                    activeDrones.Enqueue(traitorDrone);
-                }
+                drone = shadowDrones.Dequeue();
             }
             else
             {
-                traitorDrone = activeDrones.Dequeue();
-                newlyShadowedDrones.Add(traitorDrone);
-                shadowDrones.Enqueue(traitorDrone);
+                drone = _pool.Get();
             }
+
+            activeDrones.Enqueue(drone);
         }
 
-        // start posisjoner og farger for hver drone
-        List<Vector3> starts = activeDrones.Select(d => d.transform.position).ToList();
+        while (activeDrones.Count > goals.Count)
+        {
+            var traitorDrone = activeDrones.Dequeue();
+            newlyShadowedDrones.Add(traitorDrone);
+            shadowDrones.Enqueue(traitorDrone);
+        }
         
+        Debug.Log("activeDrones after " + activeDrones.Count);
+        Debug.Log("shadowDrones after " + shadowDrones.Count);
+       
 
         List<Color> goalColors = GraphicComp.edgePoints
             .Select(p => p.color)
@@ -370,9 +396,6 @@ public class droneShow : MonoBehaviour
             solverTries++;
             curvatureFactor += 4;
 
-            Debug.Log($"newlyShadowedDrones count: {newlyShadowedDrones.Count}");
-            Debug.Log($"shadowDrones count: {shadowDrones.Count}");
-
             foreach (var drone in newlyShadowedDrones)
             {
                 Vector3 currentPosition = drone.transform.position;
@@ -380,10 +403,11 @@ public class droneShow : MonoBehaviour
 
                 var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
                 paths.Add(path);
+                Debug.Log("added newly shadowed drone");
 
                 var animComp = drone.GetComponent<AnimationPlayer>();
                 animComp.targetColor = Color.black;
-                animComp.targetColor.a = 0f;
+                // animComp.targetColor.a = 0f;
             }
 
             foreach (var drone in shadowDrones)
@@ -396,14 +420,16 @@ public class droneShow : MonoBehaviour
 
                 if (forwardDot > 0f)
                 {
-                    Vector3 shadowGoal = currentPosition + directionToDrone * 30f;
+                    Vector3 shadowGoal = currentPosition + directionToDrone * 5f;
 
                     var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
+                    
                     paths.Add(path);
+                    Debug.Log("added shadowed drone");
 
                     var animComp = drone.GetComponent<AnimationPlayer>();
                     animComp.targetColor = Color.black;
-                    animComp.targetColor.a = 0f;
+                    // animComp.targetColor.a = 0f;
                 }
             }
 
@@ -414,18 +440,23 @@ public class droneShow : MonoBehaviour
             }
         }
 
-
         var droneList = activeDrones.ToList();  
-        var startPositions = droneList.Select(d => d.transform.position).ToList(); 
-
+        var startPositions = droneList.Select(d => d.transform.position).ToList();
+        Debug.Log(plans.Count);
         for (int i = 0; i < plans.Count; i++)
         {
             GameObject drone;
 
             if (i < droneList.Count)
+            {
                 drone = droneList[i];
+            }
             else
-                drone = shadowDrones.Dequeue(); 
+            {
+                drone = shadowDrones.Dequeue();
+                shadowDrones.Enqueue(drone);
+            }
+
 
             var animComp = drone.GetComponent<AnimationPlayer>();
             animComp.Speed = plans[i].Speed ?? AnimationComp.Speed;
@@ -437,16 +468,14 @@ public class droneShow : MonoBehaviour
 
 
             animComp.PlayFromStart();
-            currentDrones.Add(drone);
         }
 
+        // activeDrones.Clear(); 
 
-        activeDrones.Clear(); 
-
-        foreach (var drone in currentDrones)
-        {
-            activeDrones.Enqueue(drone);
-        }
+        // foreach (var drone in currentDrones)
+        // {
+        //     activeDrones.Enqueue(drone);
+        // }
 
         currentDrones.Clear(); 
 
@@ -705,11 +734,6 @@ public class droneShow : MonoBehaviour
     {
         dronesCompleted++;
         anim.OnDone -= OnDroneDone; 
-
-        if (dronesCompleted >= activeDrones.Count)
-        {
-            Debug.Log($"{dronesCompleted}");
-        }
     }
 
 
