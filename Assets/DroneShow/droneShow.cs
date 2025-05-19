@@ -245,7 +245,8 @@ public class droneShow : MonoBehaviour
     {
         IAnimation AnimationComp;
         DroneGraphic GraphicComp = null;
-
+        
+        // hvis ingen animasjoner er aktiv, lager vi en start animasjon. denne representerer fra bakken til første bilde
         if (currentAnimation == null)
         {
             AnimationComp = new StartAnimation();
@@ -265,16 +266,18 @@ public class droneShow : MonoBehaviour
             }
         }
 
+        // return tidlig hvis vi ikke fant noen grafikk
         if (GraphicComp == null) return;
         
 
         var currentDrones = new List<GameObject>();
         var paths = new List<DronePath>();
 
+        // opprett rutenett og plasser dronene der hvis dronene de ikke finnes
         if (!gridCreated)
         {
             int gridSize = Mathf.CeilToInt(Mathf.Sqrt(MaxDronesNeeded));
-            float spacing = 5f; 
+            float spacing = 5f;
             float offsetx = 50;
             float offsetz = -100;
 
@@ -285,7 +288,7 @@ public class droneShow : MonoBehaviour
 
                 float xOffset = row * spacing + offsetx;
                 float zOffset = col * spacing + offsetz;
-                float yOffset = 0f;  
+                float yOffset = 0f;
 
                 var currentDrone = _pool.Get();
                 currentDrone.transform.position = new Vector3(xOffset, yOffset, zOffset);
@@ -294,16 +297,18 @@ public class droneShow : MonoBehaviour
             }
         }
 
-
+        // sett lengen tid bilde skal være aktiv før vi går videre til netse
         animationInterval = GraphicComp.Duration;
 
         counter.text = GraphicComp.edgePoints.Count.ToString();
         
-
+        // regn ut målposisjonene bassert på punktene i grafikken
         List<Vector3> goals = GraphicComp.edgePoints
             .Select(p => p.ApplyTransformation(GraphicComp.transform, GraphicComp.sceneViewport, GraphicComp.Scale, GraphicComp.FlipHorizontal, GraphicComp.FlipVertical))
             .ToList();
-        
+
+        // juster antall aktive droner slik at de matcher antall mål
+        // de som er til overs blir puttet i skygge køen
         int difference = goals.Count - activeDrones.Count; 
         List<GameObject> newlyShadowedDrones = new();     
         GameObject traitorDrone;  
@@ -330,7 +335,7 @@ public class droneShow : MonoBehaviour
             }
         }
 
-
+        // start posisjoner og farger for hver drone
         List<Vector3> starts = activeDrones.Select(d => d.transform.position).ToList();
         
 
