@@ -9,7 +9,8 @@ public class UIChangesAcrossScenes : MonoBehaviour
     private Color buttonColor = new Color32(0x13, 0x5D, 0x66, 0xFF);
     private Color panelColor = new Color32(27, 127, 139, 115);
     private Color fileItemColor = new Color32(100, 220, 230, 255);
-    private Color inputFieldColor = new Color32(10, 60, 66, 255);
+    private Color inputFieldColor = new Color32(140, 210, 220, 255);
+
     private Color checkboxColor = new Color32(10, 60, 66, 255);
     private Color checkmarkColor = Color.white;
     private Color textColor = Color.white;
@@ -185,12 +186,18 @@ public class UIChangesAcrossScenes : MonoBehaviour
             if (bg != null)
                 bg.color = inputFieldColor;
 
-            input.textComponent.color = textColor;
-            if (newTMPFont != null)
+            if (input.textComponent != null)
             {
-                float originalSize = input.textComponent.fontSize;
-                input.textComponent.font = newTMPFont;
-                input.textComponent.fontSize = Mathf.Max(1, originalSize - 2);
+                input.textComponent.color = Color.black;
+                if (newTMPFont != null)
+                    input.textComponent.font = newTMPFont;
+            }
+
+            if (input.placeholder is TMP_Text placeholderText)
+            {
+                placeholderText.color = new Color(0f, 0f, 0f, 0.5f);
+                if (newTMPFont != null)
+                    placeholderText.font = newTMPFont;
             }
 
             processedElements.Add(go);
@@ -208,21 +215,24 @@ public class UIChangesAcrossScenes : MonoBehaviour
             if (bg != null)
                 bg.color = inputFieldColor;
 
-            Text text = input.textComponent;
-            if (text != null)
+            if (input.textComponent != null)
             {
-                text.color = textColor;
+                input.textComponent.color = Color.black;
                 if (newUnityFont != null)
-                {
-                    int originalSize = text.fontSize;
-                    text.font = newUnityFont;
-                    text.fontSize = Mathf.Max(1, originalSize - 2);
-                }
+                    input.textComponent.font = newUnityFont;
+            }
+
+            if (input.placeholder is Text legacyPlaceholder)
+            {
+                legacyPlaceholder.color = new Color(0f, 0f, 0f, 0.5f);
+                if (newUnityFont != null)
+                    legacyPlaceholder.font = newUnityFont;
             }
 
             processedElements.Add(go);
         }
     }
+
 
     void ChangeToggles()
     {
