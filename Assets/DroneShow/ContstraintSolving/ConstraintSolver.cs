@@ -7,7 +7,7 @@ public static class DroneConstraintSolverORTools
 {
     public static List<MotionPlan> SchedulePaths(List<DronePath> paths, float droneRadius, float maxSpeed, float minSeparationTime = 0.5f)
     {
-        Debug.Log("Solver is running...");
+
         var solver = new CpModel();
 
         int numDrones = paths.Count;
