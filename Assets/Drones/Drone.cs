@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Drone : MonoBehaviour
 {   
+    // Håndterer fargen og stærrelsen til drone modellen
     public Color color = Color.white;
     public float radius = 0.25f;
     private Renderer Renderer;

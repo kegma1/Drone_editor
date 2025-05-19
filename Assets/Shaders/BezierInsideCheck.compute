@@ -10,7 +10,7 @@ StructuredBuffer<float2> points;
 RWStructuredBuffer<int> results; 
 float2 scale; 
 
-
+// Løser en bezier kurn. bruker denne fordi det ikke er en lerp funksjon i hlsl som jeg fant
 float2 BezierPoint(float2 p0, float2 p1, float2 p2, float2 p3, float t)
 {
     float u = 1.0 - t;
@@ -20,7 +20,7 @@ float2 BezierPoint(float2 p0, float2 p1, float2 p2, float2 p3, float t)
            t * t * t * p3;
 }
 
-
+// sjekker om en punkt ligger på kanten av fromen
 bool EdgeIntersectsRay(float2 a, float2 b, float2 testPoint)
 {
     if ((a.y > testPoint.y) == (b.y > testPoint.y)) return false; 
