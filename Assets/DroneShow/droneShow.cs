@@ -74,6 +74,7 @@ public class droneShow : MonoBehaviour
 
     private InputAction restartAction;
 
+    private int dronesCompleted = 0;
 
 
     private float t = 0f;
@@ -184,25 +185,15 @@ public class droneShow : MonoBehaviour
     {
         if (isShowRunning && !IsPaused)
         {
-            bool formationDone = true;
-            foreach (var drone in activeDrones)
-            {
-                
-                var animComp = drone.GetComponent<AnimationPlayer>();
-                if (animComp == null || !animComp.quiteDone)
-                {
-                    formationDone = false;
-                    break;
-                }
-            }
             
-            if (formationDone)
+            if (dronesCompleted >= activeDrones.Count)
             {
                 animationTimer += Time.deltaTime;
                 elapsedShowTime += Time.deltaTime;
                 
                 if (animationTimer >= animationInterval)
                 {
+                    dronesCompleted = 0;
                     animationTimer = 0f;
                     Play();
                 }
@@ -420,6 +411,8 @@ public class droneShow : MonoBehaviour
             animComp.TimeOffset = plans[i].TimeOffset ?? 0f;
             animComp.startPosition = i < startPositions.Count ? startPositions[i] : drone.transform.position;
             animComp.droneShow = this;
+            animComp.OnDone += OnDroneDone;
+
 
             animComp.PlayFromStart();
             currentDrones.Add(drone);
@@ -679,5 +672,17 @@ public class droneShow : MonoBehaviour
             return assignments;
         }
     }
+
+    private void OnDroneDone(AnimationPlayer anim)
+    {
+        dronesCompleted++;
+        anim.OnDone -= OnDroneDone; 
+
+        if (dronesCompleted >= activeDrones.Count)
+        {
+            Debug.Log($"{dronesCompleted}");
+        }
+    }
+
 
 }

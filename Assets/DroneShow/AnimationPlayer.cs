@@ -1,6 +1,8 @@
 using UnityEngine;
+using System;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using System.Data.Common;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -19,11 +21,13 @@ public class AnimationPlayer : MonoBehaviour
     public Vector3 previousPosition;
     
     public bool quiteDone;
+    public int doneCounter = 0;
 
     private const float TargetTolerance = 0.02f;
 
     public droneShow droneShow;
     private Vector3 goal;
+    public event Action<AnimationPlayer> OnDone;
 
     void Start()
     {
@@ -152,10 +156,9 @@ public class AnimationPlayer : MonoBehaviour
             //Approximately done
             if (Vector3.Distance(transform.position, currentSegment.End) < 1.5f) 
             {
-                quiteDone = true; 
+                NotifyDone();
             }
             
-            //Debug.Log($"{Vector3.Distance(transform.position, currentSegment.End)}");
             
             float moved = Vector3.Distance(transform.position, previousPosition);
             float pathLength = GetSmoothedPathLength(currentSegment);
@@ -182,6 +185,7 @@ public class AnimationPlayer : MonoBehaviour
             gameObject.SetActive(true);
             IsPlaying = true;
             quiteDone = false;
+            doneCounter = 0;
             previousPosition = transform.position;
         }
         else
@@ -224,4 +228,19 @@ public class AnimationPlayer : MonoBehaviour
 
         return length;
     }
+
+
+    private void NotifyDone()
+    {
+        if (!quiteDone)
+        {   
+            doneCounter ++;
+            if (doneCounter == 1)
+            {
+                quiteDone = true;
+                OnDone?.Invoke(this);
+            }
+        }
+    }
+
 }
