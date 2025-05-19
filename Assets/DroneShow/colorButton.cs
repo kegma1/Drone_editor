@@ -116,13 +116,10 @@ public class UIChangesAcrossScenes : MonoBehaviour
 
             if (newUnityFont != null)
             {
-                int originalSize = text.fontSize;
                 text.font = newUnityFont;
-                text.fontSize = Mathf.Max(1, originalSize - 2);
             }
         }
 
-        // TMP_Text
         TMP_Text[] allTMPTexts = FindObjectsByType<TMP_Text>(FindObjectsSortMode.None);
         foreach (TMP_Text tmpText in allTMPTexts)
         {
@@ -136,12 +133,11 @@ public class UIChangesAcrossScenes : MonoBehaviour
 
             if (newTMPFont != null)
             {
-                float originalSize = tmpText.fontSize;
                 tmpText.font = newTMPFont;
-                tmpText.fontSize = Mathf.Max(1, originalSize - 2);
             }
         }
     }
+
 
     void ChangePanelsAndBackgrounds()
     {
