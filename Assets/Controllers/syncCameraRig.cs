@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class syncCameraRig : MonoBehaviour
 {
+    // sykroniserer hovedkameras rotasjon med igloo kamera rigget
     public GameObject IglooCameraRig;
 
     void Start()

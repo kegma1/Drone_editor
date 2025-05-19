@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class FlightControl : MonoBehaviour
 {
+    // movement brukt i preview modus
     public float movementSpeed = 10f;
     public float boostMultiplier = 3f;
     public float climbSpeed = 5f;
