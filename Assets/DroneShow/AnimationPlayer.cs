@@ -35,18 +35,23 @@ public class AnimationPlayer : MonoBehaviour
 
     void Update()
     {
-        if (!IsPlaying || currentSegment == null || droneShow.IsPaused) {
-            if (orca != null) {
+        if (!IsPlaying || currentSegment == null || droneShow.IsPaused)
+        {
+            if (orca != null)
+            {
                 orca.SetPaused(true);
             }
 
             return;
-        } else {
-            if (orca != null) {
+        }
+        else
+        {
+            if (orca != null)
+            {
                 orca.SetPaused(false);
             }
         }
-        
+
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime < TimeOffset) return;
@@ -63,17 +68,19 @@ public class AnimationPlayer : MonoBehaviour
             tangent = (p1 - p0).normalized;
         }
 
- 
+
         Vector3 desiredVelocity = tangent * Speed;
 
 
-         if (orca != null)
-         {
-             orca.SetTargetHeight(targetPosition.y); 
-             orca.SetPreferredVelocity(desiredVelocity); 
+        if (orca != null)
+        {
+            orca.SetTargetHeight(targetPosition.y);
+            orca.SetPreferredVelocity(desiredVelocity);
         }
 
         Drone.SetColor(Color.Lerp(startColor, targetColor, T));
+        // Debug.Log(Color.Lerp(startColor, targetColor, T));
+
     }
 
     void LateUpdate()

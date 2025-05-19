@@ -225,6 +225,7 @@ public class droneShow : MonoBehaviour
         if (droneComp != null)
         {
             droneComp.color = Color.black;
+            droneComp.color.a = 0f;
             droneComp.radius = DroneRadius;
         }
 
@@ -315,7 +316,7 @@ public class droneShow : MonoBehaviour
         for (int i = 0; i < difference; i++)
         {
             if (goals.Count > activeDrones.Count)
-            {   
+            {
                 if (shadowDrones.Count > 0)
                 {
                     traitorDrone = shadowDrones.Dequeue();
@@ -330,7 +331,7 @@ public class droneShow : MonoBehaviour
             else
             {
                 traitorDrone = activeDrones.Dequeue();
-                newlyShadowedDrones.Add(traitorDrone); 
+                newlyShadowedDrones.Add(traitorDrone);
                 shadowDrones.Enqueue(traitorDrone);
             }
         }
@@ -354,6 +355,7 @@ public class droneShow : MonoBehaviour
 
             var animComp = drone.GetComponent<AnimationPlayer>();
             animComp.targetColor = goalColor;  
+            animComp.targetColor.a = 1f;
         }
 
         Vector3 viewerPosition = Vector3.zero;
@@ -366,16 +368,18 @@ public class droneShow : MonoBehaviour
         {   
             solverTries++;
             curvatureFactor += 4;
-            foreach (var drone in newlyShadowedDrones) 
+            foreach (var drone in newlyShadowedDrones)
             {
                 Vector3 currentPosition = drone.transform.position;
                 Vector3 shadowGoal = currentPosition + (currentPosition - viewerPosition).normalized * 5f;
 
                 var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
-                paths.Add(path); 
+                paths.Add(path);
 
                 var animComp = drone.GetComponent<AnimationPlayer>();
                 animComp.targetColor = Color.black;
+                animComp.targetColor.a = 0f;
+                Debug.Log(animComp.targetColor);
             }
 
             foreach (var drone in shadowDrones)
@@ -386,15 +390,17 @@ public class droneShow : MonoBehaviour
                 Vector3 directionToDrone = (currentPosition - viewerPosition).normalized;
                 float forwardDot = Vector3.Dot(directionToDrone, viewDirection);
 
-                if (forwardDot > 0f) 
+                if (forwardDot > 0f)
                 {
                     Vector3 shadowGoal = currentPosition + directionToDrone * 30f;
 
                     var path = DronePathBuilder.FromStartToGoal(currentPosition, shadowGoal, curvatureFactor);
-                    paths.Add(path); 
+                    paths.Add(path);
 
                     var animComp = drone.GetComponent<AnimationPlayer>();
                     animComp.targetColor = Color.black;
+                    animComp.targetColor.a = 0f;
+                    Debug.Log(animComp.targetColor);
                 }
             }
 
@@ -653,7 +659,7 @@ public class droneShow : MonoBehaviour
 
                     for (int i = 0; i < goals.Count; i++)
                     {
-                        if (goalAssigned[i]) continue; 
+                        if (goalAssigned[i]) continue;
 
                         float distance = Vector3.Distance(dronePosition, goals[i]);
                         if (distance < closestDistance)
@@ -665,9 +671,9 @@ public class droneShow : MonoBehaviour
 
                     if (closestGoalIndex != -1)
                     {
-                        goalAssigned[closestGoalIndex] = true;  
+                        goalAssigned[closestGoalIndex] = true;
                         goalCount++;
-                        assignments.Add((drone, goals[closestGoalIndex], goalColors[closestGoalIndex])); 
+                        assignments.Add((drone, goals[closestGoalIndex], goalColors[closestGoalIndex]));
 
                         float distanceToOrigin = dronePosition.magnitude;
                         if (distanceToOrigin > maxDistance)
@@ -683,7 +689,10 @@ public class droneShow : MonoBehaviour
 
                     Vector3 relativePosition = drone.transform.position + direction * 3f;
 
+
+
                     assignments.Add((drone, relativePosition, Color.black));
+                    Debug.Log("hallo");
                 }
             }
 

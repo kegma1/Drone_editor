@@ -137,6 +137,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 354cd0e778ae53d49b01280cfa307bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  T: 0
+  IsPlaying: 0
+  Drone: {fileID: 0}
+  startPosition: {x: 0, y: 0, z: 0}
+  targetColor: {r: 0, g: 0, b: 0, a: 0}
+  Speed: 0
+  TimeOffset: 0
+  previousPosition: {x: 0, y: 0, z: 0}
+  quiteDone: 0
+  doneCounter: 0
+  droneShow: {fileID: 0}
 --- !u!1 &8203187383103097154
 GameObject:
   m_ObjectHideFlags: 0

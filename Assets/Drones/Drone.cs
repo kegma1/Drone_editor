@@ -12,8 +12,9 @@ public class Drone : MonoBehaviour
         Renderer = GetComponent<Renderer>();
     }
     void Start()
-    {   
+    {
         SetRadius(radius);
+        SetColor(color);
     }
 
     public void SetColor(Color newColor)
