@@ -77,8 +77,6 @@ public class droneShow : MonoBehaviour
 
     private InputAction restartAction;
 
-    private int dronesCompleted = 0;
-
 
     private float t = 0f;
 
@@ -191,8 +189,20 @@ public class droneShow : MonoBehaviour
     {
         if (isShowRunning && !IsPaused)
         {
+            bool formationDone = true;
+            foreach (var drone in activeDrones)
+            {
+                
+                var animComp = drone.GetComponent<AnimationPlayer>();
+                if (animComp == null || !animComp.quiteDone)
+                {
+                    formationDone = false;
+                    break;
+                }
+            }
+
             // når alle dronene er på plass så teller vi opp animasjons timerene
-            if (dronesCompleted >= activeDrones.Count)
+            if (formationDone)
             {
                 animationTimer += Time.deltaTime;
                 elapsedShowTime += Time.deltaTime;
@@ -200,7 +210,6 @@ public class droneShow : MonoBehaviour
                 // vi går videre til neste bilde i showet
                 if (animationTimer >= animationInterval)
                 {
-                    dronesCompleted = 0;
                     animationTimer = 0f;
                     Play();
                 }
@@ -253,7 +262,6 @@ public class droneShow : MonoBehaviour
             anim.Speed = 0;
             anim.TimeOffset = 0;
             anim.targetColor = Color.black;
-            anim.OnDone -= OnDroneDone;
         }
 
         var droneComp = drone.GetComponent<Drone>();
@@ -293,7 +301,6 @@ public class droneShow : MonoBehaviour
         if (GraphicComp == null) return;
 
         var currentDrones = new List<GameObject>();
-        var paths = new List<DronePath>();
 
         // opprett rutenett og plasser dronene der hvis dronene de ikke finnes
         if (!gridCreated)
@@ -355,25 +362,29 @@ public class droneShow : MonoBehaviour
 
         List<(GameObject drone, Vector3 goal, Color goalColor)> goalAssignments = GoalAssignment.AssignGoalsToDrones(activeDrones.ToList(), goals, goalColors);
 
-        foreach (var (drone, goal, goalColor) in goalAssignments)
-        {
-            var path = DronePathBuilder.FromStartToGoal(drone.transform.position, goal);
-            paths.Add(path);
-
-            var animComp = drone.GetComponent<AnimationPlayer>();
-            animComp.targetColor = goalColor;
-            animComp.targetColor.a = 1f;
-        }
-
         Vector3 viewerPosition = Vector3.zero;
         Vector3 viewDirection = Vector3.forward;
 
         List<MotionPlan> plans = new List<MotionPlan>();
         int solverTries = 0;
+
+        var paths = new List<DronePath>();
+
         while (plans.Count == 0 && solverTries < MaxSolverTries)
         {
             solverTries++;
             curvatureFactor += 4;
+            paths.Clear();
+
+            foreach (var (drone, goal, goalColor) in goalAssignments)
+            {
+                var path = DronePathBuilder.FromStartToGoal(drone.transform.position, goal);
+                paths.Add(path);
+
+                var animComp = drone.GetComponent<AnimationPlayer>();
+                animComp.targetColor = goalColor;
+                animComp.targetColor.a = 1f;
+            }
 
             foreach (var drone in newlyShadowedDrones)
             {
@@ -413,6 +424,7 @@ public class droneShow : MonoBehaviour
             if (plans.Count == 0)
             {
                 Debug.LogError("Failed to find a feasible solution even after calculating paths.");
+                errorManager.DisplayError("Failed to find a feasible solution even after calculating paths.", 10);
             }
         }
 
@@ -447,7 +459,6 @@ public class droneShow : MonoBehaviour
             animComp.TimeOffset = plans[i].TimeOffset ?? 0f;
             animComp.startPosition = i < startPositions.Count ? startPositions[i] : drone.transform.position;
             animComp.droneShow = this;
-            animComp.OnDone += OnDroneDone;
 
             animComp.PlayFromStart();
         }
@@ -711,12 +722,6 @@ public class droneShow : MonoBehaviour
 
             return assignments;
         }
-    }
-
-    private void OnDroneDone(AnimationPlayer anim)
-    {
-        dronesCompleted++;
-        anim.OnDone -= OnDroneDone; 
     }
 
 

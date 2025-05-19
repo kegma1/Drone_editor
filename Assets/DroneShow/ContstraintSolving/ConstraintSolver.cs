@@ -93,7 +93,7 @@ public static class DroneConstraintSolverORTools
                             Vector3 posB = sampledPaths[j][t];
                             float dist = Vector3.Distance(posA, posB);
 
-                            if (dist < droneRadius*0.2)
+                            if (dist < droneRadius*0.01)
                             {
                                 Debug.Log($"Conflict detected at time {t} between drones {i} and {j}, distance: {dist}");
 

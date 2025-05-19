@@ -23,7 +23,6 @@ public class AnimationPlayer : MonoBehaviour
 
     public droneShow droneShow;
     private Vector3 goal;
-    public event Action<AnimationPlayer> OnDone;
 
     void Start()
     {
@@ -159,7 +158,7 @@ public class AnimationPlayer : MonoBehaviour
             //Approximately done
             if (Vector3.Distance(transform.position, currentSegment.End) < 1.5f) 
             {
-                NotifyDone();
+                quiteDone = true; 
             }
             
             
@@ -230,20 +229,6 @@ public class AnimationPlayer : MonoBehaviour
             length += Vector3.Distance(pts[i - 1], pts[i]);
 
         return length;
-    }
-
-
-    private void NotifyDone()
-    {
-        if (!quiteDone)
-        {   
-            doneCounter ++;
-            if (doneCounter == 1)
-            {
-                quiteDone = true;
-                OnDone?.Invoke(this);
-            }
-        }
     }
 
 }
